@@ -1,0 +1,14 @@
+CREATE TABLE `tbl_rqst_invoice` (
+ `id` int(11) unsigned zerofill NOT NULL AUTO_INCREMENT,
+ `type_invoice` char(4) NOT NULL COMMENT '发票类型',
+ `id_taxpayer` varchar(32) NOT NULL COMMENT '开票税号',
+ `id_product` mediumint(9) unsigned zerofill NOT NULL COMMENT '产品ID',
+ `quantity` smallint(6) NOT NULL DEFAULT '1' COMMENT '开票数量',
+ `price` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '开票单价',
+ `id_filling_invoice` int(11) unsigned zerofill DEFAULT NULL COMMENT '开票ID',
+ `amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '开票金额',
+ `id_asker` smallint(6) unsigned zerofill NOT NULL COMMENT '申请人',
+ `time_ask` datetime NOT NULL,
+ `other` varchar(64) DEFAULT NULL,
+ PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8

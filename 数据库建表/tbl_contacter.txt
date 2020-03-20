@@ -1,0 +1,20 @@
+CREATE TABLE `tbl_contacter` (
+ `id` mediumint(10) unsigned zerofill NOT NULL AUTO_INCREMENT,
+ `name` varchar(32) NOT NULL,
+ `gender` enum('男','女') NOT NULL DEFAULT '男',
+ `idcard` varchar(18) DEFAULT NULL,
+ `num_mobile` varchar(18) NOT NULL,
+ `num_fixed` varchar(18) DEFAULT NULL,
+ `id_orgnztn` smallint(6) unsigned zerofill NOT NULL,
+ `position` varchar(16) NOT NULL COMMENT '职务',
+ `address` varchar(32) DEFAULT NULL,
+ `favorite` varchar(64) DEFAULT NULL COMMENT '个人喜好',
+ `fvrt_work` varchar(32) DEFAULT NULL COMMENT '工作喜好',
+ `id_responsible` smallint(6) unsigned zerofill NOT NULL COMMENT '责任人ID',
+ `id_creater` smallint(6) unsigned zerofill NOT NULL,
+ `time_create` datetime NOT NULL,
+ `id_lastmodifyer` smallint(6) unsigned zerofill DEFAULT NULL,
+ `time_lastmodify` datetime DEFAULT NULL,
+ `other` varchar(128) DEFAULT NULL,
+ PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='客户的联系人表'
