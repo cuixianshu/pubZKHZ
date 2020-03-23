@@ -15,8 +15,8 @@
           <thead>
             <th v-for="title,index in recordersTitle" :width="widthOfTH[index]">{{title}}</th>
           </thead>
-          <tbody @click="clickedARecorderToModify">
-            <tr v-for="row in rcdrSetFromDBSForModifying">
+          <tbody>
+            <tr v-for="row in rcdrSetFromDBSForModifying" @click="clickedARecorderToModify(row)">
               <td v-for="vlu in row" :title='vlu'>{{vlu}}</td>
             </tr>
           </tbody>
@@ -247,25 +247,24 @@ Date.prototype.format = function(fmt) {
         this.recordersTitle=[];
         this.rcdrSetFromDBSForModifying=[];
       },
-      clickedARecorderToModify:function (e) {
-        var el=e.toElement.parentElement;
-        this.slctdRcdrForChecking.id=el.children[0].innerHTML;
-        this.slctdRcdrForChecking.prjct=el.children[1].innerHTML;
-        this.slctdRcdrForChecking.booker=el.children[2].innerHTML;
-        this.slctdRcdrForChecking.product=el.children[3].innerHTML;
-        this.slctdRcdrForChecking.startTime=el.children[4].innerHTML;
-        this.slctdRcdrForChecking.endTime=el.children[5].innerHTML;
-        this.slctdRcdrForChecking.mileage=el.children[6].innerHTML;
-        this.slctdRcdrForChecking.startPoint=el.children[7].innerHTML;
-        this.slctdRcdrForChecking.endPoint=el.children[8].innerHTML;
-        this.slctdRcdrForChecking.msg_to_driver=el.children[9].innerHTML;
-        this.slctdRcdrForChecking.driver=el.children[10].innerHTML;
-        this.slctdRcdrForChecking.equipment=el.children[11].innerHTML;
-        this.slctdRcdrForChecking.salePrice=el.children[12].innerHTML;
-        this.slctdRcdrForChecking.park_fee=el.children[13].innerHTML;
-        this.slctdRcdrForChecking.surcharge=el.children[14].innerHTML;
-        this.slctdRcdrForChecking.usage_surcharge=el.children[15].innerHTML;
-        this.slctdRcdrForChecking.mem=el.children[16].innerHTML;
+      clickedARecorderToModify:function (dataRow) {
+        this.slctdRcdrForChecking.id=dataRow.ID;
+        this.slctdRcdrForChecking.prjct=dataRow.项目;
+        this.slctdRcdrForChecking.booker=dataRow.订车人;
+        this.slctdRcdrForChecking.product=dataRow.产品;
+        this.slctdRcdrForChecking.startTime=dataRow.开始时间;
+        this.slctdRcdrForChecking.endTime=dataRow.结束时间;
+        this.slctdRcdrForChecking.mileage=dataRow.里程;
+        this.slctdRcdrForChecking.startPoint=dataRow.起点;
+        this.slctdRcdrForChecking.endPoint=dataRow.终点;
+        this.slctdRcdrForChecking.msg_to_driver=dataRow.通知信息;
+        this.slctdRcdrForChecking.driver=dataRow.司机;
+        this.slctdRcdrForChecking.equipment=dataRow.车辆;
+        this.slctdRcdrForChecking.salePrice=dataRow.金额;
+        this.slctdRcdrForChecking.park_fee=dataRow.停车;
+        this.slctdRcdrForChecking.surcharge=dataRow.垫付;
+        this.slctdRcdrForChecking.usage_surcharge=dataRow.垫付说明;
+        this.slctdRcdrForChecking.mem=dataRow.备注;
         this.slctdRcdrForChecking.payer=this.slctdRcdrForChecking.booker;
         this.slctdRcdrForChecking.rulePrice='Not Given';
         this.clonedRecorder=JSON.parse(JSON.stringify(this.slctdRcdrForChecking));

@@ -208,7 +208,7 @@ import ClipboardJS from 'clipboard';
         return prmsData;
       },
       async axiosAsync() {
-        
+     
         var _this=this;
         var modalModel="<div id='loadingModal' class='modal fade'></div>";//height:80px;
         var msg="<div id='msg' style='width:50%;text-align:center;padding:10px;background:#17a2b8;color:#FFF;position: absolute;top:20%;left:50%;transform:translate(-50%,-50%);'><h4>正在处理,请稍等...</h4></div>" ; 
@@ -221,7 +221,7 @@ import ClipboardJS from 'clipboard';
         }
         $("#loadingModal").modal('show');
         var rspnData = await this.promiseMethod();
-console.log(rspnData);
+// console.log(rspnData);
 // return;
         $('#openFileSelector').val(''); 
         $('#loadingModal').remove();
@@ -256,6 +256,7 @@ console.log(rspnData);
         this.xlsTitle=[];
       },
       saveXlsxDataToDBS:function () {
+       
         var rspnData=this.axiosAsync();
       },
       clearTitle(val) {
