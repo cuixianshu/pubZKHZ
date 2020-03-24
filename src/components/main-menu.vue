@@ -57,9 +57,9 @@
         <li class="dropdown">
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">财务业务</span>
           <div class="dropdown-menu">
-            <li><span class="dropdown-item menu-item" @click="loadPage('/cashier')">收入款项</span></li>
-            <li><span class="dropdown-item menu-item">收款复核</span></li>
-            <li><span class="dropdown-item menu-item">支付款项</span></li>
+            <li><span class="dropdown-item menu-item" @click="loadPage('/cashier')">收进款项</span></li>
+            <li><span class="dropdown-item menu-item" @click="loadPage('/check-receipts')">收款复核</span></li>
+            <li><span class="dropdown-item menu-item">付出款项</span></li>
             <li><span class="dropdown-item menu-item">付款复核</span></li>
           </div>
         </li>        
@@ -71,7 +71,7 @@
             <li><span class="dropdown-item menu-item">差旅报销</span></li>
             <li><span class="dropdown-item menu-item">采购请款</span></li>
             <li><span class="dropdown-item menu-item">请款初审</span></li>
-            <li><span class="dropdown-item menu-item">请款初审</span></li>
+<!--             <li><span class="dropdown-item menu-item">请款初审</span></li> -->
             <li><span class="dropdown-item menu-item">请款复审</span></li>
           </div>
         </li>        

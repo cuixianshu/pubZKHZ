@@ -457,17 +457,17 @@ console.log(response.data);
       //初始化项目的option
       this.projects=[];
       this.$axios({
-            method: 'post',
-            url: 'getProject.php'
-        }).then(function (response) {
-          _this.projects=response.data;
-        }).catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger!',
-              duration: 4000
-          });
+        method: 'post',
+        url: 'getProject.php'
+      }).then(function (response) {
+        _this.projects=response.data;
+      }).catch(function (error) {
+        _this.$toast({
+          text: '异步通信错误!'+error,
+          type: 'danger!',
+          duration: 4000
         });
+      });
       this.customers=[];
       this.$axios({
             method: 'post',

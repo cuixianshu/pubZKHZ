@@ -343,8 +343,4 @@ Date.prototype.format = function(fmt) {
 input[type=radio] {
   width: 1.2em!important;
 }
-/*#whydisagree {
-  width: 100%;
-  margin:5px;
-}*/
 </style>

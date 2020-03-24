@@ -37,6 +37,7 @@ import approveApplyingPurchasing from '@/components/approve-applying-purchasing.
 import enquiryComparePrice from '@/components/enquiry-compare-price.vue';
 import approveEnquiry from '@/components/approve-enquiry.vue';
 import launchPurchasing from '@/components/launch-purchasing.vue';
+import checkReceipts from '@/components/check-receipts.vue';
 
 Vue.use(Router);
 
@@ -227,6 +228,11 @@ export default new Router({
       path:'/launch-purchasing',
       name:'launch-purchasing',
       component:launchPurchasing
+    },
+    {
+      path:'/check-receipts',
+      name:'check-receipts',
+      component:checkReceipts
     }
 
   ]
