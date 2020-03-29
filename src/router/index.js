@@ -38,7 +38,8 @@ import enquiryComparePrice from '@/components/enquiry-compare-price.vue';
 import approveEnquiry from '@/components/approve-enquiry.vue';
 import launchPurchasing from '@/components/launch-purchasing.vue';
 import checkReceipts from '@/components/check-receipts.vue';
-
+import requestFunds from '@/components/request-funds.vue';
+import rqstPcsgFunds from '@/components/rqst-pcsg-funds.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -233,7 +234,16 @@ export default new Router({
       path:'/check-receipts',
       name:'check-receipts',
       component:checkReceipts
+    },
+    {
+      path:'/request-funds',
+      name:'request-funds',
+      component:requestFunds      
+    },
+    {
+      path:'/rqst-pcsg-funds',
+      name:'rqst-pcsg-funds',
+      component:rqstPcsgFunds 
     }
-
   ]
 });
