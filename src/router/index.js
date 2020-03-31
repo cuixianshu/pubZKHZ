@@ -40,6 +40,8 @@ import launchPurchasing from '@/components/launch-purchasing.vue';
 import checkReceipts from '@/components/check-receipts.vue';
 import requestFunds from '@/components/request-funds.vue';
 import rqstPcsgFunds from '@/components/rqst-pcsg-funds.vue';
+import primaryAuditsRqstFunds from '@/components/primary-audits-requesting-funds.vue';
+import finalAuditsRqstingFunds from '@/components/final-audits-rqsting-funds.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -244,6 +246,16 @@ export default new Router({
       path:'/rqst-pcsg-funds',
       name:'rqst-pcsg-funds',
       component:rqstPcsgFunds 
+    },
+    {
+      path:'/prmry-audits-rqst-funds',
+      name:'prmry-audits-rqst-funds',
+      component:primaryAuditsRqstFunds 
+    },
+    {
+      path:'/final-audits-rqst-funds',
+      name:'final-audits-rqst-funds',
+      component:finalAuditsRqstingFunds 
     }
   ]
 });

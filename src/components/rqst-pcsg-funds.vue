@@ -55,23 +55,23 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctProject">项目</label>
-                  <select id="slctProject" type="text" name="Project" class="form-control" placeholder="所属项目" v-model="requestPcsFunds.project" title="所属项目" ><!-- disabled -->
+                  <select id="slctProject" type="text" name="Project" class="form-control" placeholder="所属项目" v-model="requestPcsFunds.project" title="所属项目" :disabled="requestPcsFunds.result_approved==1"><!-- disabled -->
                     <option v-for="item in projects">{{item.prjct}}</option>}
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputUsage">用途</label>
-                  <input id="inputUsage" type="text" class="form-control" v-model="requestPcsFunds.use_for" title="款项用途,不超过64个字" placeholder="款项用途,不超过64个字">
+                  <input id="inputUsage" type="text" class="form-control" v-model="requestPcsFunds.use_for" title="款项用途,不超过64个字" placeholder="款项用途,不超过64个字" :disabled="requestPcsFunds.result_approved==1">
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputCashiedAmount">金额</label>
-                  <input id="inputCashiedAmount" type="number" class="form-control" name="cashiedAmount" v-model="requestPcsFunds.amount" placeholder="请款金额" title="请款金额">
+                  <input id="inputCashiedAmount" type="number" class="form-control" name="cashiedAmount" v-model="requestPcsFunds.amount" placeholder="请款金额" title="请款金额" :disabled="requestPcsFunds.result_approved==1">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="requestPcsFunds.way" placeholder="收款方式" title="收款方式">
+                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="requestPcsFunds.way" placeholder="收款方式" title="收款方式" :disabled="requestPcsFunds.result_approved==1">
                     <option v-for="item in wayOfPayment">{{item.name}}</option>}
                   </select>
                 </div>
@@ -79,25 +79,29 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputAccount">账号</label>
-                  <input id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" placeholder="接收款项的账号" v-model="requestPcsFunds.account" title="账号名和账号">
+                  <input id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" placeholder="接收款项的账号" v-model="requestPcsFunds.account" title="账号名和账号" :disabled="requestPcsFunds.result_approved==1">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputRemark">备注</label>
-                  <input id="inputRemark" type="text" class="form-control" name="otherInCashier" v-model="requestPcsFunds.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
+                  <input id="inputRemark" type="text" class="form-control" name="otherInCashier" v-model="requestPcsFunds.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字" :disabled="requestPcsFunds.result_approved==1">
                 </div>
               </div>
-              <div class="row" v-if="requestPcsFunds.status_of_rqstfunds==0">
+              <div class="row" v-if="requestPcsFunds.result_approved==0 || requestPcsFunds.result_approved2==0">
                 <div class="col-lg form-inline reason-reject">
-                  <label>审核意见:</label>
-                  <span>{{requestPcsFunds.reason_reject_pcsgfunds}}</span>
+                  <label>初审意见:</label>
+                  <span>{{requestPcsFunds.reason_reject}}</span>
+                </div>
+                <div class="col-lg form-inline reason-reject">
+                  <label>复审意见:</label>
+                  <span>{{requestPcsFunds.reason_reject2}}</span>
                 </div>
               </div>
             </div>
           </div>
           <div class="modal-footer">  
             <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-            <button v-if="requestPcsFunds.id_rqst_funds" type="button" id="saveTheRequestedData" @click="" class="btn btn-primary">重新申请</button>
-            <button v-else  type="button" id="btnSaveTheRequestedData" @click="saveTheRequestedData" class="btn btn-primary">新建申请</button>
+            <button v-if="hasNotPassedApproving" type="button" @click="saveTheRequestedData" class="btn btn-primary">重新申请</button>
+            <button v-if="hasRqstFundsID"  type="button" id="btnSaveTheRequestedData" @click="saveTheRequestedData" class="btn btn-primary">新建申请</button>
           </div>           
         </div>
       </div>
@@ -153,8 +157,10 @@ Date.prototype.format = function(fmt) {
           id_project:'',
           use_for:'',
           id_rqst_funds:'',
-          reason_reject_pcsgfunds:'',
-          status_of_rqstfunds:''
+          reason_reject:'',
+          reason_reject2:'',
+          result_approved:'',
+          result_approved2:''
         },
         wayOfPayment:[],
         projects:[]
@@ -203,7 +209,6 @@ Date.prototype.format = function(fmt) {
           });
       },
       clickedARowInShower(dataRow) {
-// console.log(dataRow);
         this.idOfAppliedPcsg=dataRow.id;
         this.requestPcsFunds.id_relative=this.idOfAppliedPcsg;//注意:这是请购id
         this.requestPcsFunds.id_project=dataRow.id_project;
@@ -213,8 +218,10 @@ Date.prototype.format = function(fmt) {
         this.requestPcsFunds.remark=dataRow.remark;
         this.requestPcsFunds.id_way_pay=dataRow.id_way_pay;
         this.requestPcsFunds.id_rqst_funds=dataRow.id_of_rqst_funds;
-        this.requestPcsFunds.reason_reject_pcsgfunds=dataRow.reason_reject_pcsgfunds;
-        this.requestPcsFunds.status_of_rqstfunds=dataRow.status_of_rqstfunds;
+        this.requestPcsFunds.reason_reject=dataRow.reason_reject;
+        this.requestPcsFunds.reason_reject2=dataRow.reason_reject2;
+        this.requestPcsFunds.result_approved=dataRow.result_approved;
+        this.requestPcsFunds.result_approved2=dataRow.result_approved2;
         for(var i=0;i<this.wayOfPayment.length;i++) {
           if(this.requestPcsFunds.id_way_pay=this.wayOfPayment[i].id) {
             this.requestPcsFunds.way=this.wayOfPayment[i]['name'];
@@ -226,6 +233,7 @@ Date.prototype.format = function(fmt) {
           }
         }        
         $('#mdlRqstPcsgFunds').modal('toggle');
+// console.log(this.requestPcsFunds);
       },
       saveTheRequestedData() {
         if(this.requestPcsFunds.project=='') {
@@ -328,19 +336,30 @@ console.log(response.data);
     computed:{
       getStatus() {
         return function(dataRow){
-          // console.log(dataRow);
-          if (!dataRow.status_of_rqstfunds && typeof(dataRow.status_of_rqstfunds)!="undefined" && dataRow.status_of_rqstfunds!=0){
-            if(dataRow.date_of_rqst_funds){ 
-              return '已请款,未审核';
-            } else {
-              return '未请款';
-            } 
-          } else if(dataRow.status_of_rqstfunds==0) {
-            return '请款未通过审核';
+          if (!dataRow.result_approved && typeof(dataRow.result_approved)!="undefined" && dataRow.result_approved!=0){
+            return '已请款,未审核';
+          } else if(dataRow.result_approved==0) {
+            return '请款未通过初审';
+          } else if(!dataRow.result_approved2 && typeof(dataRow.result_approved2)!="undefined" && dataRow.result_approved2!=0) {
+            return '已初审,待复审';
+          } else if(dataRow.result_approved2==0) {
+            return '请款未通过复审';
           } else {
-            return '已通过,待付款';
+            return '已复审,待付款';
           }
-        } 
+        }
+
+      },
+      hasNotPassedApproving () {//有请款单号,并且status是0或null
+        // console.log(this.requestPcsFunds);
+        if(this.requestPcsFunds.id_rqst_funds && (this.requestPcsFunds.result_approved==0 || !this.requestPcsFunds.result_approved && typeof(this.requestPcsFunds.result_approved)!="undefined" && this.requestPcsFunds.result_approved!=0)) {
+          return true;
+        }
+      },
+      hasRqstFundsID () {
+        if(!this.requestPcsFunds.id_rqst_funds) {
+          return true;
+        }
       }
     },
     beforeCreate:function() {

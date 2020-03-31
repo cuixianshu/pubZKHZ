@@ -70,9 +70,9 @@
           <div class="dropdown-menu">
             <li><span class="dropdown-item menu-item" @click="loadPage('/request-funds')">费用请款</span></li>
             <li><span class="dropdown-item menu-item" @click="loadPage('/rqst-pcsg-funds')">采购请款</span></li>
-            <li><span class="dropdown-item menu-item">请款初审</span></li>
+            <li><span class="dropdown-item menu-item" @click="loadPage('/prmry-audits-rqst-funds')">请款初审</span></li>
 <!--             <li><span class="dropdown-item menu-item">请款初审</span></li> -->
-            <li><span class="dropdown-item menu-item">请款复审</span></li>
+            <li><span class="dropdown-item menu-item" @click="loadPage('/final-audits-rqst-funds')">请款复审</span></li>
           </div>
         </li>        
       </ul>
