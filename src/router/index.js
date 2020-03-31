@@ -42,6 +42,7 @@ import requestFunds from '@/components/request-funds.vue';
 import rqstPcsgFunds from '@/components/rqst-pcsg-funds.vue';
 import primaryAuditsRqstFunds from '@/components/primary-audits-requesting-funds.vue';
 import finalAuditsRqstingFunds from '@/components/final-audits-rqsting-funds.vue';
+import pay from '@/components/pay.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -256,6 +257,11 @@ export default new Router({
       path:'/final-audits-rqst-funds',
       name:'final-audits-rqst-funds',
       component:finalAuditsRqstingFunds 
+    },
+    {
+      path:'/pay',
+      name:'pay',
+      component:pay 
     }
   ]
 });

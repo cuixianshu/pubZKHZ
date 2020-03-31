@@ -59,7 +59,7 @@
           <div class="dropdown-menu">
             <li><span class="dropdown-item menu-item" @click="loadPage('/cashier')">收进款项</span></li>
             <li><span class="dropdown-item menu-item" @click="loadPage('/check-receipts')">收款复核</span></li>
-            <li><span class="dropdown-item menu-item">支付款项</span></li>
+            <li><span class="dropdown-item menu-item" @click="loadPage('/pay')">支付款项</span></li>
             <li><span class="dropdown-item menu-item">付款复核</span></li>
           </div>
         </li>        
