@@ -1,6 +1,6 @@
 <template>
   <div class="father">
-    <h5>当前位置:收款付款/收进款项</h5>
+    <h5>当前位置:收款付款/销售回款</h5>
     <div id="queryOfCashier" class="container-fluid">
       <div class="row">
         <div class="col-lg form-inline searchcontent">
@@ -156,10 +156,10 @@ Date.prototype.format = function(fmt) {
         if(this.queryContent.dateRange.length<2 || !this.queryContent.dateRange[0] || !this.queryContent.dateRange[1]){//如果日期填写不全,默认是过去1周
           var day1=new Date();
           day1.setDate(day1.getDate() - 7);
-          this.queryContent.dateRange[0]= day1.format("yyyy-MM-dd");
+          this.queryContent.dateRange[0]= day1.format("yyyy-MM-dd")+" 00:00:00";
           var day2 = new Date();
           day2.setDate(day2.getDate());
-          this.queryContent.dateRange[1] = day2.format("yyyy-MM-dd");
+          this.queryContent.dateRange[1] = day2.format("yyyy-MM-dd")+" 23:59:59";
         }      	
         var _this = this;
         this.listOfFilledInvoice=[];

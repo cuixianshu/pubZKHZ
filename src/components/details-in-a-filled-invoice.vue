@@ -25,7 +25,7 @@
 
 <script>
 import Print from '@/plugs/print';
-import JsonExcel from 'vue-json-excel';
+import JsonExcel from 'vue-json-excel/JsonExcel.vue';
 Date.prototype.format = function(fmt) { 
      var o = { 
         "M+" : this.getMonth()+1,                 //月份 

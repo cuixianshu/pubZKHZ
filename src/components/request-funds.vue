@@ -1,15 +1,18 @@
 <template>
   <div class="father">
-    <h5>当前位置:收款付款/费用请款</h5>
+    <h5>当前位置:请款报销/报销借款</h5>
     <div id="queryOfCashier" class="container-fluid">
       <div class="row">
-        <div class="col-lg form-inline searchcontent">
+        <div class="col-lg-8 form-inline searchcontent">
           <label for="queryConditions">关键词:</label> 
           <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="请款人,用途等搜索关键词">
           <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="填开发票的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="填开发票的时间范围"></datepicker> 
           <button class="btn btn-primary" @click="getListOfRequestFunds">🔍获取数据</button>
-          <button class="btn btn-secondary" @click="clearList" v-if="listOfRequestFunds.length>0">清除</button>            
-          <button id="byhand" @click="newCreateRequestFunds" class="btn btn-primary" type="button">新建申请</button>
+          <button class="btn btn-secondary" @click="clearList" v-if="listOfRequestFunds.length>0">清除</button> 
+        </div>
+        <div class="col-lg-4 form-inline">           
+          <button id="byhand-fee" @click="newCreateRequestFunds(1)" class="btn btn-primary" type="button">新报销单</button>
+          <button id="byhand-borrow" @click="newCreateRequestFunds(2)" class="btn btn-primary" type="button">新借款单</button>
         </div>          
       </div>
 
@@ -41,11 +44,11 @@
         <div class="modal-content">  
           <div class="modal-header">
             <span v-if="idOfRequestFunds===''?false:true">
-              <h5>费用报销---申请ID:{{idOfRequestFunds}}
+              <h5>请款单---申请ID:{{idOfRequestFunds}}
               </h5>
             </span>
             <span v-else>
-              <h5>费用报销---新建申请</h5>
+              <h5>请款单---{{natureText}}</h5>
             </span>  
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>  
@@ -159,10 +162,12 @@ Date.prototype.format = function(fmt) {
           reason_reject:'',
           reason_reject2:'',
           result_approved:'',
-          result_approved2:''
+          result_approved2:'',
+          nature:1
         },
         wayOfPayment:[],
-        projects:[]
+        projects:[],
+        natureText:'借备用金'
 
       }
     },
@@ -344,7 +349,16 @@ Date.prototype.format = function(fmt) {
       clearList () {
         this.listOfRequestFunds=[];
       },
-      newCreateRequestFunds() {
+      newCreateRequestFunds(nature) {
+        this.requestFunds.nature=nature;
+        switch (nature) {
+          case 1:
+            this.natureText='报销单';
+            break;
+          case 2:
+            this.natureText='借款单';
+            break;
+        }
         this.clearList();
         this.idOfRequestFunds='';
         this.requestFunds.account='';
@@ -463,11 +477,13 @@ table {
 .searchcontent button {
   margin-left: 5px;
 }
-#byhand {
-  /*margin-left: 100px;*/
+#byhand-borrow {
   position: absolute;
-  /*bottom: 0;*/
   right: 0;
+}
+#byhand-fee {
+  position: absolute;
+  right: 100px;  
 }
 .reason-reject {
   color: red;

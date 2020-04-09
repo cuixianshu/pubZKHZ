@@ -1,8 +1,8 @@
-import vue from 'vue'
+import Vue from 'vue'
 import toastComponent from './toast.vue'
 
 // 组件构造器，构造出一个 vue组件实例
-const ToastConstructor = vue.extend(toastComponent)
+const ToastConstructor = Vue.extend(toastComponent)
 
 function showToast ({ text, type, duration = 1000 }) {
     const toastDom = new ToastConstructor({
@@ -52,7 +52,7 @@ function showToast ({ text, type, duration = 1000 }) {
 }
 // 全局注册
 function registryToast () {
- vue.prototype.$toast = showToast
+ Vue.prototype.$toast = showToast
 }
 
 export default registryToast

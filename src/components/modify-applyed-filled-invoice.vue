@@ -214,7 +214,7 @@ import 'bootstrap-table/dist/bootstrap-table.min.css'
 import 'bootstrap-table/dist/bootstrap-table.min.js'
 import 'bootstrap-table/dist/bootstrap-table-vue.min.js'
 import 'bootstrap-table/dist/locale/bootstrap-table-zh-CN.min.js'
-import bootstraptable from 'bootstrap-table/dist/bootstrap-table-vue.esm.js'
+import bootstraptable from 'bootstrap-table/dist/bootstrap-table-vue.esm.min.js'
 import '@icon/open-iconic/open-iconic.css'
 //2019-12-31
 import datepicker from 'vue2-datepicker';

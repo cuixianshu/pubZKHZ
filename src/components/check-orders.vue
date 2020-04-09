@@ -40,13 +40,13 @@
                 </div>
                 <div class="col-lg form-inline">
                   <label for="slctMdfBooker">用户:</label>
-                  <select id="slctMdfBooker" type="text" name="booker" class="form-control" placeholder="用户名称" v-model="slctdRcdrForChecking.booker" title="用户名称" >
+                  <select id="slctMdfBooker" type="text" name="booker" class="form-control" placeholder="用户名称" v-model="slctdRcdrForChecking.booker" title="用户名称" disabled>
                     <option v-for="bkr in customers">{{bkr.mix_name}}</option>}
                   </select>
                 </div>
                 <div class="col-lg form-inline">
                   <label for="slctMdfNameOfPrdct">产品:</label>
-                    <select id="slctMdfNameOfPrdct" type="text" name="product" class="form-control" placeholder="产品名称" v-model="slctdRcdrForChecking.product" title="产品名称" >
+                    <select id="slctMdfNameOfPrdct" type="text" name="product" class="form-control" placeholder="产品名称" v-model="slctdRcdrForChecking.product" title="产品名称" disabled>
                       <option v-for="item in namesOfPrdctInSelect">{{item.name}}</option>
                     </select>            
                 </div>
@@ -54,7 +54,7 @@
               <div class="row">                  
                 <div class="col-lg form-inline">
                   <label for="dtpkrMdfStartTime">开始:</label>
-                  <datepicker id="dtpkrMdfStartTime" v-model="slctdRcdrForChecking.startTime" type="datetime"  format="YYYY-MM-DD HH:mm" title="开始时间" :minute-step="5" width="160" name="startTime"></datepicker>
+                  <datepicker id="dtpkrMdfStartTime" v-model="slctdRcdrForChecking.startTime" type="datetime"  format="YYYY-MM-DD HH:mm" title="开始时间" :minute-step="5" width="160" name="startTime" disabled></datepicker>
                 </div><!-- confirm confirm --> 
                 <div id="endTimeForMdf" class="col-lg form-inline">
                   <label for="dtpkrMdfEndTime">结束:</label>

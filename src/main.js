@@ -6,10 +6,10 @@ import 'babel-polyfill';
 //
 import Vue from 'vue';
 //import App from './App'
-import router from './router';
-import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import '../node_modules/bootstrap/dist/js/bootstrap.min.js';
-// import cmpntHeader from './components/cmpnt-header';
+import router from '@/router';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.min.js';
+// import cmpntHeader from './components/cmpnt-header';../node_modules/
 import mainMenu from '@/components/main-menu.vue';
 import globalVariable from '@/components/global_variable.js';
 

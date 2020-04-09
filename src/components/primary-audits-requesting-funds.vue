@@ -201,7 +201,7 @@ Date.prototype.format = function(fmt) {
           url: 'getRequestFunds.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
-// console.log(response.data);
+console.log(response.data);
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到符合条件的记录!',

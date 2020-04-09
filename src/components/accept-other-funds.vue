@@ -1,67 +1,72 @@
 <template>
   <div class="father">
-    <h5>当前位置:收款付款/收款复核</h5>
+    <h5>当前位置:收款付款/其它收款</h5>
     <div id="queryOfCashier" class="container-fluid">
       <div class="row">
         <div class="col-lg form-inline searchcontent">
           <label for="queryConditions">关键词:</label> 
           <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位等搜索关键词">
           <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="填开发票的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="填开发票的时间范围"></datepicker> 
-          <button class="btn btn-primary" @click="getListOfCashier">🔍获取数据</button>
-          <button class="btn btn-secondary" @click="clearList" v-if="listOfCashies.length>0">清除</button>            
+          <button class="btn btn-primary" @click="getListOfTurnedInFunds">🔍获取数据</button>
+          <button class="btn btn-secondary" @click="clearList" v-if="listOfTurnInFunds.length>0">清除</button>            
+<!--           <button id="byhand" @click="collectByHand" class="btn btn-primary" type="button">手工填表</button> -->
         </div>          
       </div>
 
     </div>
-    <div class="" v-if="listOfCashies.length>0">
+    <div class="showerOfFilledInvoice" v-if="listOfTurnInFunds.length>0">
       <table class="table table-hover">
         <thead>
           <th v-for="title,index in titlesOfList" :width="widthOfTH[index]">{{title}}</th>
           <!-- <th><input class="checkbox" type="checkbox" @click=""></th> -->
         </thead>
         <tbody>
-          <tr v-for="row,index in listOfCashies" @click="clickedARowInShower(row)">
+          <tr v-for="row,index in listOfTurnInFunds" @click="clickedARowInShower(row)">
             <td v-for="vlu in row" :title="vlu">{{vlu}}</td>
             <!-- <td><input class="checkbox" type="checkbox"  name="selecter" @click=""></td> -->
           </tr>
         </tbody>
       </table>
     </div>
-    <div class="modal fade" id="checkReceipts" role="dialog" aria-labelledby="checkReceipts" data-backdrop="static" data-keyboard: false>
+    <div class="modal fade" id="mdlCashier" role="dialog" aria-labelledby="mdlCashier" data-backdrop="static" data-keyboard: false>
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">  
           <div class="modal-header">
-            <span>
-              <h5>收款复核--收款ID:{{approvedResult.idOfCollectedReceipts}}</h5>
+            <span> <!-- v-if="cashier.id_turn_in_funds===''?false:true" -->
+              <h5>其它收款---缴款ID:{{cashier.id_turn_in_funds}},金额:￥{{cashier.amount}}
+              </h5>
             </span>
+<!--             <span v-else>
+              <h5>收款入账   手工收款</h5>
+            </span>  --> 
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>  
               </button>  
           </div>
           <div class="modal-body">
-            <div id="detailsForCheckingReceipts" class="container-fluid">
+            <div id="detailsForCashier" class="container-fluid">
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctCashierProject">项目</label>
-                  <select id="slctCashierProject" type="text" name="cashierProject" class="form-control" placeholder="所属项目" v-model="approvedResult.id_project" title="所属项目">
-                    <option v-for="item in projects" :value="item.id">{{item.prjct}}</option>
+                  <select id="slctCashierProject" type="text" name="cashierProject" class="form-control" placeholder="所属项目" v-model="cashier.id_project" title="所属项目" disabled>
+                    <option v-for="item in projects" :value="item.id">{{item.name}}</option>}
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputDateOfCashier">时间</label>
-                  <input id="inputDateOfCashier" type="text" class="form-control" :value="(new Date()).format('yyyy-MM-dd hh:mm:ss')" readonly>
+                  <input id="inputDateOfCashier" type="text" class="form-control" :value="cashier.time_paid" placeholder="缴款时间" readonly>
                 </div>
-              </div>              
+              </div>
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctCashierAccount">账号</label>
-                  <select id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" placeholder="收款账号" v-model="approvedResult.id_account" title="收款账号">
+                  <select id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" placeholder="收款账号" v-model="cashier.id_account" title="收款账号">
                     <option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>}
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="approvedResult.id_way_pay" placeholder="收款方式" title="收款方式">
+                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="cashier.id_way_pay" placeholder="收款方式" title="收款方式">
                     <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>}
                   </select>
                 </div>
@@ -69,25 +74,18 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputCashiedAmount">金额</label>
-                  <input id="inputCashiedAmount" type="number" class="form-control" name="cashiedAmount" v-model="approvedResult.amount" placeholder="实际收款金额" title="实际收款金额">
+                  <input id="inputCashiedAmount" type="number" class="form-control" name="cashiedAmount" v-model="cashier.amount" placeholder="实际收款金额" title="实际收款金额">
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="inputOther">备注</label>
-                  <input id="inputOther" type="text" class="form-control" name="otherInCashier" v-model="approvedResult.other" title="收款时的备注信息" placeholder="备注信息,不超过64个字">
+                  <label for="inputRemark">备注</label>
+                  <input id="inputRemark" type="text" class="form-control" name="remarkInCashier" v-model="cashier.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
                 </div>
               </div>
-              <hr style="margin:10px 0px;height:2px;border:2px;background-color:#007bff;"/>
-              <div class="row" >
-                <div class="col-lg  form-inline">
-                  <label for="inputOther">复核说明:</label>
-                  <input id="inputOther" type="text" class="form-control" name="otherInCashier" v-model="approvedResult.describe_confirm" title="复核说明" placeholder="复核说明,不超过64字">
-                </div>
-              </div>              
             </div>
           </div>
           <div class="modal-footer">  
             <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-            <button type="button" id="btnSaveTheApprovedData" @click="saveTheApprovedData" class="btn btn-primary">确认复核</button>
+            <button type="button" @click="saveTheCollectedData" class="btn btn-primary">保存</button>
           </div>           
         </div>
       </div>
@@ -129,30 +127,33 @@ Date.prototype.format = function(fmt) {
         },
         titlesOfList:[],
         widthOfTH:['5%','11%','8%','6%','8%','10%','7%','12%','6%','7%','5%','11%','4%'],
-        listOfCashies:[],
+        listOfTurnInFunds:[],
         currentUserId:1,
-        approvedResult:{
-          idOfCollectedReceipts:'',
+        cashier:{
+          amount:0,
+          id_turn_in_funds:'',//缴款ID
+          id_payer:'',
+          id_project:'',
+          id_way_pay:'',
+          remark:'',
+          time_paid:'', 
           account:'中科平安',
           id_account:1,
           way:'电汇',
-          id_way_pay:1,
-          amount:0,
-          other:'',
-          describe_confirm:'',
           project:'',
-          id_project:''
+          id_cashier:''
         },
         ourAccounts:[],
         wayOfPayment:[],
         projects:[]
+
       }
     },
     components: {
       datepicker
     },    
     methods: {
-      getListOfCashier() {
+      getListOfTurnedInFunds() {
         if(this.queryContent.dateRange.length<2 || !this.queryContent.dateRange[0] || !this.queryContent.dateRange[1]){//如果日期填写不全,默认是过去1周
           var day1=new Date();
           day1.setDate(day1.getDate() - 7);
@@ -162,16 +163,14 @@ Date.prototype.format = function(fmt) {
           this.queryContent.dateRange[1] = day2.format("yyyy-MM-dd")+" 23:59:59";
         }       
         var _this = this;
-        this.listOfCashies=[];
+        this.listOfTurnInFunds=[];
         this.titlesOfList=[];
-        this.queryContent.conditions="ReiceiptsWithoutChecking";
+        this.queryContent.conditions="NotCollected";
         this.$axios({
           method: 'post',
-          url: 'getCashiers.php',
+          url: 'getTurnInFunds.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
-// console.log(response.data);
-// return;
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到符合条件的记录!',
@@ -179,7 +178,7 @@ Date.prototype.format = function(fmt) {
                 duration: 1000
               });              
             } else {
-              _this.listOfCashies=response.data;
+              _this.listOfTurnInFunds=response.data;
               for(var title in response.data[0]) {
                 _this.titlesOfList.push(title);
               }             
@@ -195,76 +194,70 @@ Date.prototype.format = function(fmt) {
           });
       },
       clickedARowInShower(dataRow) {
-        this.approvedResult.idOfCollectedReceipts=dataRow.id;
-        this.approvedResult.id_account=dataRow.id_account;
-        this.approvedResult.amount=dataRow.amount;
-        this.approvedResult.id_way_pay=dataRow.id_way_pay;
-        this.approvedResult.other=dataRow.other;
-        this.approvedResult.describe_confirm=dataRow.describe_confirm;
-        this.approvedResult.id_project=dataRow.id_project;
-
-        $('#checkReceipts').modal('toggle');
+// console.log(dataRow);
+        this.cashier.amount=dataRow.amount;
+        this.cashier.id_turn_in_funds=dataRow.id;
+        this.cashier.id_payer=dataRow.id_payer;
+        this.cashier.id_project=dataRow.id_project;
+        this.cashier.id_way_pay=dataRow.id_way_pay;
+        this.cashier.time_paid=dataRow.time_paid;
+        this.cashier.account='中科平安';
+        this.cashier.id_account=1;
+        this.cashier.id_cashier=this.currentUserId;
+        $('#mdlCashier').modal('toggle');
       },
-      saveTheApprovedData() {
+      saveTheCollectedData() {
+// console.log(this.cashier);
+// return;        
         // for(var i=0;i<this.ourAccounts.length;i++) {
-        //   if(this.approvedResult.account===this.ourAccounts[i]['short_name']) {
-        //     this.approvedResult.id_account=this.ourAccounts[i]['id'];
+        //   if(this.cashier.account===this.ourAccounts[i]['short_name']) {
+        //     this.cashier.id_account=this.ourAccounts[i]['id'];
         //   }
         // }
         // for(var i=0;i<this.wayOfPayment.length;i++) {
-        //   if(this.approvedResult.way===this.wayOfPayment[i]['name']) {
-        //     this.approvedResult.id_way_pay=this.wayOfPayment[i]['id'];
+        //   if(this.cashier.way===this.wayOfPayment[i]['name']) {
+        //     this.cashier.id_way_pay=this.wayOfPayment[i]['id'];
         //   }
-        // }        
-        if(this.approvedResult.result==0) {
-          if(this.approvedResult.describe_confirm.length<4) {
-            this.$toast({
-              text: '改正错误后请填写过程,不少于4个字!',
-              type: 'info',
-              duration: 2000
-            });
-            return false;
-          }
-        }
-        // if(this.approvedResult.project=='' || !this.approvedResult.project) {
-        //   this.$toast({
-        //     text: '请选择项目!',
-        //     type: 'info',
-        //     duration: 2000
-        //   });
-        //   return false;
-        // }        
-        var _this = this;
+        // }
+        
         var queryContent={
-          id:this.approvedResult.idOfCollectedReceipts,
-          id_account:this.approvedResult.id_account,
-          id_way_pay:this.approvedResult.id_way_pay,
-          other:this.approvedResult.other,
-          amount:this.approvedResult.amount,
-          id_confirmer:this.currentUserId,
-          conditions:'WithCheckedData',
-          describe_confirm:this.approvedResult.describe_confirm,
-          id_project:this.approvedResult.id_project
+          id_turn_in_funds:this.cashier.id_turn_in_funds,
+          id_account:this.cashier.id_account,
+          id_way_pay:this.cashier.id_way_pay,
+          remark:this.cashier.remark,
+          amount:this.cashier.amount,
+          id_cashier:this.currentUserId,
+          conditions:'',
+          id_project:this.cashier.id_project
         };
-// console.log(queryContent);
-// return;
+
+        if(this.cashier.amount<this.cashier.amount) {
+          this.$toast({
+            text: '收款金额不对!',
+            type: 'info',
+            duration: 2000
+          });
+          return false;
+        }
+        queryContent.conditions='ByTurnInFunds';
+
+        var _this=this;
         this.$axios({
           method: 'post',
           url: 'updateCashier.php',
           data: qs.stringify(queryContent)
           }).then(function (response) {
-// console.log(response.data);
             if(response.data===true) {
-              $('#checkReceipts').modal('toggle'); 
+              $('#mdlCashier').modal('toggle'); 
               _this.$toast({
                 text: "操作成功",
                 type: 'success',
                 duration: 1000
               });
             //更新数据
-              for(var i=0;i<_this.listOfCashies.length;i++) {
-                if(_this.listOfCashies[i]['id']==_this.approvedResult.idOfCollectedReceipts) {
-                  _this.listOfCashies.splice(i,1);
+              for(var i=0;i<_this.listOfTurnInFunds.length;i++) {
+                if(_this.listOfTurnInFunds[i]['id']==_this.cashier.id_turn_in_funds) {
+                  _this.listOfTurnInFunds.splice(i,1);
                   i--;  
                 }
               }
@@ -274,7 +267,7 @@ Date.prototype.format = function(fmt) {
                 type: 'danger',
                 duration: 4000
               });
-              $('#checkReceipts').modal('toggle');             
+              $('#mdlCashier').modal('toggle');             
             }
           }).catch(function (error) {
             console.log(error);
@@ -283,61 +276,34 @@ Date.prototype.format = function(fmt) {
               type: 'danger',
               duration: 4000
             });
-            $('#checkReceipts').modal('toggle');
+            $('#mdlCashier').modal('toggle');
           });        
       },
       clearList () {
-        this.listOfCashies=[];
+        this.listOfTurnInFunds=[];
         this.titlesOfList=[];
+      },
+      collectByHand() {
+        this.cashier.id_turn_in_funds='';
+        $('#mdlCashier').modal('toggle');
+        this.cashier.account='中科平安';
+        this.cashier.id_account=1;
+        this.cashier.way='现金';
+        this.cashier.id_way_pay=1;
+        this.cashier.amount=0;
+        this.cashier.remark='';        
       }
     },
-    // computed:{
-    //   account() {
-    //     for(var i=0;i<this.ourAccounts.length;i++) {
-    //       if(this.approvedResult.id_account==this.ourAccounts[i].id) {
-    //         this.approvedResult.account=this.ourAccounts[i]['short_name'];
-    //         return this.approvedResult.account;
-    //       }
-    //     }
-    //   }
-    // },
     watch:{
-      // 'approvedResult.id_account': {
-      //   handler() {
-      //     for(var i=0;i<this.ourAccounts.length;i++) {
-      //       if(this.approvedResult.id_account==this.ourAccounts[i].id) {
-      //         this.approvedResult.account=this.ourAccounts[i]['short_name'];
-      //       }
-      //     }          
-      //   }
-      // },
-      // 'approvedResult.id_way_pay': {
-      //   handler() {
-      //     for(var i=0;i<this.wayOfPayment.length;i++) {
-      //       if(this.approvedResult.id_way_pay==this.wayOfPayment[i].id) {
-      //         this.approvedResult.way=this.wayOfPayment[i].name;
-      //       }
-      //     }          
-      //   }
-      // },
-      // 'approvedResult.project':{
+      // 'cashier.project':{
       //   handler() {
       //     for(var i=0;i<this.projects.length;i++) {
-      //       if(this.approvedResult.project==this.projects[i].prjct) {
-      //         this.approvedResult.id_project=this.projects[i].id;
+      //       if(this.cashier.project==this.projects[i].prjct) {
+      //         this.cashier.id_project=this.projects[i].id;
       //       }
       //     }
       //   }
-      // },
-      // 'approvedResult.id_project':{
-      //   handler() {
-      //     for(var i=0;i<this.projects.length;i++) {
-      //       if(this.approvedResult.id_project==this.projects[i].id) {
-      //         this.approvedResult.project=this.projects[i].prjct;
-      //       }
-      //     }
-      //   }        
-      // }            
+      // }
     },
     beforeCreate:function() {
       var _this=this;
@@ -369,6 +335,7 @@ Date.prototype.format = function(fmt) {
           duration: 4000
         });
       });
+
       this.projects=[];
       this.$axios({
         method: 'post',
@@ -381,7 +348,7 @@ Date.prototype.format = function(fmt) {
           type: 'danger!',
           duration: 4000
         });
-      });       
+      });            
     }    
   } 
 </script>
@@ -426,19 +393,6 @@ table {
   position: absolute;
   /*bottom: 0;*/
   right: 0;
-}
-.radio-group {
-  height: 1.2em;
-  vertical-align:middle;
-  margin-top:-2px;
-  margin-bottom:1px;
-  color:#007bff;
-}
-.radio-inline {
-  /*display: inline-block;*/
-  width: 40%;
-  text-align: center;
-}
-
+} 
 </style>
 

@@ -57,10 +57,11 @@
         <li class="dropdown">
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">财务业务</span>
           <div class="dropdown-menu">
-            <li><span class="dropdown-item menu-item" @click="loadPage('/cashier')">收进款项</span></li>
+            <li><span class="dropdown-item menu-item" @click="loadPage('/cashier')">销售回款</span></li>
+            <li><span class="dropdown-item menu-item" @click="loadPage('/accept-other-funds')">其它收款</span></li>
             <li><span class="dropdown-item menu-item" @click="loadPage('/check-receipts')">收款复核</span></li>
             <li><span class="dropdown-item menu-item" @click="loadPage('/pay')">支付款项</span></li>
-            <li><span class="dropdown-item menu-item">付款复核</span></li>
+            <li><span class="dropdown-item menu-item" @click="loadPage('/review-payment')">付款复核</span></li>
           </div>
         </li>        
       </ul> 
@@ -68,7 +69,7 @@
         <li class="dropdown">
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">请款报销</span>
           <div class="dropdown-menu">
-            <li><span class="dropdown-item menu-item" @click="loadPage('/request-funds')">费用请款</span></li>
+            <li><span class="dropdown-item menu-item" @click="loadPage('/request-funds')">报销借款</span></li>
             <li><span class="dropdown-item menu-item" @click="loadPage('/rqst-pcsg-funds')">采购请款</span></li>
             <li><span class="dropdown-item menu-item" @click="loadPage('/prmry-audits-rqst-funds')">请款初审</span></li>
 <!--             <li><span class="dropdown-item menu-item">请款初审</span></li> -->
@@ -176,10 +177,10 @@
         <li class="dropdown">
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">个人中心</span>
           <div class="dropdown-menu">
-            <li><span class="dropdown-item menu-item">修改昵称</span></li>
-            <li><span class="dropdown-item menu-item">退出登录</span></li>
+            <li><span class="dropdown-item menu-item" @click="loadPage('/turn-in-funds')">缴款还款</span></li>
             <li><span class="dropdown-item menu-item">我的申请</span></li>
             <li><span class="dropdown-item menu-item">我的审批</span></li>
+            <li><span class="dropdown-item menu-item">退出登录</span></li>
           </div>
         </li>        
       </ul> 

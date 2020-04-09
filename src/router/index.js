@@ -11,11 +11,11 @@ import distributeExwareHouse from '@/components/distribute-ex';
 import takeInventory from '@/components/take-inventory';
 import requestPurchasing from '@/components/purchasing-supplier';
 import purchasingProgress from '@/components/purchasing-progress';
-import manageSuppliers from '@/components/manage-suppliers';
+import turnInFunds from '@/components/turn-in-funds';
 import payFor from '@/components/pay-receipt';
 import cashier from '@/components/cashier';
 import requestPaying from '@/components/request-paying';
-import examineRequestPaying from '@/components/examine-request-paying';
+import acceptOtherFunds from '@/components/accept-other-funds';
 import product from '@/components/product';
 import inputByHand from '@/components/input-by-hand';
 import importFromExcel from '@/components/import-from-excel.vue';
@@ -43,6 +43,7 @@ import rqstPcsgFunds from '@/components/rqst-pcsg-funds.vue';
 import primaryAuditsRqstFunds from '@/components/primary-audits-requesting-funds.vue';
 import finalAuditsRqstingFunds from '@/components/final-audits-rqsting-funds.vue';
 import pay from '@/components/pay.vue';
+import reviewPayment from '@/components/review-payment.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -109,9 +110,9 @@ export default new Router({
       component: purchasingProgress
     },
     {
-      path: '/manageSuppliers',
-      name: 'manage-suppliers',
-      component: manageSuppliers
+      path: '/turn-in-funds',
+      name: 'turn-in-funds',
+      component: turnInFunds
     },
     {
       path: '/fillInvoice',
@@ -134,9 +135,9 @@ export default new Router({
       component: requestPaying
     },
     {
-      path: '/examineRequestPaying',
-      name: 'examine-request-paying',
-      component: examineRequestPaying
+      path: '/accept-other-funds',
+      name: 'accept-other-funds',
+      component: acceptOtherFunds
     },
     {
       path: '/product',
@@ -262,6 +263,11 @@ export default new Router({
       path:'/pay',
       name:'pay',
       component:pay 
+    },
+    {
+      path:'/review-payment',
+      name:'review-payment',
+      component:reviewPayment 
     }
   ]
 });

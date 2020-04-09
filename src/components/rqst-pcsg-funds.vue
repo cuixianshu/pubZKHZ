@@ -160,7 +160,8 @@ Date.prototype.format = function(fmt) {
           reason_reject:'',
           reason_reject2:'',
           result_approved:'',
-          result_approved2:''
+          result_approved2:'',
+          nature:3
         },
         wayOfPayment:[],
         projects:[]
@@ -188,7 +189,6 @@ Date.prototype.format = function(fmt) {
           url: 'getAppliedPurchasings.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
-// console.log(response.data);
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到符合条件的记录!',
@@ -209,6 +209,8 @@ Date.prototype.format = function(fmt) {
           });
       },
       clickedARowInShower(dataRow) {
+        console.log(this.listOfRequestPcsgFunds);
+        console.log(dataRow);
         this.idOfAppliedPcsg=dataRow.id;
         this.requestPcsFunds.id_relative=this.idOfAppliedPcsg;//注意:这是请购id
         this.requestPcsFunds.id_project=dataRow.id_project;
@@ -274,7 +276,7 @@ Date.prototype.format = function(fmt) {
         } else {
           queryContent.conditions='NewRequestPurchasingFunds';
         }
-// console.log(queryContent);
+console.log(queryContent);
 // return;
         var _this = this;
         this.$axios({
@@ -282,7 +284,7 @@ Date.prototype.format = function(fmt) {
           url: 'updateRequestFunds.php',
           data: qs.stringify(queryContent)
           }).then(function (response) {
-console.log(response.data);
+// console.log(response.data);
             if(response.data===true) {
               $('#mdlRqstPcsgFunds').modal('toggle'); 
               _this.$toast({

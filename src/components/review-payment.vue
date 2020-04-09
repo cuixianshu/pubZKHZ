@@ -1,49 +1,48 @@
 <template>
   <div class="father">
-    <h5>当前位置:收款付款/支付款项</h5>
+    <h5>当前位置:收款付款/付款复核</h5>
     <div id="queryOfCashier" class="container-fluid">
       <div class="row">
         <div class="col-lg form-inline searchcontent">
           <label for="queryConditions">关键词:</label> 
           <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位,请款人 收款账号 用途等关键词">
           <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="填开发票的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="填开发票的时间范围"></datepicker> 
-          <button class="btn btn-primary" @click="getListOfRqstedFunds">🔍获取数据</button>
-          <button class="btn btn-secondary" @click="clearList" v-if="listOfRqstedFunds.length>0">清除</button>            
+          <button class="btn btn-primary" @click="getListOfPaidRqstedFunds">🔍获取数据</button>
+          <button class="btn btn-secondary" @click="clearList" v-if="listOfPaidRqstedFunds.length>0">清除</button>            
         </div>          
       </div>
 
     </div>
-    <div class="showerOfRqstedFunds" v-if="listOfRqstedFunds.length>0">
+    <div class="showerOfRqstedFunds" v-if="listOfPaidRqstedFunds.length>0">
       <table class="table table-hover">
         <thead>
           <th v-for="(title,index) in titlesOfList" :width="widthOfTH[index]">{{title}}</th>
           <!-- <th><input class="checkbox" type="checkbox" @click=""></th> -->
         </thead>
         <tbody>
-          <tr v-for="row,index in listOfRqstedFunds" @click="clickedARowInShower(row)">
-            <td :title="row.id">{{row.id}}</td>
+          <tr v-for="row,index in listOfPaidRqstedFunds" @click="clickedARowInShower(row)">
+            <td :title="row.id">{{row.id_rqst_funds}}</td>
             <td :title="row.project">{{row.project}}</td>
-            <td :title="row.amount">{{row.amount}}</td>
+            <td :title="row.amount_rqsted">{{row.amount_rqsted}}</td>
             <td :title="row.way_pay">{{row.way_pay}}</td>
-            <td :title="row.account">{{row.account}}</td>
+            <td :title="row.account_rqsted">{{row.account_rqsted}}</td>
             <td :title="row.use_for">{{row.use_for}}</td>
             <td :title="row.id_relative">{{row.id_relative}}</td>
             <td :title="row.remark">{{row.remark}}</td>
-            <td :title="row.name_applyer">{{row.name_applyer}}</td>
-            <td :title="row.time_applied">{{row.time_applied}}</td>
-            <td :title="row.name_approver2">{{row.name_approver2}}</td>
-            <td :title="row.reason_reject2">{{row.reason_reject2}}</td>
+            <td :title="row.applyer">{{row.applyer}}</td>
+            <td :title="row.cashier">{{row.cashier}}</td>
+            <td :title="row.time_paid">{{(new Date(row.time_paid)).format('yyyy-MM-dd')}}</td>
             <!-- <td><input class="checkbox" type="checkbox"  name="selecter" @click=""></td> -->
           </tr>
         </tbody>
       </table>
     </div>
-    <div class="modal fade" id="mdlPay" role="dialog" aria-labelledby="mdlPay" data-backdrop="static" data-keyboard: false>
+    <div class="modal fade" id="mdlReviewPaying" role="dialog" aria-labelledby="mdlReviewPaying" data-backdrop="static" data-keyboard: false>
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">  
           <div class="modal-header">
             <span>
-              <h5>支付款项---请款ID:{{requestFunds.id}}--请款金额:{{requestFunds.amount}}
+              <h5>付款复核---付款ID:{{payment.id}}--付款金额:{{payment.amount}}
               </h5>
             </span>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -52,28 +51,17 @@
           </div>
           <div class="modal-body">
             <div class="container-fluid">
-              <div class="row request-funds">
-                <div class="col-lg  form-inline">
-                  <label>收款</label>
-                  <input type="text" name="paymentAccount" class="form-control" :value="requestFunds.account" title="请款收款账户" readonly>
-                </div>
-                <div class="col-lg  form-inline">
-                  <label>方式</label>
-                  <input type="text" class="form-control" name="wayOfpayment" :value="requestFunds.way_pay" title="请款收款方式" readonly>
-                </div>
-              </div>
-              <hr class="split-line">              
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctpaymentAccount">付款</label>
                   <select id="slctpaymentAccount" type="text" name="paymentAccount" class="form-control" placeholder="付款账户" v-model="payment.id_account" title="付款账户">
-                    <option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>}
+                    <option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfpayment">方式</label>
                   <select id="slctWayOfpayment" type="text" class="form-control" name="wayOfpayment" v-model="payment.id_way_pay" placeholder="付款方式" title="付款方式">
-                    <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>}
+                    <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>
                   </select>
                 </div>
               </div>
@@ -97,11 +85,23 @@
                   <input id="inputRemark" type="text" class="form-control" name="remark" v-model="payment.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
                 </div>
               </div>
+              <hr class="split-line">              
+              <div class="row">
+                <label class="radio-inline">
+                  <span><input type="radio" v-model="payment.result_reviewed" class="radio-group" value=1 checked>正确</span>
+                </label>                    
+                <label class="radio-inline">
+                  <span><input type="radio" v-model="payment.result_reviewed" class="radio-group"  value=0>已勘误</span>
+                </label>
+              </div>
+              <div>
+                <input v-model="payment.opinion_reviewed" type="text" placeholder="复核说明,如有错误请改正" class="form-control" style="width: 100%;">
+              </div>
             </div>
           </div>
           <div class="modal-footer">  
             <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-            <button type="button" @click="savePayment" class="btn btn-primary">确定</button>
+            <button type="button" @click="saveReviewing" class="btn btn-primary">保存</button>
           </div>           
         </div>
       </div>
@@ -141,46 +141,22 @@ Date.prototype.format = function(fmt) {
           dateRange:[],
           conditions:''
         },
-        titlesOfList:['请款ID','项目','金额','付款方式','收款账号','用途','关联业务','备注','请款人','请款时间','审批人','批准意见'],
-        widthOfTH:['5%','13%','6%','6%','12%','10%','7%','12%','6%','7%','5%','11%'],
-        listOfRqstedFunds:[],
+        titlesOfList:['请款ID','项目','请款金额','付款方式','收款账号','用途','关联业务','备注','请款人','出纳员','付款时间'],
+        widthOfTH:['7%','11%','8%','8%','14%','12%','8%','10%','6%','7%','9%'],
+        listOfPaidRqstedFunds:[],
         currentUserId:1,
-        requestFunds:{
-          account:'',
-          amount:'',
-          id:'',
-          id_applyer:'',
-          id_approver:'',
-          id_approver2:'',
-          id_project:'',
-          id_relative:'',
-          id_way_pay:'',
-          is_paid:'',
-          name_applyer:'',
-          name_approver:'',
-          name_approver2:'',
-          project:'',
-          reason_reject:'',
-          reason_reject2:'',
-          remark:'',
-          result_approved:'',
-          result_approved2:'',
-          time_applied:'',
-          time_approved:'',
-          time_approved2:'',
-          use_for:'',
-          way_pay:''
-        },
         payment:{
-          account:'中科平安',
-          way_pay:'',
-          id_way_pay:1,
-          amount:0,
-          serial_paid:'',
-          numbers_bills:'',
-          remark:'',
-          id_account:1,
-          id_cashier:''
+          // account:'中科平安',
+          // way_pay:'',
+          // id_way_pay:1,
+          // amount:0,
+          // serial_paid:'',
+          // numbers_bills:'',
+          // remark:'',
+          // id_account:1,
+          // id_cashier:''
+          result_reviewed:1,
+          opinion_reviewed:''
         },
         ourAccounts:[],
         wayOfPayment:[],
@@ -192,7 +168,7 @@ Date.prototype.format = function(fmt) {
       datepicker
     },    
     methods: {
-      getListOfRqstedFunds() {
+      getListOfPaidRqstedFunds() {
         if(this.queryContent.dateRange.length<2 || !this.queryContent.dateRange[0] || !this.queryContent.dateRange[1]){//如果日期填写不全,默认是过去1周
           var day1=new Date();
           day1.setDate(day1.getDate() - 7);
@@ -202,11 +178,11 @@ Date.prototype.format = function(fmt) {
           this.queryContent.dateRange[1] = day2.format("yyyy-MM-dd")+" 23:59:59";
         }       
         var _this = this;
-        this.listOfRqstedFunds=[];
-        this.queryContent.conditions="PassedAllApprovingAndNotPaid";
+        this.listOfPaidRqstedFunds=[];
+        this.queryContent.conditions="HasPaidNotReviewed";
         this.$axios({
           method: 'post',
-          url: 'getRequestFunds.php',
+          url: 'getPaymentData.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
 // console.log(response.data);
@@ -218,7 +194,7 @@ Date.prototype.format = function(fmt) {
                 duration: 1000
               });              
             } else {
-              _this.listOfRqstedFunds=response.data;
+              _this.listOfPaidRqstedFunds=response.data;
             }
 
           }).catch(function (error) {
@@ -231,22 +207,23 @@ Date.prototype.format = function(fmt) {
           });
       },
       clickedARowInShower(dataRow) {
-        // this.requestFunds.id=dataRow.id;
+        // this.resultOfReview.id=dataRow.id;
         // this.numberOfInvoice=dataRow.num_of_invoice;
         // this.amountInInvoice=dataRow.amount;
         // this.payment.amount=this.amountInInvoice;
         // this.payment.id_project=dataRow.id_project;
-        this.requestFunds=dataRow;
-        this.payment.account=dataRow.account;
-        this.payment.way_pay=dataRow.way_pay;
-        this.payment.id_way_pay=dataRow.id_way_pay;
-        this.payment.amount=dataRow.amount;
+        this.payment=dataRow;
+
+        // this.payment.account=dataRow.account;
+        // this.payment.way_pay=dataRow.way_pay;
+        // this.payment.id_way_pay=dataRow.id_way_pay;
+        // this.payment.amount=dataRow.amount;
        
-        $('#mdlPay').modal('toggle');
-// console.log(this.requestFunds);
+        $('#mdlReviewPaying').modal('toggle');
+// console.log(this.payment);
       },
-      savePayment() {
-        if(!this.payment.account) {
+      saveReviewing() {
+        if(!this.payment.id_account) {
           this.$toast({
             text: '请选择支付账户!',
             type: 'info',
@@ -262,7 +239,7 @@ Date.prototype.format = function(fmt) {
           });
           return false;          
         }
-        if(this.payment.amount<=0 || parseFloat(this.payment.amount)>parseFloat(this.requestFunds.amount)) {
+        if(this.payment.amount<=0 || parseFloat(this.payment.amount)>parseFloat(this.payment.amount_rqsted)) {
           this.$toast({
             text: '请检查金额!',
             type: 'info',
@@ -285,19 +262,38 @@ Date.prototype.format = function(fmt) {
             duration: 2000
           });
           return false;          
-        }                
+        }
+        if(this.payment.result_reviewed!=1 && this.payment.result_reviewed!=0) {
+          this.$toast({
+            text: '请做判断!',
+            type: 'info',
+            duration: 2000
+          });
+          return false;
+        }
+        if(!this.payment.opinion_reviewed && this.payment.result_reviewed==0) {
+          this.$toast({
+            text: '请注明错误!',
+            type: 'info',
+            duration: 2000
+          });
+          return false;
+        }
         var queryContent={
-          id_rqstFunds:this.requestFunds.id,
+          id_payment:this.payment.id,
           id_account:this.payment.id_account,
           id_way_pay:this.payment.id_way_pay,
           remark:this.payment.remark,
           amount:this.payment.amount,
-          conditions:'PAID',
-          id_cashier:this.currentUserId,
+          conditions:'ReviewPaying',
+          id_reviewer:this.currentUserId,
           serial_paid:this.payment.serial_paid,
-          numbers_bills:this.payment.numbers_bills          
+          numbers_bills:this.payment.numbers_bills,
+          result_reviewed:this.payment.result_reviewed,
+          opinion_reviewed:this.payment.opinion_reviewed
         };
-
+// console.log(queryContent);
+// return;
         var _this=this;
         this.$axios({
           method: 'post',
@@ -307,16 +303,16 @@ Date.prototype.format = function(fmt) {
 // console.log(response.data);
 // return;
             if(response.data===true) {
-              $('#mdlPay').modal('toggle'); 
+              $('#mdlReviewPaying').modal('toggle'); 
               _this.$toast({
                 text: "操作成功",
                 type: 'success',
                 duration: 1000
               });
             //更新数据
-              for(var i=0;i<_this.listOfRqstedFunds.length;i++) {
-                if(_this.listOfRqstedFunds[i]['id']==_this.requestFunds.id) {
-                  _this.listOfRqstedFunds.splice(i,1);
+              for(var i=0;i<_this.listOfPaidRqstedFunds.length;i++) {
+                if(_this.listOfPaidRqstedFunds[i]['id']==_this.payment.id) {
+                  _this.listOfPaidRqstedFunds.splice(i,1);
                   i--;  
                 }
               }
@@ -326,7 +322,7 @@ Date.prototype.format = function(fmt) {
                 type: 'danger',
                 duration: 4000
               });
-              $('#mdlPay').modal('toggle');             
+              $('#mdlReviewPaying').modal('toggle');             
             }
           }).catch(function (error) {
             console.log(error);
@@ -335,16 +331,16 @@ Date.prototype.format = function(fmt) {
               type: 'danger',
               duration: 4000
             });
-            $('#mdlPay').modal('toggle');
+            $('#mdlReviewPaying').modal('toggle');
           });        
       },
       clearList () {
-        this.listOfRqstedFunds=[];
+        this.listOfPaidRqstedFunds=[];
         // this.titlesOfList=[];
       },
       collectByHand() {
-        this.requestFunds.id='';
-        $('#mdlPay').modal('toggle');
+        this.resultOfReview.id='';
+        $('#mdlReviewPaying').modal('toggle');
         this.payment.account='中科平安';
         this.payment.id_account=1;
         this.payment.way='现金';
@@ -460,6 +456,20 @@ table {
   background-color: red;
   color: red;
   border: 1px solid red;
+}
+.radio-group {
+/*  display:inline-block; 
+  width:40px;*/
+  height: 1.2em;
+  vertical-align:middle;
+  margin-top:-2px;
+  margin-bottom:1px;
+}
+.radio-inline {
+  width: 50%;
+}
+input[type=radio] {
+  width: 1.2em!important;
 } 
 </style>
 
