@@ -119,6 +119,7 @@ import ClipboardJS from 'clipboard';
                 $('#openFileSelector').val('');
                 return;                
               }
+// return;              
               //核心数据列
               var indispensableCellValue=['订单类型','用车人手机号码','起点站','终点站','出发日期','出发时间','结束日期','结束时间','里程数','司机手机号码','车牌号码','用车单位/部门'];
               var tempTitles=[];//获取表头,也就是属性名
@@ -185,6 +186,8 @@ import ClipboardJS from 'clipboard';
           reader.readAsArrayBuffer(f);
         }
         reader.readAsBinaryString(f);
+console.log(this.effectiveCols);
+
       },
       clearXlsx :function() {
         this.xlsData=[];

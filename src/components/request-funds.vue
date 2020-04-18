@@ -1,6 +1,6 @@
 <template>
   <div class="father">
-    <h5>当前位置:请款报销/报销借款</h5>
+    <h5>当前位置:请款报销/费用报销、借款</h5>
     <div id="queryOfCashier" class="container-fluid">
       <div class="row">
         <div class="col-lg-8 form-inline searchcontent">
@@ -104,7 +104,7 @@
           </div>
           <div class="modal-footer">  
             <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-            <button type="button" id="btnSaveTheRequestedData" @click="saveTheRequestedData" class="btn btn-primary" v-if="requestFunds.result_approved!==1">提交</button>
+            <button type="button" id="btnSaveTheRequestedData" @click="saveTheRequestedData" class="btn btn-primary" v-if="requestFunds.result_approved!==1 || requestFunds.result_approved2!==1">提交</button>
           </div>           
         </div>
       </div>

@@ -1,6 +1,6 @@
 <template>
 <div class="father"> 
-	<h5>当前位置:发票业务/更改申请、填开发票</h5>
+	<h5>当前位置:发票业务/开票、变更申请</h5>
     <div id="mdyApldFild" class="container-fluid">
       <div id="searchConditions"  class="form-group form-inline">
         <label for="queryConditions">关键词:</label>

@@ -20,6 +20,21 @@
                 核单
               </span>
             </li>
+            <li>
+              <span class="dropdown-item menu-item" @click="loadPage('/ticket-inbound')">
+                机票入库
+              </span>
+            </li>
+            <li>
+              <span class="dropdown-item menu-item" @click="loadPage('/ticket-outbound')">
+                机票出库
+              </span>
+            </li>
+            <li>
+              <span class="dropdown-item menu-item" @click="">
+                机票退票
+              </span>
+            </li>            
           </div>
         </li>        
       </ul>
@@ -46,7 +61,7 @@
             </li>
             <li title="作废已开出的发票">
               <span class="dropdown-item menu-item" @click="loadPage('/refillCancelFilledInvoice')">
-                作废发票
+                作废重开
               </span>
             </li>
             <!-- <li><span class="dropdown-item menu-item" @click="loadPage('/fillInvoice')">填开发票a</span></li> -->
@@ -58,6 +73,7 @@
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">财务业务</span>
           <div class="dropdown-menu">
             <li><span class="dropdown-item menu-item" @click="loadPage('/cashier')">销售回款</span></li>
+            <li><span class="dropdown-item menu-item" @click="">机票回款</span></li>            
             <li><span class="dropdown-item menu-item" @click="loadPage('/accept-other-funds')">其它收款</span></li>
             <li><span class="dropdown-item menu-item" @click="loadPage('/check-receipts')">收款复核</span></li>
             <li><span class="dropdown-item menu-item" @click="loadPage('/pay')">支付款项</span></li>
@@ -69,8 +85,9 @@
         <li class="dropdown">
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">请款报销</span>
           <div class="dropdown-menu">
-            <li><span class="dropdown-item menu-item" @click="loadPage('/request-funds')">报销借款</span></li>
+            <li><span class="dropdown-item menu-item" @click="loadPage('/request-funds')">费用报销、借款</span></li>
             <li><span class="dropdown-item menu-item" @click="loadPage('/rqst-pcsg-funds')">采购请款</span></li>
+            <li><span class="dropdown-item menu-item" @click="">机票退款</span></li>            
             <li><span class="dropdown-item menu-item" @click="loadPage('/prmry-audits-rqst-funds')">请款初审</span></li>
 <!--             <li><span class="dropdown-item menu-item">请款初审</span></li> -->
             <li><span class="dropdown-item menu-item" @click="loadPage('/final-audits-rqst-funds')">请款复审</span></li>

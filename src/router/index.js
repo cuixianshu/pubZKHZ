@@ -44,6 +44,8 @@ import primaryAuditsRqstFunds from '@/components/primary-audits-requesting-funds
 import finalAuditsRqstingFunds from '@/components/final-audits-rqsting-funds.vue';
 import pay from '@/components/pay.vue';
 import reviewPayment from '@/components/review-payment.vue';
+import ticketInbound from '@/components/ticket-inbound.vue';
+import ticketOutbound from '@/components/ticket-outbound.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -268,6 +270,17 @@ export default new Router({
       path:'/review-payment',
       name:'review-payment',
       component:reviewPayment 
+    },
+    {
+      path:'/ticket-inbound',
+      name:'ticket-inbound',
+      component:ticketInbound 
+    },
+    {
+      path:'/ticket-outbound',
+      name:'ticket-outbound',
+      component:ticketOutbound 
     }
+
   ]
 });
