@@ -9,16 +9,14 @@
         <button class="btn btn-primary" @click="getTkts">🔍获取数据</button>
         <button class="btn btn-secondary" @click="clearData" v-if="setOftickets.length>0">清空</button>
       </div>
-      <div class="listOfSelectedTickets" v-if="setOftickets.length>0">
+      <div v-if="setOftickets.length>0">
         <table class="table table-hover">
           <thead>
             <th v-for="(title,index) in listOfTitles" @click="allCheckboxClicked" :width="widthOfTH[index]">{{title}}</th>
             <th><input class="checkbox" type="checkbox" @click="allCheckboxClicked" v-model="allRequestCheckbox"></th>
-
           </thead>
           <tbody>
             <tr v-for="(row,index) in setOftickets">
-              <!-- <td v-for="vlu in row" :title="vlu">{{vlu}}</td> -->
               <td :title="row.date_issued">{{row.date_issued}}</td>
               <td :title="row.number_ticket">{{row.number_ticket}}</td>
               <td :title="row.name_psgr">{{row.name_psgr}}</td>
@@ -29,11 +27,7 @@
               <td :title="row.price">{{row.price}}</td>
               <td :title="row.tax">{{row.tax}}</td>
               <td :title="row.insurance">{{row.insurance}}</td>
-<!--              <td :title="row.date_issued">{{row.date_issued}}</td>
-              <td :title="row.date_issued">{{row.date_issued}}</td>
-              <td :title="row.date_issued">{{row.date_issued}}</td>  value="true"-->
               <td><input :id="index" class="checkbox" type="checkbox"  name="selecter" v-model="listOfCheckboxStatement[index]" @click.stop="checkboxClickedInTable(index)"></td>
-
             </tr>
           </tbody>
         </table>
@@ -128,8 +122,7 @@ Date.prototype.format = function(fmt) {
           keyWord:'',
           dateRange:[],
         },
-        widthOfTH:['9%','12%','11%','12%','8%','9%','10%','8%','8%','6%','7%'],
-        listOfOurCompany:[],
+        widthOfTH:['9%','12%','11%','12%','8%','9%','10%','8%','8%','6%','7%']
       } 
     },
     components: {
@@ -143,10 +136,6 @@ Date.prototype.format = function(fmt) {
       //     // console.log(this.listOfCheckboxStatement[indexRow]);
       // },
       getTkts:function() {
-        // if(this.detailsOfRequest.nameOfOurCmpny==='' && this.detailsOfRequest.cstmrOgnztnName==='' && this.detailsOfRequest.amount===0){
-        //   this.cloneddetailsOfRequest=JSON.stringify(this.detailsOfRequest);
-        // }
-        // this.detailsOfRequest=JSON.parse(this.cloneddetailsOfRequest);
         this.allRequestCheckbox=false;
         if(this.setOftickets.length>0) {
           this.setOftickets=[];
@@ -170,12 +159,6 @@ Date.prototype.format = function(fmt) {
           if(response.data.length>0){
               _this.setOftickets = response.data;
               _this.listOfCheckboxStatement = new Array(response.data.length).fill(false);
-            // if(_this.listOfTitles.length>0) {
-            //     _this.listOfTitles=[];
-            // }
-            // for(var title in response.data[0]) {
-            //   _this.listOfTitles.push(title);
-            // }             
           } else {
             _this.$toast({
               text: "没有记录符合搜索条件",
@@ -193,10 +176,8 @@ Date.prototype.format = function(fmt) {
           });
       },
       checkboxClickedInTable(i) {
-
-
         this.listOfCheckboxStatement[i]=!this.listOfCheckboxStatement[i];
-        this.changeAllCheckboxStatus("requesting");
+        this.changeAllCheckboxStatus();
 // console.log(this.listOfCheckboxStatement);
       },
       outboundSeletcedTkts() {
@@ -229,34 +210,18 @@ Date.prototype.format = function(fmt) {
         // });
 // console.log(this.listOfCheckboxStatement);
       },
-      changeAllCheckboxStatus(strMode) {
-        if(strMode=="requesting") {
-          for(var i=0;i<this.listOfCheckboxStatement.length;i++) {
-            if(!this.listOfCheckboxStatement[i]) {
-              this.allRequestCheckbox=false;
-              break;
+      changeAllCheckboxStatus() {
+        for(var i=0;i<this.listOfCheckboxStatement.length;i++) {
+          if(!this.listOfCheckboxStatement[i]) {
+            this.allRequestCheckbox=false;
+            break;
+          }
+          else {
+            if(i===this.listOfCheckboxStatement.length-1) {
+              this.allRequestCheckbox=true;
             }
-            else {
-              if(i===this.listOfCheckboxStatement.length-1) {
-                this.allRequestCheckbox=true;
-              }
-            }
-          }          
-        }
-        //  else {
-        //   var i;
-        //   for(i=0;i<this.markedListForFilling.length;i++) {
-        //     if(!this.markedListForFilling[i]) {
-        //       this.allFillCheckbox=false;
-        //       break;
-        //     }
-        //     else {
-        //       if(i===this.markedListForFilling.length-1) {
-        //         this.allFillCheckbox=true;
-        //       }
-        //     }
-        //   }               
-        // }
+          }
+        }          
       },
       saveOutBoundedData() {
         this.queryContent.conditions="UpdateOutboundedData";
@@ -275,7 +240,7 @@ Date.prototype.format = function(fmt) {
         }).then(function (response) {
           $('#outboundShower').modal('toggle');
           if(response.data===true) {
-            //从未申请开票的列表中清除已经申请的记录.includes
+
             for(var index=0;index<_this.setOftickets.length;index++) {
               if(numbersOfSelectedTickets.includes(_this.setOftickets[index]['number_ticket'])) {
                   _this.setOftickets.splice(index, 1);
@@ -311,11 +276,9 @@ Date.prototype.format = function(fmt) {
       },
       clearData () {
         this.setOftickets=[];
-        // this.listOfTitles=[];
         this.listOfSelectedTickets=[];
         this.listOfCheckboxStatement=[];
         this.allRequestCheckbox=false;
-        // this.detailsOfRequest=JSON.parse(this.cloneddetailsOfRequest);
       }                                          
     },
     beforeCreate:function() {

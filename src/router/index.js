@@ -5,8 +5,8 @@ import untreatedWorks from '@/components/untreated-works';
 import receivesAndReturns from '@/components/receives-returns';
 import operatedHistory from '@/components/operated-history';
 import reporters from '@/components/reporters';
-import checkingAndStoring from '@/components/manage-material';
-import requestMaterial from '@/components/manage-material';
+// import checkingAndStoring from '@/components/manage-material';
+import ticketCahier from '@/components/ticket-cashier.vue';
 import distributeExwareHouse from '@/components/distribute-ex';
 import takeInventory from '@/components/take-inventory';
 import requestPurchasing from '@/components/purchasing-supplier';
@@ -21,7 +21,7 @@ import inputByHand from '@/components/input-by-hand';
 import importFromExcel from '@/components/import-from-excel.vue';
 import checkOrders from '@/components/check-orders.vue';
 import requestInvoice from '@/components/request-invoice.vue';
-import fillInvoice from '@/components/fill-invoice.vue';
+import ticketChangeRefound from '@/components/ticket-change-refound.vue';
 import selecterOfFilledInvoice from '@/components/selecter-of-filled-invoice.vue';
 import detailsInAFilledInvoice from '@/components/details-in-a-filled-invoice.vue';
 import modifyApplyedFilledInvoice from '@/components/modify-applyed-filled-invoice.vue';
@@ -46,6 +46,7 @@ import pay from '@/components/pay.vue';
 import reviewPayment from '@/components/review-payment.vue';
 import ticketInbound from '@/components/ticket-inbound.vue';
 import ticketOutbound from '@/components/ticket-outbound.vue';
+import rqstRfdFee from '@/components/rqst-rfdtkt-paying.vue';
 Vue.use(Router);
 
 export default new Router({
@@ -81,15 +82,15 @@ export default new Router({
       name: 'reporters',
       component: reporters
     },
+    // {
+    //   path: '/checkingAndStoring',
+    //   name: 'checking-Storing',
+    //   component: checkingAndStoring
+    // },
     {
-      path: '/checkingAndStoring',
-      name: 'checking-Storing',
-      component: checkingAndStoring
-    },
-    {
-      path: '/requestMaterial',
-      name: 'request-material',
-      component: requestMaterial
+      path: '/ticket-cashier',
+      name: 'ticket-cashier',
+      component: ticketCahier
     },
     {
       path: '/distributeExwareHouse',
@@ -117,9 +118,9 @@ export default new Router({
       component: turnInFunds
     },
     {
-      path: '/fillInvoice',
-      name: 'fill-invoice',
-      component: fillInvoice
+      path: '/ticketChangeRefound',
+      name: 'ticket-change-refound.vue',
+      component: ticketChangeRefound
     },
     {
       path: '/payFor',
@@ -280,6 +281,11 @@ export default new Router({
       path:'/ticket-outbound',
       name:'ticket-outbound',
       component:ticketOutbound 
+    },
+    {
+      path:'/rqst-rfdtkt-paying',
+      name:'rqst-rfdtkt-paying',
+      component:rqstRfdFee 
     }
 
   ]

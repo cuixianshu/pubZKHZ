@@ -11,18 +11,22 @@
           <button class="btn btn-secondary" @click="clearList" v-if="listOfCashies.length>0">清除</button>            
         </div>          
       </div>
-
     </div>
     <div class="" v-if="listOfCashies.length>0">
       <table class="table table-hover">
         <thead>
-          <th v-for="title,index in titlesOfList" :width="widthOfTH[index]">{{title}}</th>
-          <!-- <th><input class="checkbox" type="checkbox" @click=""></th> -->
+          <th v-for="(title,index) in titlesOfList" :width="widthOfTH[index]">{{title}}</th>
         </thead>
         <tbody>
-          <tr v-for="row,index in listOfCashies" @click="clickedARowInShower(row)">
-            <td v-for="vlu in row" :title="vlu">{{vlu}}</td>
-            <!-- <td><input class="checkbox" type="checkbox"  name="selecter" @click=""></td> -->
+          <tr v-for="(row,index) in listOfCashies" @click="clickedARowInShower(row)">
+            <td title="收款编号">{{row.id}}</td>
+            <td title="所属项目">{{row.project}}</td>
+            <td title="收款金额">{{row.amount}}</td>
+            <td title="收款方式">{{row.way_pay}}</td>
+            <td title="收款账户">{{row.account}}</td>
+            <td title="备注信息">{{row.other}}</td>
+            <td title="收款日期">{{(new Date(row.time_collect)).format("yyyy-MM-dd")}}</td>
+            <td title="收款人">{{row.cashier}}</td>
           </tr>
         </tbody>
       </table>
@@ -32,7 +36,7 @@
         <div class="modal-content">  
           <div class="modal-header">
             <span>
-              <h5>收款复核--收款ID:{{approvedResult.idOfCollectedReceipts}}</h5>
+              <h5>收款复核--收款ID:{{approvedResult.id}}</h5>
             </span>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>  
@@ -127,21 +131,11 @@ Date.prototype.format = function(fmt) {
           dateRange:[],
           conditions:''
         },
-        titlesOfList:[],
-        widthOfTH:['5%','11%','8%','6%','8%','10%','7%','12%','6%','7%','5%','11%','4%'],
+        titlesOfList:['收款ID','项目','收款金额','收款方式','收款账户','备注信息','收款日期','收款人'],
+        widthOfTH:['8%','12%','12%','12%','12%','12%','12%','12%'],
         listOfCashies:[],
         currentUserId:1,
         approvedResult:{
-          idOfCollectedReceipts:'',
-          account:'中科平安',
-          id_account:1,
-          way:'电汇',
-          id_way_pay:1,
-          amount:0,
-          other:'',
-          describe_confirm:'',
-          project:'',
-          id_project:''
         },
         ourAccounts:[],
         wayOfPayment:[],
@@ -163,8 +157,8 @@ Date.prototype.format = function(fmt) {
         }       
         var _this = this;
         this.listOfCashies=[];
-        this.titlesOfList=[];
-        this.queryContent.conditions="ReiceiptsWithoutChecking";
+        // this.titlesOfList=[];
+        this.queryContent.conditions="CollectionsWithoutChecking";
         this.$axios({
           method: 'post',
           url: 'getCashiers.php',
@@ -180,9 +174,6 @@ Date.prototype.format = function(fmt) {
               });              
             } else {
               _this.listOfCashies=response.data;
-              for(var title in response.data[0]) {
-                _this.titlesOfList.push(title);
-              }             
             }
 
           }).catch(function (error) {
@@ -195,27 +186,11 @@ Date.prototype.format = function(fmt) {
           });
       },
       clickedARowInShower(dataRow) {
-        this.approvedResult.idOfCollectedReceipts=dataRow.id;
-        this.approvedResult.id_account=dataRow.id_account;
-        this.approvedResult.amount=dataRow.amount;
-        this.approvedResult.id_way_pay=dataRow.id_way_pay;
-        this.approvedResult.other=dataRow.other;
-        this.approvedResult.describe_confirm=dataRow.describe_confirm;
-        this.approvedResult.id_project=dataRow.id_project;
-
+        this.approvedResult=dataRow;
+        this.approvedResult.id_confirmer=this.currentUserId
         $('#checkReceipts').modal('toggle');
       },
       saveTheApprovedData() {
-        // for(var i=0;i<this.ourAccounts.length;i++) {
-        //   if(this.approvedResult.account===this.ourAccounts[i]['short_name']) {
-        //     this.approvedResult.id_account=this.ourAccounts[i]['id'];
-        //   }
-        // }
-        // for(var i=0;i<this.wayOfPayment.length;i++) {
-        //   if(this.approvedResult.way===this.wayOfPayment[i]['name']) {
-        //     this.approvedResult.id_way_pay=this.wayOfPayment[i]['id'];
-        //   }
-        // }        
         if(this.approvedResult.result==0) {
           if(this.approvedResult.describe_confirm.length<4) {
             this.$toast({
@@ -226,28 +201,9 @@ Date.prototype.format = function(fmt) {
             return false;
           }
         }
-        // if(this.approvedResult.project=='' || !this.approvedResult.project) {
-        //   this.$toast({
-        //     text: '请选择项目!',
-        //     type: 'info',
-        //     duration: 2000
-        //   });
-        //   return false;
-        // }        
         var _this = this;
-        var queryContent={
-          id:this.approvedResult.idOfCollectedReceipts,
-          id_account:this.approvedResult.id_account,
-          id_way_pay:this.approvedResult.id_way_pay,
-          other:this.approvedResult.other,
-          amount:this.approvedResult.amount,
-          id_confirmer:this.currentUserId,
-          conditions:'WithCheckedData',
-          describe_confirm:this.approvedResult.describe_confirm,
-          id_project:this.approvedResult.id_project
-        };
-// console.log(queryContent);
-// return;
+        var queryContent=this.approvedResult;
+        queryContent.conditions='WithCheckedData';
         this.$axios({
           method: 'post',
           url: 'updateCashier.php',
@@ -263,7 +219,7 @@ Date.prototype.format = function(fmt) {
               });
             //更新数据
               for(var i=0;i<_this.listOfCashies.length;i++) {
-                if(_this.listOfCashies[i]['id']==_this.approvedResult.idOfCollectedReceipts) {
+                if(_this.listOfCashies[i]['id']==_this.approvedResult.id) {
                   _this.listOfCashies.splice(i,1);
                   i--;  
                 }
@@ -288,56 +244,12 @@ Date.prototype.format = function(fmt) {
       },
       clearList () {
         this.listOfCashies=[];
-        this.titlesOfList=[];
+        // this.titlesOfList=[];
       }
     },
-    // computed:{
-    //   account() {
-    //     for(var i=0;i<this.ourAccounts.length;i++) {
-    //       if(this.approvedResult.id_account==this.ourAccounts[i].id) {
-    //         this.approvedResult.account=this.ourAccounts[i]['short_name'];
-    //         return this.approvedResult.account;
-    //       }
-    //     }
-    //   }
-    // },
+    computed:{
+    },
     watch:{
-      // 'approvedResult.id_account': {
-      //   handler() {
-      //     for(var i=0;i<this.ourAccounts.length;i++) {
-      //       if(this.approvedResult.id_account==this.ourAccounts[i].id) {
-      //         this.approvedResult.account=this.ourAccounts[i]['short_name'];
-      //       }
-      //     }          
-      //   }
-      // },
-      // 'approvedResult.id_way_pay': {
-      //   handler() {
-      //     for(var i=0;i<this.wayOfPayment.length;i++) {
-      //       if(this.approvedResult.id_way_pay==this.wayOfPayment[i].id) {
-      //         this.approvedResult.way=this.wayOfPayment[i].name;
-      //       }
-      //     }          
-      //   }
-      // },
-      // 'approvedResult.project':{
-      //   handler() {
-      //     for(var i=0;i<this.projects.length;i++) {
-      //       if(this.approvedResult.project==this.projects[i].prjct) {
-      //         this.approvedResult.id_project=this.projects[i].id;
-      //       }
-      //     }
-      //   }
-      // },
-      // 'approvedResult.id_project':{
-      //   handler() {
-      //     for(var i=0;i<this.projects.length;i++) {
-      //       if(this.approvedResult.id_project==this.projects[i].id) {
-      //         this.approvedResult.project=this.projects[i].prjct;
-      //       }
-      //     }
-      //   }        
-      // }            
     },
     beforeCreate:function() {
       var _this=this;

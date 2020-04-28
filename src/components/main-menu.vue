@@ -31,10 +31,10 @@
               </span>
             </li>
             <li>
-              <span class="dropdown-item menu-item" @click="">
-                机票退票
+              <span class="dropdown-item menu-item" @click="loadPage('/ticketChangeRefound')">
+                机票退改
               </span>
-            </li>            
+            </li>
           </div>
         </li>        
       </ul>
@@ -73,7 +73,7 @@
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">财务业务</span>
           <div class="dropdown-menu">
             <li><span class="dropdown-item menu-item" @click="loadPage('/cashier')">销售回款</span></li>
-            <li><span class="dropdown-item menu-item" @click="">机票回款</span></li>            
+            <li><span class="dropdown-item menu-item" @click="loadPage('/ticket-cashier')">机票收款</span></li>            
             <li><span class="dropdown-item menu-item" @click="loadPage('/accept-other-funds')">其它收款</span></li>
             <li><span class="dropdown-item menu-item" @click="loadPage('/check-receipts')">收款复核</span></li>
             <li><span class="dropdown-item menu-item" @click="loadPage('/pay')">支付款项</span></li>
@@ -87,7 +87,7 @@
           <div class="dropdown-menu">
             <li><span class="dropdown-item menu-item" @click="loadPage('/request-funds')">费用报销、借款</span></li>
             <li><span class="dropdown-item menu-item" @click="loadPage('/rqst-pcsg-funds')">采购请款</span></li>
-            <li><span class="dropdown-item menu-item" @click="">机票退款</span></li>            
+            <li><span class="dropdown-item menu-item" @click="loadPage('/rqst-rfdtkt-paying')">机票退款</span></li>            
             <li><span class="dropdown-item menu-item" @click="loadPage('/prmry-audits-rqst-funds')">请款初审</span></li>
 <!--             <li><span class="dropdown-item menu-item">请款初审</span></li> -->
             <li><span class="dropdown-item menu-item" @click="loadPage('/final-audits-rqst-funds')">请款复审</span></li>

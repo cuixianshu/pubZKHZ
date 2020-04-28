@@ -21,7 +21,7 @@
     <div><!--  class="tablebox" display:inline-block;-->
       <table class="table table-hover" v-if="xlsData.length">
         <thead>
-          <th v-for="title in titls">{{title}}</th>
+          <th v-for="title in titles">{{title}}</th>
           <th>客户单位</th>
         </thead>
           <tbody style="overflow-y:auto;">
@@ -41,11 +41,11 @@
               <td :title="row.乘机人">{{row.乘机人}}</td>
               <td>
                 <select v-model="client_dptmts[index]">
-                  <option>成果处</option>
-                  <option>大工教务处</option>
+                  <option v-for="item in listOfClntDptmts" :value="item.id">{{item.short_name}}</option>
+<!--                   <option>大工教务处</option>
                   <option>科技处</option>
                   <option>重大办</option>
-                  <option>基建处</option>
+                  <option>基建处</option> -->
                 </select>
               </td>
             </tr>
@@ -111,14 +111,14 @@ Date.prototype.format = function(fmt) {
   export default {
     data () {
       return{
-        // xlsTitle:[],
         xlsData:[],
         tip_for_duplicate:'',
         duplicateRecorders:[],
-        titls:['票号','航班号','乘机日期','首航段','票价','税','保险','采购金额','已付采购金额','支付方式','退票手续费','实退金额','乘机人'],
+        titles:['票号','航班号','乘机日期','首航段','票价','税','保险','采购金额','已付采购金额','支付方式','退票手续费','实退金额','乘机人'],
         style:'color:red;',
         client_dptmts:[],
         insurances:[],
+        listOfClntDptmts:[]
       }
     },
     methods:{
@@ -141,7 +141,7 @@ Date.prototype.format = function(fmt) {
             var data = ev.target.result;
             var workbook = XLSX.read(data, {type: 'binary'}); // 以二进制流方式读取得到整份excel表格对象
 console.log(workbook);
-return;
+// return;
           } catch (e) {
             console.log(e);
             return;
@@ -159,7 +159,7 @@ return;
             if(tempArry.length>120) {
               _this.$toast({
                 text: "表中数据过多,一次不能超120条!",
-                type: 'danger',
+                type: 'info',
                 duration: 3000
               });
               $('#openFileSelector').val('');
@@ -268,172 +268,6 @@ return;
         // 以二进制方式打开文件
         fileReader.readAsBinaryString(files[0]);
       },
-      excelFileChanged:function(event){
-        if(!$('#openFileSelector').val()) {
-          return;
-        }
-        if(!event.currentTarget.files.length) {//没有文件被选中 
-          return;
-        }
-        if(this.xlsData.length>0){//如果已有数据,需清空
-          // this.xlsTitle=[];
-          this.xlsData=[];
-        }
-        var _this = this;
-        var f = event.currentTarget.files[0];// 拿取文件对象
-        var reader = new FileReader();// 用FileReader来读取
-        FileReader.prototype.readAsBinaryString = function(f) {
-          var binary = "";
-          var workBook; // 读取完成的数据
-          var reader = new FileReader();
-          reader.onload = function(e) {
-            var bytes = new Uint8Array(reader.result);
-            var length = bytes.byteLength;
-            for (var i = 0; i < length; i++) {
-              binary += String.fromCharCode(bytes[i]);
-            }
-            workBook = XLSX.read(binary, {
-              type: 'binary'//'base64''string'"binary"
-            });
-            var sheet2JSONOpts = {
-              /** Default value for null/undefined values */
-              defval: ''//给defval赋值为空的字符串
-            }
-            if(XLSX.utils.sheet_to_json(workBook.Sheets[workBook.SheetNames[0]],sheet2JSONOpts).length<1) {
-              _this.$toast({
-                text: "空表!",
-                type: 'danger',
-                duration: 1000
-              });
-              $('#openFileSelector').val('');
-              return;          
-            } else {
-              // 获取数据
-              var tempArry= XLSX.utils.sheet_to_json(workBook.Sheets[workBook.SheetNames[0]], {raw: true,defval: ''});
-              if(tempArry.length>120) {
-                _this.$toast({
-                  text: "表中数据过多,一次不能超120条!",
-                  type: 'danger',
-                  duration: 3000
-                });
-                $('#openFileSelector').val('');
-                return;                
-              }
-
-              //处理合并行数据
-              var steps=tempArry.length;
-              for(var i=0;i<steps;i++) {
-                for(var prop in tempArry[i]) {
-                  if(prop==='票号' && tempArry[i][prop].search(/(\r\n|\n|\r)/gm)!==-1) {
-                    tempArry[i].票号=tempArry[i].票号.replace(/(\r\n|\n|\r)/gm, ";");
-                    var tickets=tempArry[i].票号.split(';');
-                    tempArry[i].乘机人=tempArry[i].乘机人.replace(/(\r\n|\n|\r)/gm, ";");
-                    var names=tempArry[i].乘机人.split(';');
-
-                    //处理退票费,这里是按退票人数平均计算的.
-                    var counterOfRefound=0;
-                    var feeOfPerPerson=0;
-                    var returnedAmountPrePerson=0;
-                    for(var j=0;j<names.length;j++) {
-                      if(names[j].indexOf('(退)')!==-1) {
-                        counterOfRefound+=1;
-                        feeOfPerPerson=parseInt(tempArry[i].退票手续费)/counterOfRefound;
-                        returnedAmountPrePerson=parseInt(tempArry[i].实退金额)/counterOfRefound;
-                      }
-                    }
-
-                    steps+=tickets.length;
-                    for(var j=0;j<tickets.length;j++) {
-                      var {...tmplt}=tempArry[i];
-// console.log(tmplt);
-                      tmplt.票号=tickets[j];
-                      tmplt.乘机人=names[j];
-                      tmplt.票价=parseInt(tempArry[i].票价)/tickets.length;
-                      tmplt.税=parseInt(tempArry[i].税)/tickets.length;
-                      tmplt.订单应收=parseInt(tempArry[i].订单应收)/tickets.length;
-                      tmplt.已收金额=parseInt(tempArry[i].已收金额)/tickets.length;
-                      tmplt.票应收=parseInt(tempArry[i].票应收)/tickets.length;
-                      if(names[j].indexOf('(退)')!==-1) {
-                        tmplt.退票手续费=feeOfPerPerson;
-                        tmplt.实退金额=returnedAmountPrePerson;
-                      } else {
-                        tmplt.退票手续费=0;
-                        tmplt.实退金额=0;
-                      }
-                      var pstn=parseInt(i)+parseInt(j)+1;
-                      tempArry.splice(pstn,0,tmplt);//新增一行数据
-                    }
-
-
-                    tempArry.splice(i,1);
-                    i+=tickets.length-1;
-                  }
-                }
-
-              }
-
-// return;
-
-              //核心数据列
-              var indispensableCellValue=['票号','航班号','乘机日期','首航段','票价','税','保险','订单应收','已收金额','支付方式','退票手续费','实退金额','乘机人'];
-              var tempTitles=[];//获取表头,也就是属性名
-              for (var index in tempArry) {
-                _this.client_dptmts[index]='';
-                for (var prop in tempArry[index]) {//tempArry[index]为对象--
-                    if(index==0) {//获取表头,只创建一遍
-                      tempTitles.push(prop);
-                    }
-                    // 处理小数格式的时间转为标准格式.setYear(time.getFullYear() - 70)
-                    if(prop=='乘机日期' || prop=='出票时间' || prop=='收款时间'){
-                      var tmpTime = new Date((tempArry[index][prop] - 1) * 24 * 3600000 + 1);
-                      tmpTime.setYear(tmpTime.getFullYear() - 70);
-                      tmpTime.setDate(tmpTime.getDate());
-                      tempArry[index][prop]=tmpTime.format("yyyy-MM-dd");
-                    }
-
-                    //空白格用空格代替
-                    tempArry[index][prop]=(tempArry[index][prop] || tempArry[index][prop]==0)?tempArry[index][prop]:'';
-                    //必有列的单元格不能空
-                    if(indispensableCellValue.includes(prop) && tempArry[index][prop]===''){
-                      _this.$toast({
-                        text: "‘"+prop+"’"+'－－是核心数据，不许有空格，行号：'+(Number(index)+2)+'。',
-                        type: 'danger',
-                        duration: 4000
-                      }); 
-                      $('#openFileSelector').val('');
-                      return ;
-                    }
-                }
-              }
-              if(tempTitles.length<1){
-                _this.$toast({
-                  text: "没有表头或表头不对!",
-                  type: 'danger',
-                  duration: 3000
-                });
-                $('#openFileSelector').val('');                
-                return;
-              }
-              for(var i=0;i<indispensableCellValue.length;i++) {
-                    
-                if(!tempTitles.includes(indispensableCellValue[i])){//是否缺少必有列
-                  _this.$toast({
-                    text: "'"+indispensableCellValue[i]+"'－－整列缺失,这是核心数据，不允许缺失！",
-                    type: 'danger',
-                    duration: 4000
-                  }); 
-                  $('#openFileSelector').val('');
-                  return ;
-                }                
-              }
-              _this.xlsData=tempArry;
-              // _this.xlsTitle=tempTitles;
-            }
-          }
-          reader.readAsArrayBuffer(f);
-        }
-        reader.readAsBinaryString(f);
-      },
       clearXlsx :function() {
         this.xlsData=[];
         this.client_dptmts=[];
@@ -502,7 +336,6 @@ console.log(rspnData);
           // console.log(rspnData);
         }
         this.xlsData=[];
-        // this.xlsTitle=[];
       },
       saveXlsxDataToDBS:function () {
         for(var i=0;i<this.client_dptmts.length;i++) {
@@ -532,9 +365,6 @@ console.log(rspnData);
        
         var rspnData=this.axiosAsync();
       },
-      clearTitle(val) {
-        // this.xlsTitle=val;
-      },
       copyToclipboard:function () {
         var _this=this;
         var clipboard = new ClipboardJS('#btnCopyToClipboard');        //实例化clipboard
@@ -561,32 +391,27 @@ console.log(rspnData);
     
     },
     beforeCreate:function() {
-    //初始化必须列   this.titls
-    // var _this=this; 
-    // this.titls=[];
-    // this.$axios({
-    //       method: 'post',
-    //       url: 'getDictionaryOfFeildNames.php'
-    //   }).then(function (response) {
-    //     for(var index in response.data) {
-    //       _this.titls.push(response.data[index].name_in_excel);
-    //     }
-    //   }).catch(function (error) {
-    //     _this.$toast({
-    //        text: '异步通信错误!'+error,
-    //        type: 'danger',
-    //         duration: 4000
-    //     });
-    //   });       
+      var _this=this;
+      this.listOfClntDptmts=[];
+      this.$axios({
+        method: 'post',
+        url: 'getClntDptmt.php',
+      }).then(function (response) {
+console.log(response.data);
+        _this.listOfClntDptmts=response.data;
+      }).catch(function (error) {
+        console.log(error);
+        _this.$toast({
+          text: '异步通信错误!'+error,
+          type: 'danger',
+          duration: 4000
+        });
+      });
     },
     computed: {
       isRefounded() {
         return function(dataRow) {
-          if((dataRow.乘机人).indexOf('(退)')!==-1) {
-            return true;
-          } else {
-            return false;
-          }
+          return ((dataRow.乘机人).indexOf('(退)')!==-1)?true:false;
         }
       }
     }   
