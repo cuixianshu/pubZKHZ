@@ -71,7 +71,7 @@
               </div>
               <div class="col-lg form-inline">
                 <label for="inptStartPoint" class="require">需要日期</label>
-                <input id="inptStartPoint" type="date" name="neededDate" class="form-control" placeholder="需要日期" v-model="detailsInApplyPurchasing.neededDate" title="需要日期" readonly>
+                <input id="inptStartPoint" type="date" name="date_needed" class="form-control" placeholder="需要日期" v-model="detailsInApplyPurchasing.date_needed" title="需要日期" readonly>
               </div>
             </div>
             <div class="row">
@@ -144,7 +144,7 @@ Date.prototype.format = function(fmt) {
           brand:'',
           model:'',
           detail:'',
-          neededDate:'',
+          date_needed:'',
           remark:'',
           id_applier:1
         },
@@ -159,7 +159,6 @@ Date.prototype.format = function(fmt) {
         listOfAppliedPurchasings:[],
         titleOfList:[],
         projects:[]
-        // showReasonBox:false
       }
     },
     methods:{
@@ -177,9 +176,6 @@ Date.prototype.format = function(fmt) {
         }
         this.approvedResult.id_applyedPurchasing=this.detailsInApplyPurchasing.id;
         this.approvedResult.conditions='Approved';
-// console.log(this.approvedResult);
-
-// return;
         var _this=this;
         var url='updateApplyPurchasing.php';
         this.$axios({
@@ -207,7 +203,7 @@ Date.prototype.format = function(fmt) {
             _this.detailsInApplyPurchasing.brand='';
             _this.detailsInApplyPurchasing.model='';
             _this.detailsInApplyPurchasing.detail='';
-            _this.detailsInApplyPurchasing.neededDate='';
+            _this.detailsInApplyPurchasing.date_needed='';
             _this.detailsInApplyPurchasing.remark='';
           } else {
         console.log(response.data);
@@ -228,7 +224,6 @@ Date.prototype.format = function(fmt) {
         });
       },
       clickedARecorderToApprove (dataRow) {
-
         this.detailsInApplyPurchasing.id=dataRow.id;
         this.detailsInApplyPurchasing.id_project=dataRow.id_project;
         this.detailsInApplyPurchasing.name=dataRow.name;
@@ -237,7 +232,7 @@ Date.prototype.format = function(fmt) {
         this.detailsInApplyPurchasing.brand=dataRow.brand;
         this.detailsInApplyPurchasing.model=dataRow.model;
         this.detailsInApplyPurchasing.detail=dataRow.detail;
-        this.detailsInApplyPurchasing.neededDate=dataRow.date_needed;
+        this.detailsInApplyPurchasing.date_needed=dataRow.date_needed;
         this.detailsInApplyPurchasing.is_finished=dataRow.is_finished;
         this.detailsInApplyPurchasing.remark=dataRow.remark;
         this.detailsInApplyPurchasing.id_applier=dataRow.id_applier;

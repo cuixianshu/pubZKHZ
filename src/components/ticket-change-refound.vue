@@ -11,7 +11,7 @@
         </select>
         <label for="queryConditions">关键词:</label>
         <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="票号、乘机人、客人单位等搜索关键词">
-        <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="航班起飞日期,默认最近7天" :shortcuts="shortcuts" placeholder="航班起飞日期的范围"></datepicker> 
+        <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="出票日期,默认最近7天" :shortcuts="shortcuts" placeholder="出票日期的范围"></datepicker> 
         <button class="btn btn-primary" @click="getTickets">🔍获取数据</button>
         <button class="btn btn-secondary" @click="listOfTickets=[]" v-if="listOfTickets.length>0">清空</button>
       </div>

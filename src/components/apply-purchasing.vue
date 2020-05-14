@@ -48,8 +48,8 @@
               <div class="row">
                 <div class="col-lg form-inline">
                   <label for="slctProject" class="require">所属项目</label>
-                  <select id="slctProject" type="text" name="project" class="form-control" placeholder="所属项目" v-model="applyPurchasingList.project" title="选择所属项目" :readonly="applyingIsPassedApproving(applyPurchasingList.id)">
-                    <option v-for="proj in projects">{{proj.prjct}}</option>
+                  <select id="slctProject" type="text" name="project" class="form-control" placeholder="所属项目" v-model="applyPurchasingList.id_project" title="选择所属项目" :readonly="applyingIsPassedApproving(applyPurchasingList.id)">
+                    <option v-for="item in projects" :value="item.id">{{item.prjct}}</option>
                   </select>
                 </div>
                 <div class="col-lg form-inline">
@@ -79,12 +79,12 @@
               </div>
               <div class="row">    
                 <div class="col-lg form-inline">
-                  <label for="inputDetail" class="require">详细说明</label>
-                  <input id="inputDetail" type="text" name="detail" class="form-control" placeholder="详细说明" v-model="applyPurchasingList.detail" title="详细说明" :readonly="applyingIsPassedApproving(applyPurchasingList.id)">
+                  <label for="inputDetail" class="require">用途说明</label>
+                  <input id="inputDetail" type="text" name="detail" class="form-control" placeholder="用途说明" v-model="applyPurchasingList.detail" title="用途说明" :readonly="applyingIsPassedApproving(applyPurchasingList.id)">
                 </div>
                 <div class="col-lg form-inline">
                   <label for="inptStartPoint" class="require">需要日期</label>
-                  <input id="inptStartPoint" type="date" name="neededDate" class="form-control" placeholder="需要日期" v-model="applyPurchasingList.neededDate" title="需要日期" :readonly="applyingIsPassedApproving(applyPurchasingList.id)">
+                  <input id="inptStartPoint" type="date" name="date_needed" class="form-control" placeholder="需要日期" v-model="applyPurchasingList.date_needed" title="需要日期" :readonly="applyingIsPassedApproving(applyPurchasingList.id)">
                 </div>
               </div>
               <div class="row">
@@ -145,7 +145,7 @@ Date.prototype.format = function(fmt) {
           brand:'',
           model:'',
           detail:'',
-          neededDate:'',
+          date_needed:'',
           remark:'',
           id_applier:1,
           conditions:''//用于标识后台如何操作
@@ -158,7 +158,7 @@ Date.prototype.format = function(fmt) {
     },
     methods:{
       saveApplyPurchasing() {
-        if(this.applyPurchasingList.project.length<2) {
+        if(!this.applyPurchasingList.id_project) {
           this.$toast({
             text: '请选择所属项目',
             type: 'info',
@@ -208,13 +208,13 @@ Date.prototype.format = function(fmt) {
         }
         if(this.applyPurchasingList.detail.length<4) {
           this.$toast({
-            text: '详细说明不能少于4个字',
+            text: '用途说明不能少于4个字',
             type: 'info',
             duration: 1000
           });
           return;
         }
-        if((this.applyPurchasingList.neededDate < (new Date().format("yyyy-MM-dd"))) || this.applyPurchasingList.neededDate.length<8) {
+        if((this.applyPurchasingList.date_needed < (new Date().format("yyyy-MM-dd"))) || this.applyPurchasingList.date_needed.length<8) {
           this.$toast({
             text: '需要日期不能早于今天',
             type: 'info',
@@ -222,19 +222,6 @@ Date.prototype.format = function(fmt) {
           });
           return;
         }
-        // if(this.applyPurchasingList.isFinished!=0 && this.applyPurchasingList.isFinished!=1) {
-        //   this.$toast({
-        //     text: '执行进度只能是0或1!',
-        //     type: 'info',
-        //     duration: 1000
-        //   });
-        //   return;
-        // } 
-        for(var i=0;i<this.projects.length;i++) {
-          if(this.applyPurchasingList.project===this.projects[i].prjct) {
-            this.applyPurchasingList.id_project=this.projects[i].id;
-          }
-        }               
         var _this=this;
         var url='';
         if(this.applyPurchasingList.id!=='') {
@@ -268,7 +255,7 @@ Date.prototype.format = function(fmt) {
             _this.applyPurchasingList.brand='';
             _this.applyPurchasingList.model='';
             _this.applyPurchasingList.detail='';
-            _this.applyPurchasingList.neededDate='';
+            _this.applyPurchasingList.date_needed='';
             _this.applyPurchasingList.remark='';
           } else {
         console.log(response.data);
@@ -289,47 +276,7 @@ Date.prototype.format = function(fmt) {
         });
       },
       clickedARecorderToModify (dataRow) {
-/*
-brand: (...)
-date_applied: (...)
-date_approved: (...)
-date_finished: (...)
-date_needed: (...)
-detail: (...)
-id: (...)
-id_applier: (...)
-id_approver: (...)
-id_project: (...)
-is_finished: (...)
-model: (...)
-name: (...)
-quantity: (...)
-remark: (...)
-result_approved: (...)
-unit: (...)
-why_disagree: (...)
- */
-        this.applyPurchasingList.id=dataRow.id;
-        this.applyPurchasingList.id_project=dataRow.id_project;
-        this.applyPurchasingList.name=dataRow.name;
-        this.applyPurchasingList.unit=dataRow.unit;
-        this.applyPurchasingList.quantity=dataRow.quantity;
-        this.applyPurchasingList.brand=dataRow.brand;
-        this.applyPurchasingList.model=dataRow.model;
-        this.applyPurchasingList.detail=dataRow.detail;
-        this.applyPurchasingList.neededDate=dataRow.date_needed;
-        this.applyPurchasingList.is_finished=dataRow.is_finished;
-        this.applyPurchasingList.remark=dataRow.remark;
-        this.applyPurchasingList.id_applier=dataRow.id_applier;
-        this.applyPurchasingList.date_applied=dataRow.date_applied;
-        this.applyPurchasingList.id_approver=dataRow.id_approver;
-        this.applyPurchasingList.date_approved=dataRow.date_approved;
-        this.applyPurchasingList.result_approved=dataRow.result_approved;
-        for(var i=0;i<this.projects.length;i++) {
-          if(this.applyPurchasingList.id_project===this.projects[i].id) {
-            this.applyPurchasingList.project=this.projects[i].prjct;
-          }
-        }
+        this.applyPurchasingList=dataRow;
         $('#mdfRecorder').modal('toggle');
       },
       getListOfAppliedPurchasing () {
@@ -345,12 +292,6 @@ why_disagree: (...)
         }).then(function (response) {
             if(response.data.length>0) {
               _this.listOfAppliedPurchasings = response.data;
-// console.log(_this.listOfAppliedPurchasings);
-
-              // var ttl='';
-              // for(ttl in response.data[0]) {
-              //   _this.titleOfList.push(ttl);
-              // }              
             } else {
               _this.$toast({
                 text: '没有符合条件的记录',
@@ -365,7 +306,6 @@ why_disagree: (...)
       },
       clearlistOfAppliedPurchasing() {
         this.listOfAppliedPurchasings=[];
-        // this.titleOfList=[];
       },
       newCreateApplyPurchasing () {
         this.listOfAppliedPurchasings=[];
@@ -378,7 +318,7 @@ why_disagree: (...)
         this.applyPurchasingList.brand='';
         this.applyPurchasingList.model='';
         this.applyPurchasingList.detail='';
-        this.applyPurchasingList.neededDate='';
+        this.applyPurchasingList.date_needed='';
         this.applyPurchasingList.remark='';
         $('#mdfRecorder').modal('toggle');
       }

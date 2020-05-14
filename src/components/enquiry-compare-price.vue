@@ -286,10 +286,6 @@ Date.prototype.format = function(fmt) {
         this.appliedPurchasingDetails.neededDate=dataRow.date_needed;
         this.appliedPurchasingDetails.remark=dataRow.remark;
         this.appliedPurchasingDetails.id_applier=dataRow.id_applier;
-
-        // this.id_applyedPurchasing=this.appliedPurchasingDetails.id;
-// console.log(dataRow);
-// return;
         for(var i=0;i<this.projects.length;i++) {
           if(this.appliedPurchasingDetails.id_project===this.projects[i].id) {
             this.appliedPurchasingDetails.project=this.projects[i].prjct;
@@ -304,8 +300,6 @@ Date.prototype.format = function(fmt) {
         this.queryContent.conditions='EnquiryingNotPassedApproving';
         this.queryContent.id_applyedPurchasing=this.appliedPurchasingDetails.id;
         this.enquiries=[]; 
-// console.log(this.queryContent);
-// return;               
         var _this = this;
         this.$axios({
           method: 'post',
@@ -321,7 +315,6 @@ Date.prototype.format = function(fmt) {
                 _this.resultOfComparePrice.selectedID=_this.enquiries[i].id;               
               }
             }
-// console.log(_this.enquiries);
         $('#showerOfDetails').modal('toggle');
 
           } else {
@@ -339,25 +332,14 @@ Date.prototype.format = function(fmt) {
         this.listOfApprovedPurchasing=[];
         this.titleOfList=[];
         this.queryContent.conditions='NotComparedOrEnquiryNotCommitedOrNotPassedApproving';//enquiry未提交审核或审核未通过的
-// console.log(this.queryContent);
         var _this = this;
         this.$axios({
           method: 'post',
           url: 'getAppliedPurchasings.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
-// return;
             if(response.data.length>0) {
               _this.listOfApprovedPurchasing = response.data;
-// console.log(_this.listOfApprovedPurchasing);
-              // for(var i=0;i<_this.listOfApprovedPurchasing.length;i++) {
-              //   delete _this.listOfApprovedPurchasing[i].is_finished;
-              //   delete _this.listOfApprovedPurchasing[i].date_applied;
-              //   delete _this.listOfApprovedPurchasing[i].id_approver;
-              //   delete _this.listOfApprovedPurchasing[i].date_approved;
-              //   delete _this.listOfApprovedPurchasing[i].result_approved;
-              //   delete _this.listOfApprovedPurchasing[i].why_disagree;
-              // }
               var ttl='';
               for(ttl in _this.listOfApprovedPurchasing[0]) {
                 _this.titleOfList.push(ttl);
@@ -441,8 +423,6 @@ Date.prototype.format = function(fmt) {
           return;          
         }
         this.enquiry.idApplyed=this.id_applyedPurchasing;
-// console.log(this.enquiry);
-// return;
         var _this = this;
         this.$axios({
             method: 'post',
@@ -466,9 +446,7 @@ Date.prototype.format = function(fmt) {
               _this.enquiry.actualAmount=0;
               _this.enquiry.idApplyed='';
               _this.enquiry.remark='';
-              // _this.id_applyedPurchasing='';
            } else {
-              // console.log(response.data);
               _this.$toast({
                  text: '通信错误!'+response.data,
                  type: 'danger',
@@ -492,8 +470,6 @@ Date.prototype.format = function(fmt) {
 
         //获取请购ID
         this.id_applyedPurchasing=dataRow.id;
-// console.log(this.queryContent);
-// return;
         //获取对应清单
         var _this = this;
         this.enquiries=[];
@@ -503,8 +479,6 @@ Date.prototype.format = function(fmt) {
               url: 'getEnquiries.php',
               data: qs.stringify(_this.queryContent)
           }).then(function (response) {
-// console.log(response.data);
-// return;
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到询价单!',
@@ -514,11 +488,6 @@ Date.prototype.format = function(fmt) {
               return;        
             }
             _this.enquiries=response.data;
-
-            // for(var prop in _this.enquiries[0]) {
-            //   _this.titleOfEnquiries.push(prop);
-            // }
-// console.log(_this.enquiries);
             $('#modifyEnquiry').modal('toggle');
             _this.queryContent.id_applyedPurchasing='';
             _this.queryContent.keyWord='';
@@ -540,8 +509,6 @@ Date.prototype.format = function(fmt) {
         // })        
       },
       saveDataToApprove() {
-// console.log(this.resultOfComparePrice);
-// return;
         if(this.resultOfComparePrice.reason.length<4){
           this.$toast({
             text: '选定理由最少4个字!',
@@ -558,13 +525,9 @@ Date.prototype.format = function(fmt) {
           });
           return;
         }
-// console.log(this.id_applyedPurchasing);
-// return;
         this.resultOfComparePrice.idOfApplyedPurchasing=this.id_applyedPurchasing;
         var _this=this;
         var url='updateEnquiriesWithComparedPrice.php';
-// console.log(this.resultOfComparePrice);
-// return;        
         this.$axios({
           method: 'post',
           url: url,

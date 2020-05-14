@@ -22,10 +22,10 @@
       <table class="table table-hover" v-if="xlsData.length">
         <thead>
           <th v-for="title in titles">{{title}}</th>
-          <th>客户单位</th>
+<!--           <th>客户单位</th> -->
         </thead>
           <tbody style="overflow-y:auto;">
-            <tr v-for="(row,index) in xlsData" :style="isRefounded(row)?style:''" >
+            <tr v-for="(row,index) in xlsData" :style="isRefounded(row)?style:''" :width="width[index]">
               <td :title="row.票号">{{row.票号}}</td>
               <td :title="row.航班号">{{row.航班号}}</td>
               <td :title="row.乘机日期">{{row.乘机日期}}</td>
@@ -37,7 +37,7 @@
               <td :title="row.已收金额">{{row.已收金额}}</td>
               <td :title="row.支付方式">{{row.支付方式}}</td>
               <td :title="row.退票手续费">{{row.退票手续费}}</td>
-              <td :title="row.实退金额">{{row.实退金额}}</td>
+<!--               <td :title="row.实退金额">{{row.实退金额}}</td> -->
               <td :title="row.乘机人">{{row.乘机人}}</td>
               <td>
                 <select v-model="client_dptmts[index]">
@@ -114,11 +114,14 @@ Date.prototype.format = function(fmt) {
         xlsData:[],
         tip_for_duplicate:'',
         duplicateRecorders:[],
-        titles:['票号','航班号','乘机日期','首航段','票价','税','保险','采购金额','已付采购金额','支付方式','退票手续费','实退金额','乘机人'],
+        titles:['票号','航班号','乘机日期','首航段','票价','税','保险','采购价','已支付','支付方式','退票费','乘机人','客户单位'],//'实退金额',
+        width:['10%','6%','8%','8%','6%','6%','6%','6%','6%','6%','12%','8%','12%'],
         style:'color:red;',
         client_dptmts:[],
         insurances:[],
-        listOfClntDptmts:[]
+        listOfClntDptmts:[],
+        //核心数据列
+        indispensableCellValue:['票号','航班号','乘机日期','首航段','票价','税','保险','订单应收','已收金额','支付方式','退票手续费','实退金额','乘机人']
       }
     },
     methods:{
@@ -210,8 +213,7 @@ console.log(workbook);
                 }
               }
             }
-            //核心数据列
-            var indispensableCellValue=['票号','航班号','乘机日期','首航段','票价','税','保险','订单应收','已收金额','支付方式','退票手续费','实退金额','乘机人'];
+
             var tempTitles=[];//获取表头,也就是属性名
             for (var index in tempArry) {
               _this.client_dptmts[index]='';
@@ -229,7 +231,7 @@ console.log(workbook);
                   //空白格用空格代替
                   tempArry[index][prop]=(tempArry[index][prop] || tempArry[index][prop]==0)?tempArry[index][prop]:'';
                   //必有列的单元格不能空
-                  if(indispensableCellValue.includes(prop) && tempArry[index][prop]===''){
+                  if(_this.indispensableCellValue.includes(prop) && tempArry[index][prop]===''){
                     _this.$toast({
                       text: "‘"+prop+"’"+'－－是核心数据，不许有空格，行号：'+(Number(index)+2)+'。',
                       type: 'danger',
@@ -249,11 +251,11 @@ console.log(workbook);
               $('#openFileSelector').val('');                
               return;
             }
-            for(var i=0;i<indispensableCellValue.length;i++) {
+            for(var i=0;i<_this.indispensableCellValue.length;i++) {
                   
-              if(!tempTitles.includes(indispensableCellValue[i])){//是否缺少必有列
+              if(!tempTitles.includes(_this.indispensableCellValue[i])){//是否缺少必有列
                 _this.$toast({
-                  text: "'"+indispensableCellValue[i]+"'－－整列缺失,这是核心数据，不允许缺失！",
+                  text: "'"+_this.indispensableCellValue[i]+"'－－整列缺失,这是核心数据，不允许缺失！",
                   type: 'danger',
                   duration: 4000
                 }); 
@@ -262,6 +264,7 @@ console.log(workbook);
               }                
             }
             _this.xlsData=tempArry;
+            _this.insurances=new Array(_this.xlsData.length).fill(30);
 
           }
         };
@@ -397,7 +400,7 @@ console.log(rspnData);
         method: 'post',
         url: 'getClntDptmt.php',
       }).then(function (response) {
-console.log(response.data);
+// console.log(response.data);
         _this.listOfClntDptmts=response.data;
       }).catch(function (error) {
         console.log(error);

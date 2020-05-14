@@ -309,9 +309,12 @@ export default {
       });
     //初始化产品的option   
     this.products=[];
+    var queryContent={};
+    queryContent.conditions="ExceptVehicle";
     this.$axios({
           method: 'post',
-          url: 'getProduct.php'
+          url: 'getProduct.php',
+          data: qs.stringify(queryContent)
       })
       .then(function (response) {
         _this.products=response.data;

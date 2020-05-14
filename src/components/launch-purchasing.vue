@@ -30,7 +30,6 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5>完成采购--申请ID:{{queryContent.id_applyedPurchasing}}</h5>
-          <!-- <h6>物品:{{applyPurchasingList.name}}({{applyPurchasingList.unit}})</h6> -->
         </div>
         <div class="modal-body">
           <div class="container-fluid">
@@ -98,7 +97,6 @@ Date.prototype.format = function(fmt) {
         listOfPassedApprovingCompareAndUnfinishedApplyings:[],
         titleOfApplyings:[],
         selectedEnquiries:[],
-        // titleOfSelectedEnquiries:[],
         detailsInInfoShower:{
           seller:'',
           priceIncludeTax:'',
@@ -152,7 +150,6 @@ Date.prototype.format = function(fmt) {
       },
       clickedARecorderToFinish(dataRow) {
         this.selectedEnquiries=[];
-        // this.titleOfSelectedEnquiries=[];
         this.queryContent.id_applyedPurchasing=dataRow.id;
         var expectDate=dataRow.date_needed;
         var idApplyer=dataRow.id_applier;
@@ -166,12 +163,6 @@ Date.prototype.format = function(fmt) {
         }).then(function (response) {
           if(response.data.length>0) {
             _this.selectedEnquiries = response.data[0];
-            // var ttl='';
-            // for(ttl in response.data[0]) {
-            //   _this.titleOfSelectedEnquiries.push(ttl);
-            // }
-// console.log(response.data);
-// return;
         //需要获取detailsInInfoShower的内容          
             _this.detailsInInfoShower.seller=_this.selectedEnquiries.seller;
             _this.detailsInInfoShower.priceIncludeTax=_this.selectedEnquiries.price_include_tax;
@@ -186,7 +177,6 @@ Date.prototype.format = function(fmt) {
                  break;
                }
             }
-// console.log(_this.detailsInInfoShower);
             $('#infoShower').modal('toggle');
           } else {
             _this.$toast({

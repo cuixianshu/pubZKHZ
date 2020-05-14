@@ -6,7 +6,7 @@
         <label for="queryConditions">关键词:</label>
         <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="用车人,单位,项目等搜索关键词">
         <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="申请开票时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="申请开票的时间范围"></datepicker>
-        <button class="btn btn-primary" @click="getListOFRequestedInvoiceToFillInvoice">🔍获取数据</button>
+        <button class="btn btn-primary" @click="getRequestedInvoices">🔍获取数据</button>
       </div>
     </div>
     <div v-if="data.length>0">
@@ -329,15 +329,7 @@ Date.prototype.format = function(fmt) {
       bootstraptable
     },	
 	methods: {
-      aRowInListClicked:function(e) {
-        // var id=e.toElement.parentElement.children[0].innerHTML;
-        // if(this.queryContent.typeOfQuery==='requested') {
-        //   console.log('从ORDERS表中获取数据,申请发票的ID:'+id);
-        // } else {
-        //   console.log('开具发票的ID:'+id);	
-        // }
-      },		
-	  getListOFRequestedInvoiceToFillInvoice () {
+	  getRequestedInvoices () {
         if(this.detailsOfFilling.nameOfOurCmpny==='' && this.detailsOfFilling.cstmrOgnztnName==='' && this.detailsOfFilling.amount===0){
           this.clonedDetailsOfFilling=JSON.stringify(this.detailsOfFilling);
         }
@@ -350,9 +342,10 @@ Date.prototype.format = function(fmt) {
           day2.setDate(day2.getDate());
           this.queryContent.dateRange[1] = day2.format("yyyy-MM-dd");
         }
+        this.queryContent.conditions="NotFilled";
         var _this = this;
         var rqstPage='';
-          rqstPage='getListFromRequestInvoiceWithoutInvoice.php';
+          rqstPage='getRequestedInvoices.php';
         this.$axios({
           method: 'post',
           url: rqstPage,
@@ -432,11 +425,14 @@ Date.prototype.format = function(fmt) {
         var subTalbeColumns=[];
         var subTableData=[];
         var keyWord={keyWord:row.ID};
-        rqstPage='getListFromOrdersByRqstIDToModifyRqstInvoice.php';
+        var queryContent={};
+        queryContent.keyWord=row.ID;
+        queryContent.conditions="ByRqstIDAndNotFilledInvoice";
+        rqstPage='getOrders.php';
         this.$axios({
           method: 'post',
           url: rqstPage,
-          data: qs.stringify(keyWord)
+          data: qs.stringify(queryContent)
         }).then(function (response) {
 // console.log(response.data);
 // return;
@@ -673,7 +669,7 @@ Date.prototype.format = function(fmt) {
         $('#mainTable').bootstrapTable("load",this.data);
         //需完善数据库操作
         var _this=this;
-        var rqstPage="deleteARequestInvoice.php";
+        var rqstPage="updateRequestInvoice.php";
         var queryContent={id:this.tmpBSTable.row.ID};
         this.$axios({
           method: 'post',
@@ -712,9 +708,11 @@ Date.prototype.format = function(fmt) {
         });
       },
       deleteARowInSubTable () {
-      	var rqstPage="cancelARequestInvoiceRecorderInOrders.php";
+      	var rqstPage="updateOrders.php";
       	var _this=this;
-      	var queryContent={id:this.tmpBSTable.row.ID};
+      	var queryContent={};
+        queryContent.conditions="CancelRequesting";//
+        queryContent.id=this.tmpBSTable.row.ID;
 // console.log(this.tmpBSTable);
 // console.log(this.data);
 // return;
@@ -739,8 +737,9 @@ Date.prototype.format = function(fmt) {
                 }
               }
               //删除这条发票申请记录
-              var rqstPage="deleteARequestInvoice.php";
-              var queryContent={id:_this.parentRow.ID};
+              var rqstPage="updateOrders.php";
+              var queryContent={id:_this.parentRow.ID,conditions:"DeleteTheRequesting"};
+
               _this.$axios({
                 method: 'post',
                 url: rqstPage,

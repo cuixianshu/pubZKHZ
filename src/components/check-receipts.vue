@@ -157,7 +157,6 @@ Date.prototype.format = function(fmt) {
         }       
         var _this = this;
         this.listOfCashies=[];
-        // this.titlesOfList=[];
         this.queryContent.conditions="CollectionsWithoutChecking";
         this.$axios({
           method: 'post',
@@ -244,7 +243,6 @@ Date.prototype.format = function(fmt) {
       },
       clearList () {
         this.listOfCashies=[];
-        // this.titlesOfList=[];
       }
     },
     computed:{

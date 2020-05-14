@@ -4,11 +4,13 @@
     <div id="requestInvoice" class="container-fluid">
       <div id="searchConditions"  class="form-group form-inline">
         <label for="queryConditions">关键词:</label>
-        <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="乘机人、票号等搜索关键词">
-        <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="时间区间,默认最近7天" :shortcuts="shortcuts" placeholder="航班起飞的时间范围"></datepicker> 
+        <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="乘机人、客户单位、票号等搜索关键词">
+        <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="时间区间,默认最近7天" :shortcuts="shortcuts" placeholder="出票的时间范围"></datepicker> 
         <button class="btn btn-primary" @click="getTkts">🔍获取数据</button>
         <button class="btn btn-secondary" @click="clearData" v-if="setOftickets.length>0">清空</button>
+        <button class="btn btn-primary" v-if="setOftickets.length>0" @click="outboundSeletcedTkts">出库</button>
       </div>
+
       <div v-if="setOftickets.length>0">
         <table class="table table-hover">
           <thead>
@@ -32,10 +34,10 @@
           </tbody>
         </table>
       </div>
-      <div class="buttons">
+<!--       <div class="buttons">
         <button class="btn btn-secondary" @click="clearData" v-if="setOftickets.length>0">清空</button>
         <button class="btn btn-primary" v-if="setOftickets.length>0" @click="outboundSeletcedTkts">出库</button>
-      </div>        
+      </div>  -->       
     </div>
     <div class="modal fade" id="outboundShower" role="dialog" aria-labelledby="outboundShower" data-backdrop="static" data-keyboard: false>
       <div class="modal-dialog modal-lg" role="document">

@@ -6,7 +6,7 @@
         <div class="col-lg form-inline searchcontent">
           <label for="queryConditions">关键词:</label> 
           <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="请款人,用途,采购物品等搜索关键词">
-          <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="填开发票的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="填开发票的时间范围"></datepicker> 
+          <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请款的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="请款的时间范围"></datepicker> 
           <button class="btn btn-primary" @click="getListOfRequestFunds">🔍获取数据</button>
           <button class="btn btn-secondary" @click="clearList" v-if="listOfRequestFunds.length>0">清除</button>            
         </div>          
@@ -17,11 +17,9 @@
       <table class="table table-hover">
         <thead>
           <th v-for="title,index in titlesOfList" :width="widthOfTH[index]">{{title}}</th>
-          <!-- <th><input class="checkbox" type="checkbox" @click=""></th> -->
         </thead>
         <tbody>
           <tr v-for="row,index in listOfRequestFunds" @click="clickedARowInShower(row)">
-            <!-- <td v-for="vlu in row" :title="vlu">{{vlu}}</td> -->
             <td :title="row.id">{{row.id}}</td>
             <td :title="row.project">{{row.project}}</td>
             <td :title="row.amount">{{row.amount}}</td>
@@ -55,8 +53,8 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctProject">项目</label>
-                  <select id="slctProject" type="text" name="Project" class="form-control" placeholder="所属项目" v-model="requestFunds.project" title="所属项目" disabled><!-- disabled -->
-                    <option v-for="item in projects">{{item.name}}</option>}
+                  <select id="slctProject" type="text" name="Project" class="form-control" placeholder="所属项目" v-model="requestFunds.id_project" title="所属项目" disabled>
+                    <option v-for="item in projects" :value="item.id">{{item.name}}</option>}
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
@@ -71,8 +69,8 @@
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="requestFunds.way_pay" placeholder="收款方式" title="收款方式" disabled>
-                    <option v-for="item in wayOfPayment">{{item.name}}</option>}
+                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="requestFunds.id_way_pay" placeholder="收款方式" title="收款方式" disabled>
+                    <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>}
                   </select>
                 </div>
               </div>
@@ -223,28 +221,29 @@ Date.prototype.format = function(fmt) {
           });
       },
       clickedARowInShower(dataRow) {
-        this.requestFunds.account=dataRow.account;
-        this.requestFunds.amount=dataRow.amount;
-        this.requestFunds.id=dataRow.id;
-        this.requestFunds.id_applyer=dataRow.id_applyer;
-        this.requestFunds.id_approver=dataRow.id_approver;
-        this.requestFunds.id_approver2=dataRow.id_approver2;
-        this.requestFunds.id_project=dataRow.id_project;
-        this.requestFunds.id_relative=dataRow.id_relative;
-        this.requestFunds.id_way_pay=dataRow.id_way_pay;
-        this.requestFunds.is_paid=dataRow.is_paid;
-        this.requestFunds.name_applyer=dataRow.name_applyer;
-        this.requestFunds.project=dataRow.project;
-        this.requestFunds.reason_reject=dataRow.reason_reject;
-        this.requestFunds.reason_reject2=dataRow.reason_reject2;
-        this.requestFunds.remark=dataRow.remark;
-        this.requestFunds.result_approved=dataRow.result_approved;
-        this.requestFunds.result_approved2=dataRow.result_approved2;
-        this.requestFunds.time_applied=dataRow.time_applied;
-        this.requestFunds.time_approved=dataRow.time_approved;
-        this.requestFunds.time_approved2=dataRow.time_approved2;
-        this.requestFunds.use_for=dataRow.use_for;
-        this.requestFunds.way_pay=dataRow.way_pay;
+        this.requestFunds=dataRow;
+        // this.requestFunds.account=dataRow.account;
+        // this.requestFunds.amount=dataRow.amount;
+        // this.requestFunds.id=dataRow.id;
+        // this.requestFunds.id_applyer=dataRow.id_applyer;
+        // this.requestFunds.id_approver=dataRow.id_approver;
+        // this.requestFunds.id_approver2=dataRow.id_approver2;
+        // this.requestFunds.id_project=dataRow.id_project;
+        // this.requestFunds.id_relative=dataRow.id_relative;
+        // this.requestFunds.id_way_pay=dataRow.id_way_pay;
+        // this.requestFunds.is_paid=dataRow.is_paid;
+        // this.requestFunds.name_applyer=dataRow.name_applyer;
+        // this.requestFunds.project=dataRow.project;
+        // this.requestFunds.reason_reject=dataRow.reason_reject;
+        // this.requestFunds.reason_reject2=dataRow.reason_reject2;
+        // this.requestFunds.remark=dataRow.remark;
+        // this.requestFunds.result_approved=dataRow.result_approved;
+        // this.requestFunds.result_approved2=dataRow.result_approved2;
+        // this.requestFunds.time_applied=dataRow.time_applied;
+        // this.requestFunds.time_approved=dataRow.time_approved;
+        // this.requestFunds.time_approved2=dataRow.time_approved2;
+        // this.requestFunds.use_for=dataRow.use_for;
+        // this.requestFunds.way_pay=dataRow.way_pay;
         $('#mdlFinalAuditRqstingFunds').modal('toggle');
       },
       clearList () {
@@ -263,7 +262,6 @@ Date.prototype.format = function(fmt) {
         var queryContent=this.auditResult;
         queryContent.id_auditer=this.currentUserId;
         queryContent.conditions='WithFinalAuditedData';
-        // console.log(queryContent);
 
         var _this = this;
         this.$axios({
@@ -271,7 +269,7 @@ Date.prototype.format = function(fmt) {
           url: 'updateRequestFunds.php',
           data: qs.stringify(queryContent)
           }).then(function (response) {
-console.log(response.data);
+// console.log(response.data);
             if(response.data===true) {
               $('#mdlFinalAuditRqstingFunds').modal('toggle'); 
               _this.$toast({

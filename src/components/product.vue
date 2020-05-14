@@ -19,8 +19,8 @@
         <thead>
           <th v-for="title,index in productTitle">{{title}}</th>
         </thead>
-        <tbody @click="clickedARecorderToModify">
-          <tr v-for="row in listOfProduct">
+        <tbody>
+          <tr v-for="row in listOfProduct" @click="clickedARecorderToModify(row)">
             <td v-for="vlu in row" :title='vlu'>{{vlu}}</td>
           </tr>
         </tbody>
@@ -38,8 +38,8 @@
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputProductType">产品类别:</label>
-                <select id="slctType" type="text" name="productType" class="form-control" v-model="product.type" title="产品所属类别">
-                  <option v-for="item in typeListOfPrdct">{{item.type_product}}</option>
+                <select id="slctType" type="text" name="productType" class="form-control" v-model="product.id_type" title="产品所属类别">
+                  <option v-for="item in typeListOfPrdct" :value="item.id">{{item.type_product}}</option>
                 </select>
               </div>                
               <div class="col-lg form-inline">
@@ -69,8 +69,8 @@
             </div>
             <div class="row">
               <div class="col-lg form-inline">
-                <label for="inputRemark">备注信息:</label>
-                <input class="form-control" id="inputRemark" type="text" v-model="product.remark">
+                <label for="inputOther">备注信息:</label>
+                <input class="form-control" id="inputOther" type="text" v-model="product.other">
               </div>
               <div class="col-lg form-inline">
               </div>                
@@ -98,16 +98,28 @@ import qs from 'qs';
           keyWord:''
         },
         typeListOfPrdct:[],
+/*
+details: (...)
+id: (...)
+id_type: (...)
+model: (...)
+name: (...)
+other: (...)
+sellable: (...)
+time_create: (...)
+unit: (...)
+ */
         product:{
           id:'',
           type:'',
+          id_type:1,
           name:'',
           unit:'个',
           model:'',
           details:'',
           sellable:1,
           time_create:'',
-          remark:''
+          other:''
         },
         listOfProduct:[],
         productTitle:[],
@@ -121,21 +133,18 @@ import qs from 'qs';
           this.productTitle=[];
         }
         var _this = this;
-        this.$axios.get('getProduct.php')
-          .then(function (response) {
+        this.$axios.get('getProduct.php').then(function (response) {
             _this.listOfProduct = response.data;
             var ttl='';
             for(ttl in response.data[0]) {
               _this.productTitle.push(ttl);
             }
-          })
-
-          .catch(function (error) {
+          }).catch(function (error) {
             console.log(error);
           });
       },
       saveData () {
-        if(this.product.type.length<1) {
+        if(!this.product.id_type) {
           this.$toast({
             text: '请选择产品类型',
             type: 'danger',
@@ -168,11 +177,11 @@ import qs from 'qs';
           return;
         }
         //获取产品类型ID
-        for(var i=0;i<this.typeListOfPrdct.length;i++) {
-          if(this.typeListOfPrdct[i].type_product===this.product.type) {
-            this.product.type=this.typeListOfPrdct[i].id;
-          }
-        }
+        // for(var i=0;i<this.typeListOfPrdct.length;i++) {
+        //   if(this.typeListOfPrdct[i].type_product===this.product.type) {
+        //     this.product.type=this.typeListOfPrdct[i].id;
+        //   }
+        // }
         var _this=this;
         var url='';
         if(this.product.id!=='') {
@@ -195,11 +204,11 @@ import qs from 'qs';
             _this.productTitle=[];              
             $('#mdfRecorder').modal('toggle');
             _this.product.name='';
-            _this.product.type='';
+            _this.product.id_type='';
             _this.product.unit='个';
             _this.product.model='';
             _this.product.details='';
-            _this.product.remark='';
+            _this.product.other='';
           } else {
         console.log(response.data);
             _this.$toast({
@@ -218,22 +227,25 @@ import qs from 'qs';
           $('#mdfRecorder').modal('toggle');
         });
       },
-      clickedARecorderToModify:function (e) {
-        var el=e.toElement.parentElement;
-        this.product.id=el.children[0].innerHTML;
-        this.product.name=el.children[1].innerHTML;
-        this.product.unit=el.children[2].innerHTML;
-        // this.product.type=el.children[3].innerHTML;
-        for(var i=0;i<this.typeListOfPrdct.length;i++) {
-          if(el.children[3].innerHTML===this.typeListOfPrdct[i].id) {
-            this.product.type=this.typeListOfPrdct[i].type_product
-          }
-        }
-        this.product.model=el.children[4].innerHTML;
-        this.product.details=el.children[5].innerHTML;
-        this.product.sellable=el.children[6].innerHTML;
-        this.product.time_create=el.children[7].innerHTML;
-        this.product.other=el.children[8].innerHTML;
+      clickedARecorderToModify:function (dataRow) {
+// console.log(dataRow);
+// return;        
+        this.product=dataRow;
+        // var el=e.toElement.parentElement;
+        // this.product.id=el.children[0].innerHTML;
+        // this.product.name=el.children[1].innerHTML;
+        // this.product.unit=el.children[2].innerHTML;
+        // // this.product.type=el.children[3].innerHTML;
+        // for(var i=0;i<this.typeListOfPrdct.length;i++) {
+        //   if(el.children[3].innerHTML===this.typeListOfPrdct[i].id) {
+        //     this.product.type=this.typeListOfPrdct[i].type_product
+        //   }
+        // }
+        // this.product.model=el.children[4].innerHTML;
+        // this.product.details=el.children[5].innerHTML;
+        // this.product.sellable=el.children[6].innerHTML;
+        // this.product.time_create=el.children[7].innerHTML;
+        // this.product.other=el.children[8].innerHTML;
         $('#mdfRecorder').modal('toggle');
       },
       clearlistOfProduct () {
@@ -243,11 +255,11 @@ import qs from 'qs';
       newCreateProduct () {
         this.product.id='';
         this.product.name='';
-        this.product.type='';
+        this.product.id_type=1;
         this.product.unit='个';
         this.product.model='';
         this.product.details='';
-        this.product.remark='';
+        this.product.other='';
         this.product.sellable=1;
         $('#mdfRecorder').modal('toggle');
       }

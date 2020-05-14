@@ -19,8 +19,8 @@
           <thead>
             <th v-for="title,index in titleOfList" :width="widthOfTH[index]">{{title}}</th>
           </thead>
-          <tbody @click="clickedARecorderToModify">
-            <tr v-for="row in listOfClientOgnztn">
+          <tbody>
+            <tr v-for="row in listOfClientOgnztn" @click="clickedARecorderToModify(row)">
               <td v-for="vlu in row" :title='vlu'>{{vlu}}</td>
             </tr>
           </tbody>
@@ -147,16 +147,8 @@ export default {
       this.listOfClientOgnztn=[];
       this.titleOfList=[];
     },
-    clickedARecorderToModify:function (e) {
-      var el=e.toElement.parentElement;
-      this.theClientOgnztn.id=el.children[0].innerHTML;
-      this.theClientOgnztn.short_name=el.children[1].innerHTML;
-      this.theClientOgnztn.address=el.children[2].innerHTML;
-      this.theClientOgnztn.full_name=el.children[3].innerHTML;
-      this.theClientOgnztn.tax_num_in_invoice=el.children[4].innerHTML;
-      this.theClientOgnztn.address_in_invoice=el.children[5].innerHTML;
-      this.theClientOgnztn.account_in_invoice=el.children[6].innerHTML;
-      this.theClientOgnztn.other=el.children[7].innerHTML;
+    clickedARecorderToModify:function (dataRow) {
+      this.theClientOgnztn=dataRow;
       this.isNewCreate=false;
       $('#mdfRecorder').modal('toggle');
     },

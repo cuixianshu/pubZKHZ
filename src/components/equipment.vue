@@ -71,8 +71,8 @@
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputNameOfRspnsrblPrsn">责任:</label>
-                <select id="inputNameOfRspnsrblPrsn" type="text" name="name_responsible_person" class="form-control" v-model="equipment.name_responsible_person" placeholder="设备责任人" title="设备责任人">
-                  <option v-for="item in employees">{{item.name}}</option>
+                <select id="inputNameOfRspnsrblPrsn" type="text" name="name_responsible_person" class="form-control" v-model="equipment.id_responsible_person" placeholder="设备责任人" title="设备责任人">
+                  <option v-for="item in employees" :value="item.id">{{item.name}}</option>
                 </select>
               </div>
               <div class="col-lg form-inline">
@@ -180,12 +180,12 @@ import qs from 'qs';
         this.equipment.id_responsible_person=dataRow.id_responsible_person;
         this.equipment.name_responsible_person=dataRow.rspnsbl_prsn;
         this.equipment.remark=dataRow.remark;
-        this.equipment.remark=dataRow.is_own;
+        this.equipment.is_own=dataRow.is_own;
         $('#showerOfEquipments').modal('toggle');
       },
       saveInputedData() {
         for(var prop in this.equipment) {
-          if(prop!=='id' && prop!=='id_responsible_person' && prop!=='available' && prop!=='remark') {
+          if(prop!=='is_own' && prop!=='id' && prop!=='id_responsible_person' && prop!=='available' && prop!=='remark') {
             if(this.equipment[prop].length<2) {
             this.$toast({
               text: prop+'不能少于2个字',
@@ -204,13 +204,6 @@ import qs from 'qs';
           });
           return;              
         }
-        //获取负责人ID
-        for(var i=0;i<this.employees.length;i++) {
-          if(this.equipment.name_responsible_person===this.employees[i].name) {
-            this.equipment.id_responsible_person=this.employees[i].id;
-          }
-        }
-       
         var _this=this;
         var url='';
         if(this.equipment.id!=='') {

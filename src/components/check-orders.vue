@@ -59,7 +59,7 @@
                 </div>
                 <div class="col-lg form-inline">
                   <label for="slctMdfNameOfPrdct">产品:</label>
-                    <select id="slctMdfNameOfPrdct" type="text" name="product" class="form-control" placeholder="产品名称" v-model="slctdOrderForChecking.id_product" title="产品名称" disabled>
+                    <select id="slctMdfNameOfPrdct" type="text" name="product" class="form-control" placeholder="产品名称" v-model="slctdOrderForChecking.id_product" title="产品名称">
                       <option v-for="item in products" :value="item.id">{{item.name}}</option>
                     </select>            
                 </div>
@@ -205,7 +205,6 @@ Date.prototype.format = function(fmt) {
       getRcdrsForModifying() {
         if(this.rcdrSetFromDBSForModifying.length>0) {
           this.rcdrSetFromDBSForModifying=[];
-          // this.titleOfTable=[];
         }
         if(this.queryContent.dateRange.length<2){//如果日期填写不全,默认是过去1周
           var day1=new Date();
@@ -232,10 +231,6 @@ Date.prototype.format = function(fmt) {
             });
             return;
           } 
-          // var ttl='';
-          // for(ttl in response.data[0]) {
-          //   _this.titleOfTable.push(ttl);
-          // }
           _this.rcdrSetFromDBSForModifying = response.data;
         }).catch(function (error) {
           _this.$toast({
@@ -246,7 +241,6 @@ Date.prototype.format = function(fmt) {
         });
       },
       clearRcdrsInModifyer() {
-        // this.titleOfTable=[];
         this.rcdrSetFromDBSForModifying=[];
       },
       clickedARow:function (dataRow) {
@@ -337,7 +331,6 @@ Date.prototype.format = function(fmt) {
               duration: 2000
             });
           return;
-          //this.slctdOrderForChecking.rulePrice=='Not Given' || 
           } else if((this.slctdOrderForChecking.surcharge>0 && this.slctdOrderForChecking.use_surcharge.length<2) || (this.slctdOrderForChecking.surcharge<=0 && this.slctdOrderForChecking.use_surcharge.length>2)){
               this.$toast({
                 text: '垫付和说明不匹配!',
@@ -399,7 +392,6 @@ Date.prototype.format = function(fmt) {
     watch: {
       'slctdOrderForChecking.id_rule_price': {
         handler: function() {
-// console.log('rulePrice changed!')
           if(this.slctdOrderForChecking.id_rule_price==7) {//防止影响到后续操作
             return;
           }
@@ -465,8 +457,6 @@ Date.prototype.format = function(fmt) {
             method: 'post',
             url: 'getContacters.php'
         }).then(function (response) {
-// console.log(response.data);
-// return;
           _this.customers=response.data;
         }).catch(function (error) {
           _this.$toast({

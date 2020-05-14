@@ -201,7 +201,7 @@ Date.prototype.format = function(fmt) {
           url: 'getRequestFunds.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
-console.log(response.data);
+// console.log(response.data);
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到符合条件的记录!',
@@ -222,28 +222,29 @@ console.log(response.data);
           });
       },
       clickedARowInShower(dataRow) {
-        this.requestFunds.account=dataRow.account;
-        this.requestFunds.amount=dataRow.amount;
-        this.requestFunds.id=dataRow.id;
-        this.requestFunds.id_applyer=dataRow.id_applyer;
-        this.requestFunds.id_approver=dataRow.id_approver;
-        this.requestFunds.id_approver2=dataRow.id_approver2;
-        this.requestFunds.id_project=dataRow.id_project;
-        this.requestFunds.id_relative=dataRow.id_relative;
-        this.requestFunds.id_way_pay=dataRow.id_way_pay;
-        this.requestFunds.is_paid=dataRow.is_paid;
-        this.requestFunds.name_applyer=dataRow.name_applyer;
-        this.requestFunds.project=dataRow.project;
-        this.requestFunds.reason_reject=dataRow.reason_reject;
-        this.requestFunds.reason_reject2=dataRow.reason_reject2;
-        this.requestFunds.remark=dataRow.remark;
-        this.requestFunds.result_approved=dataRow.result_approved;
-        this.requestFunds.result_approved2=dataRow.result_approved2;
-        this.requestFunds.time_applied=dataRow.time_applied;
-        this.requestFunds.time_approved=dataRow.time_approved;
-        this.requestFunds.time_approved2=dataRow.time_approved2;
-        this.requestFunds.use_for=dataRow.use_for;
-        this.requestFunds.way_pay=dataRow.way_pay;
+        this.requestFunds=dataRow;
+        // this.requestFunds.account=dataRow.account;
+        // this.requestFunds.amount=dataRow.amount;
+        // this.requestFunds.id=dataRow.id;
+        // this.requestFunds.id_applyer=dataRow.id_applyer;
+        // this.requestFunds.id_approver=dataRow.id_approver;
+        // this.requestFunds.id_approver2=dataRow.id_approver2;
+        // this.requestFunds.id_project=dataRow.id_project;
+        // this.requestFunds.id_relative=dataRow.id_relative;
+        // this.requestFunds.id_way_pay=dataRow.id_way_pay;
+        // this.requestFunds.is_paid=dataRow.is_paid;
+        // this.requestFunds.name_applyer=dataRow.name_applyer;
+        // this.requestFunds.project=dataRow.project;
+        // this.requestFunds.reason_reject=dataRow.reason_reject;
+        // this.requestFunds.reason_reject2=dataRow.reason_reject2;
+        // this.requestFunds.remark=dataRow.remark;
+        // this.requestFunds.result_approved=dataRow.result_approved;
+        // this.requestFunds.result_approved2=dataRow.result_approved2;
+        // this.requestFunds.time_applied=dataRow.time_applied;
+        // this.requestFunds.time_approved=dataRow.time_approved;
+        // this.requestFunds.time_approved2=dataRow.time_approved2;
+        // this.requestFunds.use_for=dataRow.use_for;
+        // this.requestFunds.way_pay=dataRow.way_pay;
         $('#mdlPrmryAuditRqstingFunds').modal('toggle');
       },
       clearList () {
@@ -270,7 +271,7 @@ console.log(response.data);
           url: 'updateRequestFunds.php',
           data: qs.stringify(queryContent)
           }).then(function (response) {
-console.log(response.data);
+// console.log(response.data);
             if(response.data===true) {
               $('#mdlPrmryAuditRqstingFunds').modal('toggle'); 
               _this.$toast({

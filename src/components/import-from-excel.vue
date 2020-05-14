@@ -68,7 +68,8 @@ import ClipboardJS from 'clipboard';
         xlsData:[],
         tip_for_duplicate:'',
         duplicateRecorders:[],
-        effectiveCols:[]
+        effectiveCols:[],
+        indispensableCellValue:['订单类型','用车人手机号码','起点站','终点站','出发日期','出发时间','结束日期','结束时间','里程数','司机手机号码','车牌号码','用车单位/部门']//核心数据列
   	  }
   	},
   	methods:{
@@ -120,8 +121,8 @@ import ClipboardJS from 'clipboard';
                 return;                
               }
 // return;              
-              //核心数据列
-              var indispensableCellValue=['订单类型','用车人手机号码','起点站','终点站','出发日期','出发时间','结束日期','结束时间','里程数','司机手机号码','车牌号码','用车单位/部门'];
+              // //核心数据列
+              // var indispensableCellValue=['订单类型','用车人手机号码','起点站','终点站','出发日期','出发时间','结束日期','结束时间','里程数','司机手机号码','车牌号码','用车单位/部门'];
               var tempTitles=[];//获取表头,也就是属性名
               for (var index in tempArry) {
                 for (var prop in tempArry[index]) {//tempArry[index]为对象--
@@ -146,7 +147,7 @@ import ClipboardJS from 'clipboard';
                     //空白格用空格代替
                     tempArry[index][prop]=tempArry[index][prop]?tempArry[index][prop]:'';
                     //必有列的单元格不能空
-                    if(indispensableCellValue.includes(prop) && tempArry[index][prop]==''){
+                    if(_this.indispensableCellValue.includes(prop) && tempArry[index][prop]==''){
                       _this.$toast({
                         text: "‘"+prop+"’"+'－－是核心数据，不许有空格，行号：'+(Number(index)+2)+'。',
                         type: 'danger',
@@ -167,11 +168,11 @@ import ClipboardJS from 'clipboard';
                 $('#openFileSelector').val('');                
                 return;
               }
-              for(var i=0;i<indispensableCellValue.length;i++) {
+              for(var i=0;i<_this.indispensableCellValue.length;i++) {
                     
-                if(!tempTitles.includes(indispensableCellValue[i])){//是否缺少必有列
+                if(!tempTitles.includes(_this.indispensableCellValue[i])){//是否缺少必有列
                   _this.$toast({
-                    text: "'"+indispensableCellValue[i]+"'－－整列缺失,这是核心数据，不允许缺失！",
+                    text: "'"+_this.indispensableCellValue[i]+"'－－整列缺失,这是核心数据，不允许缺失！",
                     type: 'danger',
                     duration: 4000
                   }); 
@@ -186,7 +187,7 @@ import ClipboardJS from 'clipboard';
           reader.readAsArrayBuffer(f);
         }
         reader.readAsBinaryString(f);
-console.log(this.effectiveCols);
+
 
       },
       clearXlsx :function() {
@@ -259,7 +260,7 @@ console.log(this.effectiveCols);
         this.xlsTitle=[];
       },
       saveXlsxDataToDBS:function () {
-       
+// console.log(this.xlsData);
         var rspnData=this.axiosAsync();
       },
       clearTitle(val) {

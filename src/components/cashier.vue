@@ -18,12 +18,10 @@
       <table class="table table-hover">
         <thead>
           <th v-for="title,index in titlesOfList" :width="widthOfTH[index]">{{title}}</th>
-          <!-- <th><input class="checkbox" type="checkbox" @click=""></th> -->
         </thead>
         <tbody>
           <tr v-for="row,index in listOfFilledInvoice" @click="clickedARowInShower(row)">
             <td v-for="vlu in row" :title="vlu">{{vlu}}</td>
-            <!-- <td><input class="checkbox" type="checkbox"  name="selecter" @click=""></td> -->
           </tr>
         </tbody>
       </table>
@@ -48,8 +46,8 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctCashierProject">项目</label>
-                  <select id="slctCashierProject" type="text" name="cashierProject" class="form-control" placeholder="所属项目" v-model="cashier.project" title="所属项目">
-                    <option v-for="item in projects">{{item.prjct}}</option>}
+                  <select id="slctCashierProject" type="text" name="cashierProject" class="form-control" placeholder="所属项目" v-model="cashier.id_project" title="所属项目">
+                    <option v-for="item in projects" :value="item.id">{{item.prjct}}</option>}
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
@@ -60,14 +58,14 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctCashierAccount">账号</label>
-                  <select id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" placeholder="收款账号" v-model="cashier.account" title="收款账号">
-                  	<option v-for="item in ourAccounts">{{item.short_name}}</option>}
+                  <select id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" placeholder="收款账号" v-model="cashier.id_account" title="收款账号">
+                  	<option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>}
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="cashier.way" placeholder="收款方式" title="收款方式">
-                    <option v-for="item in wayOfPayment">{{item.name}}</option>}
+                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="cashier.id_way_pay" placeholder="收款方式" title="收款方式">
+                    <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>}
                   </select>
                 </div>
               </div>
@@ -198,27 +196,28 @@ Date.prototype.format = function(fmt) {
         this.amountInInvoice=dataRow.amount;
         this.cashier.amount=this.amountInInvoice;
         this.cashier.id_project=dataRow.id_project;
-        for(var i=0;i<this.projects.length;i++) {
-          if(this.cashier.id_project==this.projects[i].id) {
-            this.cashier.project=this.projects[i].prjct;
-          }
-        }        
         $('#mdlCashier').modal('toggle');
       },
       saveTheCollectedData() {
-        for(var i=0;i<this.ourAccounts.length;i++) {
-          if(this.cashier.account===this.ourAccounts[i]['short_name']) {
-            this.cashier.id_account=this.ourAccounts[i]['id'];
-          }
-        }
-        for(var i=0;i<this.wayOfPayment.length;i++) {
-          if(this.cashier.way===this.wayOfPayment[i]['name']) {
-            this.cashier.id_way_pay=this.wayOfPayment[i]['id'];
-          }
-        }
-        if(this.cashier.project=='') {
+        if(!this.cashier.id_project) {
           this.$toast({
             text: '请选择项目!',
+            type: 'info',
+            duration: 2000
+          });
+          return false;          
+        }        
+        if(!this.cashier.id_way_pay) {
+          this.$toast({
+            text: '请选择付款方式!',
+            type: 'info',
+            duration: 2000
+          });
+          return false;          
+        }
+        if(!this.cashier.id_account) {
+          this.$toast({
+            text: '请选择收款账户!',
             type: 'info',
             duration: 2000
           });
@@ -267,15 +266,13 @@ Date.prototype.format = function(fmt) {
           }
           queryContent.conditions='WithManualData';
         }
-// console.log(queryContent);
-// return;
         var _this=this;
         this.$axios({
           method: 'post',
           url: 'updateCashier.php',
           data: qs.stringify(queryContent)
           }).then(function (response) {
-console.log(response.data);
+//console.log(response.data);
             if(response.data===true) {
               $('#mdlCashier').modal('toggle'); 
               _this.$toast({
@@ -324,15 +321,6 @@ console.log(response.data);
       }
     },
     watch:{
-      'cashier.project':{
-        handler() {
-          for(var i=0;i<this.projects.length;i++) {
-            if(this.cashier.project==this.projects[i].prjct) {
-              this.cashier.id_project=this.projects[i].id;
-            }
-          }
-        }
-      }
     },
     beforeCreate:function() {
       var _this=this;

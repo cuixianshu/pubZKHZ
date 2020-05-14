@@ -6,7 +6,7 @@
         <label for="queryConditions">关键词:</label>
         <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="用车人,单位,项目等搜索关键词">
         <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="时间区间,默认最近7天" :shortcuts="shortcuts" placeholder="发生业务的时间范围"></datepicker> 
-        <button class="btn btn-primary" @click="getRecordersFromDBSToRequestInvoice">🔍获取数据</button>
+        <button class="btn btn-primary" @click="getOrders">🔍获取数据</button>
       </div>
       <div class="listOfSelectedRecorders" v-if="rcdrsSetFromDBSForRequesting.length>0">
         <table class="table table-hover">
@@ -168,7 +168,7 @@ Date.prototype.format = function(fmt) {
           this.changeAllCheckboxStatus("requesting");
         }
       },
-      getRecordersFromDBSToRequestInvoice:function() {
+      getOrders:function() {
         if(this.detailsOfRequest.nameOfOurCmpny==='' && this.detailsOfRequest.cstmrOgnztnName==='' && this.detailsOfRequest.amount===0){
           this.cloneddetailsOfRequest=JSON.stringify(this.detailsOfRequest);
         }
@@ -185,13 +185,15 @@ Date.prototype.format = function(fmt) {
           var day2 = new Date();
           day2.setDate(day2.getDate());
           this.queryContent.dateRange[1] = day2.format("yyyy-MM-dd");
-        }        
+        }
+        this.queryContent.conditions="NotRequestedInvoice";        
         var _this = this;
         this.$axios({
             method: 'post',
-            url: 'getRcdrsFromOrdersToRequestInvoice.php',
+            url: 'getOrders.php',
             data: qs.stringify(_this.queryContent)
         }).then(function (response) {
+console.log(response.data);
         	if(response.data.length>0){
               _this.rcdrsSetFromDBSForRequesting = response.data;
               _this.listOfCheckboxStatement = new Array(response.data.length).fill(false);

@@ -6,17 +6,17 @@
         <label for="queryConditions">关键词:</label>
         <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="用车人,单位,项目等搜索关键词">
         <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="填开发票的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="填开发票的时间范围"></datepicker> 
-        <button class="btn btn-primary" @click="getRecordersFromFilledInvoice">🔍获取数据</button>
+        <button class="btn btn-primary" @click="getFilledInvoices">🔍获取数据</button>
       </div>
     </div>
-    <div class="showerOfFilledInvoice" v-if="dataOfFilledInvoiceFromDBS.length>0">
+    <div class="showerOfFilledInvoice" v-if="filledInvoices.length>0">
       <table class="table table-hover">
         <thead>
           <th v-for="title,index in titlesOfData" :width="widthOfTH[index]">{{title}}</th>
           <!-- <th><input class="checkbox" type="checkbox" @click=""></th> -->
         </thead>
         <tbody @click="clickedARowInShower">
-          <tr v-for="row,index in dataOfFilledInvoiceFromDBS">
+          <tr v-for="row,index in filledInvoices">
             <td v-for="vlu in row" :title="vlu">{{vlu}}</td>
             <!-- <td><input class="checkbox" type="checkbox"  name="selecter" @click=""></td> -->
           </tr>
@@ -83,7 +83,7 @@ Date.prototype.format = function(fmt) {
         },
         titlesOfData:[],
         widthOfTH:['5%','11%','8%','6%','8%','10%','7%','12%','6%','7%','5%','11%','4%'],
-        dataOfFilledInvoiceFromDBS:[],
+        filledInvoices:[],
         idOfFilledInvoice:'',
         numberOfInvoice:'',
         currentUser:1,
@@ -94,7 +94,7 @@ Date.prototype.format = function(fmt) {
      datepicker
     },    
     methods: {
-      getRecordersFromFilledInvoice() {
+      getFilledInvoices() {
         if(this.queryContent.dateRange.length<2 || !this.queryContent.dateRange[0] || !this.queryContent.dateRange[1]){//如果日期填写不全,默认是过去1周
           var day1=new Date();
           day1.setDate(day1.getDate() - 7);
@@ -102,13 +102,14 @@ Date.prototype.format = function(fmt) {
           var day2 = new Date();
           day2.setDate(day2.getDate());
           this.queryContent.dateRange[1] = day2.format("yyyy-MM-dd");
-        }      	
+        }
+        this.queryContent.conditions="Filled";
         var _this = this;
-        this.dataOfFilledInvoiceFromDBS=[];
+        this.filledInvoices=[];
         this.titlesOfData=[];
         this.$axios({
           method: 'post',
-          url: 'getListOfFilledInvoiceWithoutCollectedAndWithoutCanceled.php',
+          url: 'getRequestedInvoices.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
             if(response.data.length<1) {
@@ -118,7 +119,7 @@ Date.prototype.format = function(fmt) {
                   duration: 1000
               });
             } else {
-              _this.dataOfFilledInvoiceFromDBS=response.data;
+              _this.filledInvoices=response.data;
               for(var title in response.data[0]) {
                 _this.titlesOfData.push(title);
               }              
@@ -140,7 +141,7 @@ Date.prototype.format = function(fmt) {
         $('#invoiceModifyer').modal('toggle');
       },
       saveTheChangedData() {
-console.log(this.dataOfFilledInvoiceFromDBS[0]['ID']);      	
+console.log(this.filledInvoices[0]['ID']);      	
         var _this = this;
       	if(this.whyCanceled.length<4) {
           this.$toast({
@@ -164,9 +165,9 @@ console.log(this.dataOfFilledInvoiceFromDBS[0]['ID']);
                 type: 'success',
                 duration: 1000
               });
-              for(var i=0;i<_this.dataOfFilledInvoiceFromDBS.length;i++) {
-              	if(_this.dataOfFilledInvoiceFromDBS[i]['ID']==_this.idOfFilledInvoice) {
-              	  _this.dataOfFilledInvoiceFromDBS.splice(i,1);
+              for(var i=0;i<_this.filledInvoices.length;i++) {
+              	if(_this.filledInvoices[i]['ID']==_this.idOfFilledInvoice) {
+              	  _this.filledInvoices.splice(i,1);
               	  i--;	
               	}
               }

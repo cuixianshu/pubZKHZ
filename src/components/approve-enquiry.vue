@@ -222,7 +222,6 @@ Date.prototype.format = function(fmt) {
           url: 'getEnquiries.php',
           data: qs.stringify(_this.queryContent)
         }).then(function (response) {
-// return;
           if(response.data.length>0) {
             _this.listOfCommitedEnquiryWithoutApproving = response.data;
             for(var i =0;i<_this.listOfCommitedEnquiryWithoutApproving.length;i++) {
@@ -230,13 +229,6 @@ Date.prototype.format = function(fmt) {
                 _this.approvedResult.id_selected_enquiry=_this.listOfCommitedEnquiryWithoutApproving[i].id
               }
             }
- // console.log(_this.listOfCommitedEnquiryWithoutApproving);
-// return;
-
-            // var ttl='';
-            // for(ttl in response.data[0]) {
-            //   _this.titleOfEnquiriedList.push(ttl);
-            // }              
           } else {
             _this.$toast({
               text: '没有符合条件的记录',

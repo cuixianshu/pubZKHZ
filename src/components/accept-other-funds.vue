@@ -9,21 +9,17 @@
           <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="填开发票的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="填开发票的时间范围"></datepicker> 
           <button class="btn btn-primary" @click="getListOfTurnedInFunds">🔍获取数据</button>
           <button class="btn btn-secondary" @click="clearList" v-if="listOfTurnInFunds.length>0">清除</button>            
-<!--           <button id="byhand" @click="collectByHand" class="btn btn-primary" type="button">手工填表</button> -->
         </div>          
       </div>
-
     </div>
     <div class="showerOfFilledInvoice" v-if="listOfTurnInFunds.length>0">
       <table class="table table-hover">
         <thead>
           <th v-for="title,index in titlesOfList" :width="widthOfTH[index]">{{title}}</th>
-          <!-- <th><input class="checkbox" type="checkbox" @click=""></th> -->
         </thead>
         <tbody>
           <tr v-for="row,index in listOfTurnInFunds" @click="clickedARowInShower(row)">
             <td v-for="vlu in row" :title="vlu">{{vlu}}</td>
-            <!-- <td><input class="checkbox" type="checkbox"  name="selecter" @click=""></td> -->
           </tr>
         </tbody>
       </table>
@@ -32,13 +28,10 @@
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">  
           <div class="modal-header">
-            <span> <!-- v-if="cashier.id_turn_in_funds===''?false:true" -->
+            <span>
               <h5>其它收款---缴款ID:{{cashier.id_turn_in_funds}},金额:￥{{cashier.amount}}
               </h5>
             </span>
-<!--             <span v-else>
-              <h5>收款入账   手工收款</h5>
-            </span>  --> 
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>  
               </button>  
@@ -194,7 +187,6 @@ Date.prototype.format = function(fmt) {
           });
       },
       clickedARowInShower(dataRow) {
-// console.log(dataRow);
         this.cashier.amount=dataRow.amount;
         this.cashier.id_turn_in_funds=dataRow.id;
         this.cashier.id_payer=dataRow.id_payer;
@@ -207,19 +199,6 @@ Date.prototype.format = function(fmt) {
         $('#mdlCashier').modal('toggle');
       },
       saveTheCollectedData() {
-// console.log(this.cashier);
-// return;        
-        // for(var i=0;i<this.ourAccounts.length;i++) {
-        //   if(this.cashier.account===this.ourAccounts[i]['short_name']) {
-        //     this.cashier.id_account=this.ourAccounts[i]['id'];
-        //   }
-        // }
-        // for(var i=0;i<this.wayOfPayment.length;i++) {
-        //   if(this.cashier.way===this.wayOfPayment[i]['name']) {
-        //     this.cashier.id_way_pay=this.wayOfPayment[i]['id'];
-        //   }
-        // }
-        
         var queryContent={
           id_turn_in_funds:this.cashier.id_turn_in_funds,
           id_account:this.cashier.id_account,
@@ -295,15 +274,6 @@ Date.prototype.format = function(fmt) {
       }
     },
     watch:{
-      // 'cashier.project':{
-      //   handler() {
-      //     for(var i=0;i<this.projects.length;i++) {
-      //       if(this.cashier.project==this.projects[i].prjct) {
-      //         this.cashier.id_project=this.projects[i].id;
-      //       }
-      //     }
-      //   }
-      // }
     },
     beforeCreate:function() {
       var _this=this;
