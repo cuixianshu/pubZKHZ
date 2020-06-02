@@ -146,13 +146,13 @@ Date.prototype.format = function(fmt) {
           detail:'',
           date_needed:'',
           remark:'',
-          id_applier:1
+          id_applier:this.$store.state.user.id_user
         },
         approvedResult:{
           id_applyedPurchasing:'',
           result:0,
           whyDisagree:'',
-          idApprover:1,
+          idApprover:this.$store.state.user.id_user,
           conditions:''//用于通知后台如何操作
 
         },

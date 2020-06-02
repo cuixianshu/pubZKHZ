@@ -144,7 +144,7 @@ Date.prototype.format = function(fmt) {
         widthOfTH:['4%','9%','8%','6%','17%','11%','7%','12%','6%','7%','6%','7%'],
         listOfRequestFunds:[],
         idOfAppliedPcsg:'',
-        currentUserId:1,
+        currentUserId:this.$store.state.user.id_user,
         requestFunds:{
           account: '',
           amount: '',

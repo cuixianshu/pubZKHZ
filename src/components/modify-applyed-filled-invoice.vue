@@ -304,7 +304,7 @@ Date.prototype.format = function(fmt) {
             numberOfInvoice:'',
             memForFilling:'',
             imageOfInvoice:'',
-            idOfFiller:1
+            idOfFiller:this.$store.state.user.id_user
           },
           tmpBSTable:{
           	table:{},
@@ -612,7 +612,7 @@ Date.prototype.format = function(fmt) {
         queryContent.nameOfGoods=this.infoInRequestInvoice.nameOfGoods;
         queryContent.amount=this.infoInRequestInvoice.amount;
         queryContent.memInRqst=this.infoInRequestInvoice.memInRqst;
-        queryContent.idOfApplyer=this.infoInRequestInvoice.idOfApplyer=1;
+        queryContent.idOfApplyer=this.infoInRequestInvoice.idOfApplyer;
         queryContent.project=this.infoInRequestInvoice.project;
         var _this=this;
         var rqstPage="updateRqstInvoiceWithModifyedData.php";

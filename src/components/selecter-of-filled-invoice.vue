@@ -122,7 +122,7 @@ Date.prototype.format = function(fmt) {
             data:qs.stringify(queryCondition)
         }).then(function (response) {
           listInTheID = response.data;
-          _this.$router.push({name:'details-in-a-filled-invoice',params:{data: listInTheID}});
+          _this.$router.push({name:'invoices_details',params:{data: listInTheID}});
         }).catch(function (error) {
           _this.$toast({
             text: '异步通信错误!'+error,

@@ -145,7 +145,7 @@ export default {
         endDate:'',
         startPoint:'',
         endPoint:'',
-        id_operator:'',
+        id_operator:this.$store.state.user.id_user,
         id_equipment:'',
         id_payer:'',
         mem:''

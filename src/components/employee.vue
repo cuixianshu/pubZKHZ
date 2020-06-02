@@ -268,37 +268,38 @@ import qs from 'qs';
       clickedARecorderToModify(dataRow) {
         // console.log(dataRow);
         // return;
-        this.employee.id=dataRow.id;
-        this.employee.name=dataRow.name;
-        this.employee.gender=dataRow.gender;
-        this.employee.born_date=dataRow.born_date;
-        this.employee.idcard=dataRow.idcard;
-        this.employee.education=dataRow.education;
-        this.employee.graduate_from=dataRow.graduate_from;
-        this.employee.address=dataRow.address;
-        this.employee.tel_private=dataRow.tel_private;
-        this.employee.tel_work=dataRow.tel_work;
-        this.employee.emergency_contacter=dataRow.emergency_contacter;
-        this.employee.tel_emergency=dataRow.tel_emergency;
-        this.employee.date_join=dataRow.date_join;
-        this.employee.id_department=dataRow.id_department;
-        this.employee.name_department=dataRow.name_department;
-        this.employee.position=dataRow.position;
-        this.employee.certificate_and_rank=dataRow.certificate_and_rank;
-        this.employee.date_leave=dataRow.date_leave;
-        this.employee.why_leave=dataRow.why_leave;
-        this.employee.id_operator=dataRow.id_operator;
-        this.employee.name_operator=dataRow.name_operator;
-        this.employee.time_create=dataRow.time_create;
-        this.employee.time_last_modify=dataRow.time_last_modify;
-        this.employee.remark=dataRow.remark;
-        this.employee.is_own=dataRow.is_own;
+        this.employee=dataRow;
+        // this.employee.id=dataRow.id;
+        // this.employee.name=dataRow.name;
+        // this.employee.gender=dataRow.gender;
+        // this.employee.born_date=dataRow.born_date;
+        // this.employee.idcard=dataRow.idcard;
+        // this.employee.education=dataRow.education;
+        // this.employee.graduate_from=dataRow.graduate_from;
+        // this.employee.address=dataRow.address;
+        // this.employee.tel_private=dataRow.tel_private;
+        // this.employee.tel_work=dataRow.tel_work;
+        // this.employee.emergency_contacter=dataRow.emergency_contacter;
+        // this.employee.tel_emergency=dataRow.tel_emergency;
+        // this.employee.date_join=dataRow.date_join;
+        // this.employee.id_department=dataRow.id_department;
+        // this.employee.name_department=dataRow.name_department;
+        // this.employee.position=dataRow.position;
+        // this.employee.certificate_and_rank=dataRow.certificate_and_rank;
+        // this.employee.date_leave=dataRow.date_leave;
+        // this.employee.why_leave=dataRow.why_leave;
+        // this.employee.id_operator=dataRow.id_operator;
+        // this.employee.name_operator=dataRow.name_operator;
+        // this.employee.time_create=dataRow.time_create;
+        // this.employee.time_last_modify=dataRow.time_last_modify;
+        // this.employee.remark=dataRow.remark;
+        // this.employee.is_own=dataRow.is_own;
         $('#showerOfEmployee').modal('toggle');
       },
       saveInputedData() {
         for(var prop in this.employee) {
-          if(prop!=='id' && prop!=='gender' && prop!=='id_department' && prop!=='id_operator' && prop!=='name_operator' && prop!=='remark' && prop!=='time_create' && prop!=='date_leave' && prop!=='why_leave' && prop!=='time_last_modify' && prop!=='is_own' ) {
-            if(this.employee[prop].length<2) {
+          if(prop!=='id' && prop!=='gender' && prop!=='id_department' && prop!=='id_operator' && prop!=='name_operator' && prop!=='remark' && prop!=='time_create' && prop!=='date_leave' && prop!=='why_leave' && prop!=='time_last_modify' && prop!=='is_own' && prop!=='from_ognztn' && prop!=='id_creater' && prop!=='id_last_modifyer') {
+            if(this.employee[prop] && this.employee[prop].length<2) {
             this.$toast({
               text: prop+'的输入不符合要求',
               type: 'info',
@@ -308,8 +309,8 @@ import qs from 'qs';
             }
           }
         }
-        if(this.employee.date_leave!=='') {
-          if(this.employee.why_leave.length<4) {
+        if(this.employee.date_leave) {
+          if(this.employee.why_leave.length<4 || !this.employee.why_leave) {
             this.$toast({
               text: '离职原因不符合要求',
               type: 'info',
@@ -330,19 +331,25 @@ import qs from 'qs';
             this.employee.id_operator=this.operators[i].id;
           }
         }
+        this.employee.id_operator=this.$store.state.user.id_user;
+// console.log(this.employee);
+// return;
         var _this=this;
         var url='';
         if(this.employee.id!=='') {
           url='updateEmployees.php';
+          this.employee.conditions='updateInfos';
         } else {
           url='insertNewToEmployees.php';
+          
         }
         this.$axios({
           method: 'post',
           url: url,
           data: qs.stringify(_this.employee)
         }).then(function (response) {
-console.log(response.data);
+// console.log(response.data);
+// return;
           if(response.data===true) {
               _this.$toast({
                 text: '成功保存数据!',
@@ -377,6 +384,7 @@ console.log(response.data);
             _this.employee.time_last_modify='';
             _this.employee.remark='';
           } else {
+            console.log(response.data);
             _this.$toast({
               text: '通信错误!'+response.data,
               type: 'danger',

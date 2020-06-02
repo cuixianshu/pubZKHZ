@@ -134,7 +134,7 @@ Date.prototype.format = function(fmt) {
         titlesOfList:['收款ID','项目','收款金额','收款方式','收款账户','备注信息','收款日期','收款人'],
         widthOfTH:['8%','12%','12%','12%','12%','12%','12%','12%'],
         listOfCashies:[],
-        currentUserId:1,
+        currentUserId:this.$store.state.user.id_user,
         approvedResult:{
         },
         ourAccounts:[],

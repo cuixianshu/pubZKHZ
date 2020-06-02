@@ -147,8 +147,7 @@ import qs from 'qs';
                 duration: 2000
               });              
             }
-          })
-          .catch(function (error) {
+          }).catch(function (error) {
             console.log(error);
           });
       },

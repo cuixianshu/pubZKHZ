@@ -7,6 +7,7 @@ import 'babel-polyfill';
 import Vue from 'vue';
 //import App from './App'
 import router from '@/router';
+import store from '@/store/store.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 // import cmpntHeader from './components/cmpnt-header';../node_modules/
@@ -36,8 +37,6 @@ Vue.prototype.GLOBAL=globalVariable;
 axios.defaults.baseURL = process.env.API_ROOT;
 Vue.prototype.$axios = axios;
 
-
-
 //以下为测试全局组件代码
 Vue.use(toastRegistry);
 //测试部分结束
@@ -53,6 +52,7 @@ Vue.config.productionTip = false;
 var mainApp = new Vue({
   el: '#main-menu',
   router,
+  store,
   components: { mainMenu },
   template: '<main-menu/>'
 });

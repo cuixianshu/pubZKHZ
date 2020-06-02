@@ -147,7 +147,7 @@ Date.prototype.format = function(fmt) {
         widthOfTH:['5%','13%','9%','11%','14%','7%','7%','7%','7%','10%','10%'],
         listOfRequestFunds:[],
         idOfRequestFunds:'',
-        currentUserId:1,
+        currentUserId:this.$store.state.user.id_user,
         requestFunds:{},
         wayOfPayment:[],
         projects:[],

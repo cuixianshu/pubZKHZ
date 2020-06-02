@@ -146,7 +146,7 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5>比价单--请购ID:{{id_applyedPurchasing}}(<span style="color:red;">红色为以前选定的商家</span>)</h5>
+          <h5>比价单--请购ID:{{id_applyedPurchasing}}</h5><!-- (<span style="color:red;">红色为以前选定的商家</span>) -->
         </div>
         <div class="modal-body">
           <div class="container-fluid">
@@ -248,7 +248,7 @@ Date.prototype.format = function(fmt) {
           wayOfPayment:'',
           promiseDeliveryDate:'',
           remark:'',
-          id_enquiryer:1,
+          id_enquiryer:this.$store.state.user.id_user,
           actualAmount:0,
           idApplyed:''
         },

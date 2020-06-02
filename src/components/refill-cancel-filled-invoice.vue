@@ -86,7 +86,7 @@ Date.prototype.format = function(fmt) {
         filledInvoices:[],
         idOfFilledInvoice:'',
         numberOfInvoice:'',
-        currentUser:1,
+        currentUser:this.$store.state.user.id_user,
         whyCanceled:''
       }
     },

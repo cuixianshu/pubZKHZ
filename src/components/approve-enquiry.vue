@@ -117,13 +117,13 @@ Date.prototype.format = function(fmt) {
           detail:'',
           neededDate:'',
           remark:'',
-          id_applier:1
+          id_applier:this.$store.state.user.id_user
         },
         approvedResult:{
           idApplied:'',
           result:1,
           whyDisagree:'',
-          idApprover:1,
+          idApprover:this.$store.state.user.id_user,
           id_selected_enquiry:''
         },
         listOfAppliedPurchasingWithCommitedEnquiry:[],

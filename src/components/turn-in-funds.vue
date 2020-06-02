@@ -124,7 +124,7 @@ Date.prototype.format = function(fmt) {
         titlesOfList:[],
         widthOfTH:['5%','11%','8%','6%','8%','10%','7%','12%','6%','7%','5%','11%','4%'],
         listOfTurnInFunds:[],
-        currentUserId:1,
+        currentUserId:this.$store.state.user.id_user,
         turnInFundsNotice:{
           id:'',
           cause:'',

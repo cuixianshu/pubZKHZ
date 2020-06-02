@@ -144,7 +144,7 @@ Date.prototype.format = function(fmt) {
         titlesOfList:['请款ID','项目','请款金额','付款方式','收款账号','用途','关联业务','备注','请款人','出纳员','付款时间'],
         widthOfTH:['7%','11%','8%','8%','14%','12%','8%','10%','6%','7%','9%'],
         listOfPaidRqstedFunds:[],
-        currentUserId:1,
+        currentUserId:this.$store.state.user.id_user,
         payment:{
           // account:'中科平安',
           // way_pay:'',

@@ -143,7 +143,7 @@ Date.prototype.format = function(fmt) {
         titlesOfList:['请款ID','项目','金额','付款方式','收款账号','用途','关联业务','备注','请款人','请款时间','审批人','批准意见'],
         widthOfTH:['5%','13%','6%','6%','12%','10%','7%','12%','6%','7%','5%','11%'],
         listOfRqstedFunds:[],
-        currentUserId:1,
+        currentUserId:this.$store.state.user.id_user,
         requestFunds:{
           account:'',
           amount:'',

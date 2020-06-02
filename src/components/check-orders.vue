@@ -340,9 +340,11 @@ Date.prototype.format = function(fmt) {
               return;
           }
         }
+        this.slctdOrderForChecking.id_verifyer=this.$store.state.user.id_user;
         var queryContent=this.slctdOrderForChecking;
         queryContent.conditions="WithCheckedData";
-
+// console.log(queryContent);
+// return;
         //保存到数据库
         var _this = this;
         this.$axios({

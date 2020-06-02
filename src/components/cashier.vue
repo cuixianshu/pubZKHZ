@@ -129,7 +129,7 @@ Date.prototype.format = function(fmt) {
         idOfFilledInvoice:'',
         numberOfInvoice:'',
         amountInInvoice:0,
-        currentUserId:1,
+        currentUserId:this.$store.state.user.id_user,
         cashier:{
           account:'中科平安',
           id_account:1,

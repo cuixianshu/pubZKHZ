@@ -131,7 +131,7 @@ Date.prototype.format = function(fmt) {
         },
         widthOfTH:['9%','12%','11%','12%','8%','9%','10%','8%','8%','6%','7%'],
         operateType:'2',//0:退票；1：改签;3选择
-        currentUserID:1
+        currentUserID:this.$store.state.user.id_user
   	  }	
   	},
     components: {

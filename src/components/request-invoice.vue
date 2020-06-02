@@ -141,7 +141,7 @@ Date.prototype.format = function(fmt) {
           amount:0,
           mem:'',
           listOfIDS:[],
-          idOfApplyer:1
+          idOfApplyer:this.$store.state.user.id_user
         },
         shortcuts:false,
         queryContent:{
@@ -193,7 +193,7 @@ Date.prototype.format = function(fmt) {
             url: 'getOrders.php',
             data: qs.stringify(_this.queryContent)
         }).then(function (response) {
-console.log(response.data);
+// console.log(response.data);
         	if(response.data.length>0){
               _this.rcdrsSetFromDBSForRequesting = response.data;
               _this.listOfCheckboxStatement = new Array(response.data.length).fill(false);

@@ -148,7 +148,7 @@ Date.prototype.format = function(fmt) {
         widthOfTH:['11%','8%','9%','7%','6%','8%','5%','5%','5%','6%','6%','6%','6%','6','6'],
         stateOfTheTicket:{},
         listOfTickets:[],
-        currentUserId:1,
+        currentUserId:this.$store.state.user.id_user,
         cashier:{
           id_account:1,
           id_way_pay:2,

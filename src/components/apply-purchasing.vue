@@ -147,7 +147,7 @@ Date.prototype.format = function(fmt) {
           detail:'',
           date_needed:'',
           remark:'',
-          id_applier:1,
+          id_applier:this.$store.state.user.id_user,
           conditions:''//用于标识后台如何操作
         },
         listOfAppliedPurchasings:[],

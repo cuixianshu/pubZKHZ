@@ -127,7 +127,7 @@ export default {
         miss_meal_fee:'',
         other:'',
         name_ognztn:'',
-        id_operater:1
+        id_operater:this.$store.state.user.id_user
       },
       isNewCreate:false,
       clntPrntOgnztns:[],
