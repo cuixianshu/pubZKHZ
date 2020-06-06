@@ -957,6 +957,9 @@ Date.prototype.format = function(fmt) {
 .father {
   width: 100%;
 }
+h5 {
+  color: #007bff;
+}
 #modalRqstInvoiceModifyer input,#modalRqstInvoiceModifyer select {
   width: 85%;
 }	

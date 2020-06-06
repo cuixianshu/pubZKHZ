@@ -414,6 +414,9 @@ Date.prototype.format = function(fmt) {
   .row {
     margin:5px 0px;
   }
+  h5 {
+    color: #007bff;
+  }
   .btngroup {
     display: inline-block;
     text-align: right;

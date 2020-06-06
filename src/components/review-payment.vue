@@ -6,7 +6,7 @@
         <div class="col-lg form-inline searchcontent">
           <label for="queryConditions">关键词:</label> 
           <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位,请款人 收款账号 用途等关键词">
-          <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="填开发票的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="填开发票的时间范围"></datepicker> 
+          <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="付款的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="付款的时间范围"></datepicker> 
           <button class="btn btn-primary" @click="getListOfPaidRqstedFunds">🔍获取数据</button>
           <button class="btn btn-secondary" @click="clearList" v-if="listOfPaidRqstedFunds.length>0">清除</button>            
         </div>          

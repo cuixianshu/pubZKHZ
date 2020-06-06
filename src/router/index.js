@@ -6,14 +6,14 @@ import untreatedWorks from '@/components/untreated-works';
 import receivesAndReturns from '@/components/receives-returns';
 import operatedHistory from '@/components/operated-history';
 import reporters from '@/components/reporters';
-// import checkingAndStoring from '@/components/manage-material';
+import acceptanceCheck from '@/components/acceptance-check.vue';
 import ticketCahier from '@/components/ticket-cashier.vue';
-import distributeExwareHouse from '@/components/distribute-ex';
-import takeInventory from '@/components/take-inventory';
-import requestPurchasing from '@/components/purchasing-supplier';
-import purchasingProgress from '@/components/purchasing-progress';
+import materialsDistribute from '@/components/materials-distribute.vue';
+import materialsInventory from '@/components/materials-inventory.vue';
+import materialsApproveApplying from '@/components/materials-approve-applying.vue';
+// import purchasingProgress from '@/components/purchasing-progress';
 import turnInFunds from '@/components/turn-in-funds';
-import payFor from '@/components/pay-receipt';
+import materialSearchModify from '@/components/material-search-modify.vue';
 import cashier from '@/components/cashier';
 import requestPaying from '@/components/request-paying';
 import acceptOtherFunds from '@/components/accept-other-funds';
@@ -51,6 +51,7 @@ import rqstRfdFee from '@/components/rqst-rfdtkt-paying.vue';
 import home from '@/components/home.vue';
 import authorizations from '@/components/authorizations.vue';
 import changePswd from '@/components/change-pswd.vue';
+import materialsApply from '@/components/materials-apply.vue';
 Vue.use(Router);
 
 const router =  new Router({
@@ -92,36 +93,36 @@ const router =  new Router({
       name: 'reports',
       component: reporters
     },
-    // {
-    //   path: '/checkingAndStoring',
-    //   name: 'checking-Storing',
-    //   component: checkingAndStoring
-    // },
+    {
+      path: '/acceptanceCheck',
+      name: 'materials_acceptance',
+      component: acceptanceCheck
+    },
     {
       path: '/ticket-cashier',
       name: 'finance_tkt_cashier',
       component: ticketCahier
     },
     {
-      path: '/distributeExwareHouse',
-      name: 'distribute-ex',
-      component: distributeExwareHouse
+      path: '/materialsDistribute',
+      name: 'materials_distribute',
+      component: materialsDistribute
     },
     {
-      path: '/takeInventory',
+      path: '/materialsInventory',
       name: 'materials_Inventory',
-      component: takeInventory
+      component: materialsInventory
     },
     {
-      path: '/requestPurchasing',
-      name: 'purchasing_supplier',
-      component: requestPurchasing
+      path: '/materialsApproveApplying',
+      name: 'materials_approve_applying',
+      component: materialsApproveApplying
     },
-    {
-      path: '/purchasingProgress',
-      name: 'purchasing-progress',
-      component: purchasingProgress
-    },
+    // {
+    //   path: '/purchasingProgress',
+    //   name: 'purchasing-progress',
+    //   component: purchasingProgress
+    // },
     {
       path: '/turn-in-funds',
       name: 'personal_turn_in',
@@ -133,9 +134,9 @@ const router =  new Router({
       component: ticketChangeRefound
     },
     {
-      path: '/payFor',
-      name: 'pay-for',
-      component: payFor
+      path: '/materialSearchModify',
+      name: 'materials_search',
+      component: materialSearchModify
     },
     {
       path: '/cashier',
@@ -302,6 +303,11 @@ const router =  new Router({
       name:'bscinfo_authorization',
       component:authorizations
     },
+    {
+      path:'/materialsApply',
+      name:'materials_apply',
+      component:materialsApply
+    },    
     {
       path:'/change-pswd',
       name:'personal_modify_info',

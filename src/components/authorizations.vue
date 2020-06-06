@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h5>当前位置:基础数据/员工权限</h5>
     <div class="container-fluid">
       <div id="searchConditions"  class="form-group form-inline">
         <label for="employees">员工:</label>
@@ -56,10 +57,12 @@ import qs from 'qs';
           invoices_modify_fill: '开票变更',
           invoices_refill_cancel: '作废重开',
           materials: '物料管理',
-          materials_Inventory: '库存管理',
+          materials_Inventory: '库存盘点',
+          materials_apply: '申请领用',
           materials_acceptance: '验收入库',
-          materials_distribute: '发放领用',
-          materials_search: '查找物品',
+          materials_approve_applying:'审核领用',
+          materials_distribute: '发放物料',
+          materials_search: '查找新建',
           orders: '订单管理',
           orders_check_orders: '核单',
           orders_import_from_excel: 'Excel导入',
@@ -215,6 +218,10 @@ li {
   /*list-style: none;*/
   /*display:inline;*/
 }  
-
-
+h5 {
+  color: #007bff;
+}
+.btn-primary {
+  margin-left:10px;
+}
 </style>

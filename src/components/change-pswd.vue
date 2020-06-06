@@ -8,7 +8,7 @@
       </div>
       <div class="row">
         <div class="col-lg form-inline">
-          <input id="oldPswd" type="text" name="oldPswd" class="form-control" placeholder="请输入原密码" v-model="oldPswd" title="原密码">
+          <input id="oldPswd" type="password" name="oldPswd" class="form-control" placeholder="请输入原密码" v-model="oldPswd" title="原密码">
         </div>
       </div>
       <div class="row buttons">
@@ -21,12 +21,12 @@
     <div class="container-fluid" v-if="isConfirmedOldPswd">
       <div class="row">
         <div class="col-lg form-inline">
-          <input id="newPswd1" type="text" name="newPswd1" class="form-control" placeholder="请输入新密码" v-model="newPswd1" title="新密码">
+          <input id="newPswd1" type="password" name="newPswd1" class="form-control" placeholder="请输入新密码" v-model="newPswd1" title="新密码">
         </div>
       </div>
       <div class="row">
         <div class="col-lg form-inline">
-          <input id="newPswd2" type="text" name="newPswd2" class="form-control" placeholder="请再次输入新密码" v-model="newPswd2" title="确认新密码">
+          <input id="newPswd2" type="password" name="newPswd2" class="form-control" placeholder="请再次输入新密码" v-model="newPswd2" title="确认新密码">
         </div>
       </div>
       <div class="row buttons">

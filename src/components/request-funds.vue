@@ -6,7 +6,7 @@
         <div class="col-lg-8 form-inline searchcontent">
           <label for="queryConditions">关键词:</label> 
           <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="请款人,用途等搜索关键词">
-          <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="填开发票的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="填开发票的时间范围"></datepicker> 
+          <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请款的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="请款的时间范围"></datepicker> 
           <button class="btn btn-primary" @click="getListOfRequestFunds">🔍获取数据</button>
           <button class="btn btn-secondary" @click="clearList" v-if="listOfRequestFunds.length>0">清除</button> 
         </div>
@@ -187,6 +187,7 @@ Date.prototype.format = function(fmt) {
         var _this = this;
         this.listOfRequestFunds=[];
         this.queryContent.conditions="NotApprovedOrNotPassedApproving";
+        this.queryContent.id_applyer=currentUserId;
         this.$axios({
           method: 'post',
           url: 'getRequestFunds.php',

@@ -188,10 +188,12 @@
         <li class="dropdown">
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">物料管理</span>
           <div class="dropdown-menu">
-            <li v-if="user.materials_acceptance"><span class="dropdown-item menu-item">验收入库</span></li>
-            <li v-if="user.materials_distribute"><span class="dropdown-item menu-item">发放领用</span></li>
-            <li v-if="user.materials_search"><span class="dropdown-item menu-item">查找物品</span></li>
-            <li v-if="user.materials_Inventory"><span class="dropdown-item menu-item">库存管理</span></li>
+            <li v-if="user.materials_acceptance"><span class="dropdown-item menu-item" @click="loadPage('/acceptanceCheck')">验收入库</span></li>
+            <li><span class="dropdown-item menu-item" @click="loadPage('/materialsApply')">申请领用</span></li>
+            <li><span class="dropdown-item menu-item" @click="loadPage('/materialsApproveApplying')">审核领用</span></li>
+            <li v-if="user.materials_distribute"><span class="dropdown-item menu-item" @click="loadPage('/materialsDistribute')">发放物料</span></li>
+            <li v-if="user.materials_search"><span class="dropdown-item menu-item" @click="loadPage('/materialSearchModify')">查找新建</span></li>
+            <li v-if="user.materials_Inventory"><span class="dropdown-item menu-item" @click="loadPage('/materialsInventory')">库存盘点</span></li>
           </div>
         </li>        
       </ul> 
@@ -203,7 +205,7 @@
             <li v-if="user.personal_apply"><span class="dropdown-item menu-item">我的申请</span></li>
             <li v-if="user.personal_audits"><span class="dropdown-item menu-item">我的审批</span></li>
             <li v-if="user.personal_modify_info"><span class="dropdown-item menu-item" @click="loadPage('/change-pswd')">更改密码</span></li>
-            <li v-if="user.personal_logout"><span class="dropdown-item menu-item">退出登录</span></li>
+            <li v-if="user.personal_logout"><span class="dropdown-item menu-item" @click="beingQuit">退出登录</span></li>
           </div>
         </li>        
       </ul> 
@@ -217,10 +219,30 @@
           </div>
         </li>        
       </ul>  -->                                                                             
-    </div>  
+    </div>
+
     <div class="content-row"><!-- row  -->
       <router-view></router-view>
     </div>
+    <div class="modal fade" id="quitSys" role="dialog" aria-labelledby="quitSys" data-backdrop="static" data-keyboard: false>
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">  
+          <div class="modal-header">
+            <span><h4>退出系统提示</h4></span>  
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>  
+              </button>  
+          </div>
+          <div class="modal-body">
+            <h5>您确定要退出系统吗？</h5>
+          </div>
+          <div class="modal-footer">  
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>  
+            <button type="button" class="btn btn-primary" @click="confirmQuiting">确定</button>
+          </div>           
+        </div>
+      </div>
+    </div>     
   </div>
 </template>
 
@@ -237,6 +259,15 @@ export default {
   methods: {
     loadPage:function (pageRouter) {
     	this.$router.push(pageRouter);
+      // console.log(this.$store.state.user);
+    },
+    beingQuit() {
+      $('#quitSys').modal('toggle');
+    },
+    confirmQuiting() {
+      $('#quitSys').modal('toggle');
+      this.$store.commit('userLoginOut');
+      this.$router.push('/');      
     }
   },
   computed:{
@@ -319,6 +350,9 @@ background-color: #FF8C00;
 }
 li span {
   cursor:pointer;
+}
+.modal-body {
+  margin:0 auto;
 }
 
 </style>

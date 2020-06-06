@@ -139,6 +139,9 @@ Date.prototype.format = function(fmt) {
 .father {
   width: 100%;
 }
+h5 {
+  color: #007bff;
+}
 .clearBtn {
 	margin-right: 20px;
 }

@@ -12,7 +12,6 @@
           <button id="byhand" @click="collectByHand" class="btn btn-primary" type="button">手工填表</button>
         </div>          
       </div>
-
     </div>
     <div class="showerOfFilledInvoice" v-if="listOfFilledInvoice.length>0">
       <table class="table table-hover">

@@ -383,6 +383,9 @@ export default {
 .father {
   width: 100%;
 }
+h5 {
+  color: #007bff;
+}
 .shower-rule-price input,.shower-rule-price select{
   width: 80%;
 }

@@ -344,6 +344,9 @@ import qs from 'qs';
 .father {
   width: 100%;
 }
+h5 {
+  color: #007bff;
+}
 #showerOfProject input,#showerOfProject select {
   width: 80%;
 }

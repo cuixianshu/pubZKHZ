@@ -265,6 +265,9 @@ export default {
 .father {
   width: 100%;
 }
+h5 {
+  color: #007bff;
+}
 .shower-ognztn input{
   width: 80%;
 }

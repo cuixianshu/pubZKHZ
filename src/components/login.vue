@@ -10,7 +10,7 @@
         </div>
         <div class="row"> 
           <div class="col-lg form-inline">
-            <input type="text" name="pswd" class="form-control" v-model="logining_user.pswd" placeholder="请输入密码" title="登录密码">
+            <input type="password" name="pswd" class="form-control" v-model="logining_user.pswd" placeholder="请输入密码" title="登录密码">
           </div>
         </div>
         <div class="row buttons">
