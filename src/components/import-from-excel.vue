@@ -18,13 +18,13 @@
         </div>                       
       </div>
     </div>
-    <table class="table table-hover" v-if="xlsTitle.length">
+    <table class="table table-hover pre-scrollable" v-if="xlsTitle.length">
       <thead>
         <th v-for="title in xlsTitle">{{title}}</th>
       </thead>
         <tbody>
           <tr v-for="row in xlsData">
-            <td v-for="vlu in row">{{vlu}}</td>
+            <td v-for="vlu in row" :title="vlu">{{vlu}}</td>
           </tr>
         </tbody>
     </table>
@@ -64,6 +64,7 @@ import ClipboardJS from 'clipboard';
   export default {
   	data () {
   	  return{
+        currentUserId:this.$store.state.user.id_user,
         xlsTitle:[],
         xlsData:[],
         tip_for_duplicate:'',
@@ -125,6 +126,7 @@ import ClipboardJS from 'clipboard';
               // var indispensableCellValue=['订单类型','用车人手机号码','起点站','终点站','出发日期','出发时间','结束日期','结束时间','里程数','司机手机号码','车牌号码','用车单位/部门'];
               var tempTitles=[];//获取表头,也就是属性名
               for (var index in tempArry) {
+                tempArry[index]['创建者']=_this.currentUserId;
                 for (var prop in tempArry[index]) {//tempArry[index]为对象--
                   if(!(_this.effectiveCols.includes(prop))){
                     delete tempArry[index][prop];//prop是动态变化的对象属性名称,不能用'.'
@@ -204,6 +206,8 @@ import ClipboardJS from 'clipboard';
               url: 'Excel2tbl_Orders.php',
               data: qs.stringify(_this.xlsData)
           }).then((res) => {
+// console.log(res.data);
+// return;
             resolve(res.data);
           }).catch((err) => {
             reject(err);
@@ -212,7 +216,8 @@ import ClipboardJS from 'clipboard';
         return prmsData;
       },
       async axiosAsync() {
-     
+// console.log(this.currentUserId);
+// return;     
         var _this=this;
         var modalModel="<div id='loadingModal' class='modal fade'></div>";//height:80px;
         var msg="<div id='msg' style='width:50%;text-align:center;padding:10px;background:#17a2b8;color:#FFF;position: absolute;top:20%;left:50%;transform:translate(-50%,-50%);'><h4>正在处理,请稍等...</h4></div>" ; 
@@ -225,8 +230,7 @@ import ClipboardJS from 'clipboard';
         }
         $("#loadingModal").modal('show');
         var rspnData = await this.promiseMethod();
-// console.log(rspnData);
-// return;
+
         $('#openFileSelector').val(''); 
         $('#loadingModal').remove();
         $('.modal-backdrop').remove();
@@ -251,7 +255,7 @@ import ClipboardJS from 'clipboard';
             });
             console.log(rspnData);
         } else {//全部重复
-          this.tip_for_duplicate="数据重复,以下为重复数据清单:";
+          this.tip_for_duplicate="数据重复("+rspnData.duplicate_recorders.length+"条),全部丢弃!";
           this.duplicateRecorders=rspnData.duplicate_recorders;
           $("#duplicate_recorders_shower").modal('show');
           // console.log(rspnData);
@@ -261,6 +265,7 @@ import ClipboardJS from 'clipboard';
       },
       saveXlsxDataToDBS:function () {
 // console.log(this.xlsData);
+// return;
         var rspnData=this.axiosAsync();
       },
       clearTitle(val) {
@@ -282,7 +287,7 @@ import ClipboardJS from 'clipboard';
         });
         clipboard.on("error", function(e){
             _this.$toast({
-              text: "这个,我不会弄,请手动复制.",
+              text: "呃...这个,我不会弄,请手动复制.",
               type: 'danger',
               duration: 2000
             });

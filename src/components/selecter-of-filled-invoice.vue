@@ -10,7 +10,7 @@
 	</div>  	
   </div>
   <div class="listOfDetails" v-if="listOfInvoiceDetailsFromDBS.length>0">
-    <table class="table table-hover">
+    <table class="table table-hover pre-scrollable">
       <thead>
         <th v-for="title,index in recordersTitle" :width="widthOfTH[index]">{{title}}</th>
       </thead>

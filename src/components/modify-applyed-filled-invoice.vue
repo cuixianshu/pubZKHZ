@@ -6,24 +6,26 @@
         <label for="queryConditions">关键词:</label>
         <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="用车人,单位,项目等搜索关键词">
         <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="申请开票时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="申请开票的时间范围"></datepicker>
-        <button class="btn btn-primary" @click="getRequestedInvoices">🔍获取数据</button>
+        <button class="btn btn-primary" @click="getRequestedInvoices">🔍获取数据</button>          
+        <button class="btn btn-secondary" @click="clearData" v-if="data.length>0">清空</button>
+        <button class="btn btn-primary" v-if="data.length>0" @click="fillAnInvoice">填开发票</button>
       </div>
     </div>
-    <div v-if="data.length>0">
+    <div v-if="data.length>0" class="pre-scrollable"><!--  pre-scrollable -->
       <div id="toolbar">
         <button id="remove" class="btn btn-danger" disabled>
           <i class="glyphicon glyphicon-remove"></i> Delete
         </button>
-      </div>
-      <bootstraptable id="mainTable" :columns="columns" :data="data" :options="options" @onExpandRow="onExpandRow" @onClickRow="onClickRow"></bootstraptable>
+      </div> <!-- 注意事件一定要用小写加中横线格式 -->
+      <bootstraptable id="mainTable" :columns="columns" :data="data" :options="options" @on-expand-row="onExpandRow" @on-clickRow="onClickRow"></bootstraptable>
     </div>
 <!-- <i class="oi oi-account-login"></i> -->
 <font-awesome-icon :icon="['far', 'square']" />
 <font-awesome-icon :icon="['fab', 'accessible-icon']" />
 <!-- <font-awesome-icon icon="clipboard-list" size="2x" pull="left"/> -->
     <div class="buttons">
-      <button class="btn btn-secondary" @click="clearData" v-if="data.length>0">清空</button>
-      <button class="btn btn-primary" v-if="data.length>0" @click="fillAnInvoice">填开发票</button>
+<!--       <button class="btn btn-secondary" @click="clearData" v-if="data.length>0">清空</button>
+      <button class="btn btn-primary" v-if="data.length>0" @click="fillAnInvoice">填开发票</button> -->
     </div>
 
 
@@ -358,7 +360,6 @@ Date.prototype.format = function(fmt) {
             _this.columns.push({title:title,field:title});
           }
           _this.columns.unshift({checkbox: true});
-
         _this.columns.push({
             title:'操作',
 　　　　　      field:'opreation',
@@ -416,10 +417,10 @@ Date.prototype.format = function(fmt) {
         this.detailsOfFilling=JSON.parse(this.clonedDetailsOfFilling);
 	  },
 	  onExpandRow: function (index, row, $detail) {
+// console.log('row');
 	  	this.expandTable(index, row, $detail);
       },
       expandTable(index, row, $detail) {
-// console.log(row);
         var _this = this;
         var rqstPage='';
         var subTalbeColumns=[];
@@ -1003,6 +1004,9 @@ td {
 }
 #searchConditions >* {
   margin:5px 5px;
+}
+.pre-scrollable {
+  min-height: 500px;
 }
 </style>
 

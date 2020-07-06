@@ -70,7 +70,7 @@
       </ul> 
       <ul class="nav nav-tabs menu-tabs" v-if="user.finance">
         <li class="dropdown">
-          <span data-toggle="dropdown" class="dropdown-toggle menu-title">财务业务</span>
+          <span data-toggle="dropdown" class="dropdown-toggle menu-title">收款付款</span>
           <div class="dropdown-menu">
             <li v-if="user.finance_cashier"><span class="dropdown-item menu-item" @click="loadPage('/cashier')">销售回款</span></li>
             <li v-if="user.finance_tkt_cashier"><span class="dropdown-item menu-item" @click="loadPage('/ticket-cashier')">机票收款</span></li>            
@@ -85,7 +85,7 @@
         <li class="dropdown">
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">请款报销</span>
           <div class="dropdown-menu">
-            <li v-if="user.rqstfunds_borrow_reimburse"><span class="dropdown-item menu-item" @click="loadPage('/request-funds')">费用报销、借款</span></li>
+            <li v-if="user.rqstfunds_borrow_reimburse"><span class="dropdown-item menu-item" @click="loadPage('/request-funds')">报销借款</span></li>
             <li v-if="user.rqstfunds_purchasing_funds"><span class="dropdown-item menu-item" @click="loadPage('/rqst-pcsg-funds')">采购请款</span></li>
             <li v-if="user.rqstfunds_rfdtkt_paying"><span class="dropdown-item menu-item" @click="loadPage('/rqst-rfdtkt-paying')">机票退款</span></li>            
             <li v-if="user.rqstfunds_primary_audits"><span class="dropdown-item menu-item" @click="loadPage('/prmry-audits-rqst-funds')">请款初审</span></li>
@@ -177,10 +177,13 @@
         <li class="dropdown">
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">业务报表</span>
           <div class="dropdown-menu">
-            <li v-if="user.reports_sale"><span class="dropdown-item menu-item">销售报表</span></li>
-            <li v-if="user.reports_finance"><span class="dropdown-item menu-item">财务报表</span></li>
-            <li v-if="user.reports_purchasing"><span class="dropdown-item menu-item">采购报表</span></li>
-            <li v-if="user.reports_other"><span class="dropdown-item menu-item">其它报表</span></li>
+            <li v-if="user.reports_sale">
+              <span class="dropdown-item menu-item" @click="loadPage('/reports-sale')">销售报表
+              </span>
+            </li>
+            <li v-if="user.reports_finance"><span class="dropdown-item menu-item" @click="loadPage('/reports-finance')">财务报表</span></li>
+            <li v-if="user.reports_purchasing"><span class="dropdown-item menu-item" @click="loadPage('/reports-purchasing')">采购报表</span></li>
+            <li v-if="user.reports_other"><span class="dropdown-item menu-item" @click="loadPage('/reports-other')">其它报表</span></li>
           </div>
         </li>        
       </ul>
@@ -190,7 +193,7 @@
           <div class="dropdown-menu">
             <li v-if="user.materials_acceptance"><span class="dropdown-item menu-item" @click="loadPage('/acceptanceCheck')">验收入库</span></li>
             <li><span class="dropdown-item menu-item" @click="loadPage('/materialsApply')">申请领用</span></li>
-            <li><span class="dropdown-item menu-item" @click="loadPage('/materialsApproveApplying')">审核领用</span></li>
+            <li v-if="user.materials_approve_applying"><span class="dropdown-item menu-item" @click="loadPage('/materialsApproveApplying')">审核领用</span></li>
             <li v-if="user.materials_distribute"><span class="dropdown-item menu-item" @click="loadPage('/materialsDistribute')">发放物料</span></li>
             <li v-if="user.materials_search"><span class="dropdown-item menu-item" @click="loadPage('/materialSearchModify')">查找新建</span></li>
             <li v-if="user.materials_Inventory"><span class="dropdown-item menu-item" @click="loadPage('/materialsInventory')">库存盘点</span></li>

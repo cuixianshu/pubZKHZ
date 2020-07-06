@@ -69,7 +69,7 @@ module.exports = {
      * Source Maps
      */
 
-    productionSourceMap: true,//原代码中：true
+    productionSourceMap: false,//原代码中：true
 
 
 
@@ -80,7 +80,7 @@ module.exports = {
     // Surge or Netlify already gzip all static assets for you.
     // Before setting to `true`, make sure to:
     // npm install --save-dev compression-webpack-plugin
-    productionGzip: false,
+    productionGzip: true,//原为false
     productionGzipExtensions: ['js', 'css'],
 
     // Run the build command with an extra argument to

@@ -38,6 +38,7 @@ const store = new Vuex.Store({
         url: 'login.php',
         data: qs.stringify(o.logining_user)
       }).then(function (response) {
+// console.log(response.data);
         if(response.data.length>0) {
           store.commit('userLogined',response.data[0]);
           that.$router.push('/home');

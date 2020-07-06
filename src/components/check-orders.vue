@@ -1,39 +1,87 @@
 <template>
   <div class="father">
-    <div class="container-fluid query-body">
-    <h5>当前位置:订单管理/复核订单</h5>
-      <div id="schAndModify" class="form-group form-inline">
-        <label for="schKeyWds">关键词:</label>
-        <input id="schKeyWds" type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入要搜索的内容" title="订车人乘车人用车单位项目附加信息等">
-         <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="时间区间,默认最近7天" :shortcuts="shortcuts" placeholder="发生业务的时间范围"></datepicker> 
-        <button id="btnSearch"  @click="getRcdrsForModifying"class="btn btn-primary" type="button">搜索数据</button>
-        <button id="btnClearRcdrsInModifyer"  @click="clearRcdrsInModifyer"class="btn btn-secondary" type="button" v-if="rcdrSetFromDBSForModifying.length>0">清空</button>
+    <ul class="nav nav-pills" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" data-toggle="pill" href="#co">订单核验</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="pill" href="#co-history">核单报表</a>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div id="co" class="container-fluid tab-pane active query-body">
+        <div class="row">
+          <div class="form-inline">
+            <label for="schKeyWds">关键词:</label>
+            <input id="schKeyWds" type="text" class="form-control" v-model="coQC.keyWord"  placeholder="请输入要搜索的内容" title="订车人乘车人用车单位项目附加信息等">
+             <datepicker class="datepicker"id="dateRange" v-model="coQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="时间区间,默认最近7天" :shortcuts="shortcuts" placeholder="发生业务的时间范围"></datepicker> 
+            <button @click="getRcdrsForModifying"class="btn btn-primary" type="button">搜索数据</button>
+            <button @click="clearRcdrsInModifyer"class="btn btn-secondary" type="button" v-if="rcdrSetFromDBSForModifying.length>0">清空</button>
+          </div>      
+        </div>
+        <div class="pre-scrollable" v-if="rcdrSetFromDBSForModifying.length>0"><!-- form --> 
+          <table class="table table-hover">
+            <thead>
+              <th v-for="(title,index) in titleOfTable" :width="widthOfTH[index]">{{title}}</th>
+            </thead>
+            <tbody>
+              <tr v-for="row in rcdrSetFromDBSForModifying" @click="clickedARow(row)">
+                <td :title='row.id'>{{row.id}}</td>
+                <td :title='row.cstmr_ognz'>{{row.cstmr_ognz}}</td>
+                <td :title='row.id_contacter'>{{row.id_contacter}}</td>
+                <td :title='row.id_prjct_belongto'>{{row.id_prjct_belongto}}</td>
+                <td :title='row.id_product'>{{row.id_product}}</td>
+                <td :title='row.start_time'>{{row.start_time}}</td>
+                <td :title='row.end_time'>{{row.end_time}}</td>
+                <td :title='row.start_point'>{{row.start_point}}</td>
+                <td :title='row.end_point'>{{row.end_point}}</td>
+                <td :title='row.id_operater'>{{row.id_operater}}</td>
+                <td :title='row.id_equipment'>{{row.id_equipment}}</td>
+                <td :title='row.mileage'>{{row.mileage}}</td>
+                <td :title='row.park_fee'>{{row.park_fee}}</td>
+                <td :title='row.surcharge'>{{row.surcharge}}</td>
+                <td :title='row.use_surcharge'>{{row.use_surcharge}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>        
       </div>
-      <div class="rcdrsForMdfying" v-if="rcdrSetFromDBSForModifying.length>0">
-        <table class="table table-hover">
-          <thead>
-            <th v-for="(title,index) in titleOfTable" :width="widthOfTH[index]">{{title}}</th>
-          </thead>
-          <tbody>
-            <tr v-for="row in rcdrSetFromDBSForModifying" @click="clickedARow(row)">
-              <td :title='row.id'>{{row.id}}</td>
-              <td :title='row.cstmr_ognz'>{{row.cstmr_ognz}}</td>
-              <td :title='row.id_contacter'>{{row.id_contacter}}</td>
-              <td :title='row.id_prjct_belongto'>{{row.id_prjct_belongto}}</td>
-              <td :title='row.id_product'>{{row.id_product}}</td>
-              <td :title='row.start_time'>{{row.start_time}}</td>
-              <td :title='row.end_time'>{{row.end_time}}</td>
-              <td :title='row.start_point'>{{row.start_point}}</td>
-              <td :title='row.end_point'>{{row.end_point}}</td>
-              <td :title='row.id_operater'>{{row.id_operater}}</td>
-              <td :title='row.id_equipment'>{{row.id_equipment}}</td>
-              <td :title='row.mileage'>{{row.mileage}}</td>
-              <td :title='row.park_fee'>{{row.park_fee}}</td>
-              <td :title='row.surcharge'>{{row.surcharge}}</td>
-              <td :title='row.use_surcharge'>{{row.use_surcharge}}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div id="co-history" class="container-fluid tab-pane">
+        <div class="row">
+          <div class="form-inline">
+             <datepicker class="datepicker"id="dateRange" v-model="COHQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="时间区间,默认今天" :shortcuts="shortcuts" placeholder="订单核验的时间范围"></datepicker> 
+            <button @click="getCOHistoryData" class="btn btn-primary" type="button">搜索数据</button>
+          </div>      
+        </div>
+        <div class="pre-scrollable" v-if="coHstrData.length>0">
+          <span>共核单:{{coHstrData.length}}条.</span>
+          <jsonexcel class="btn btn-primary" :data="COH_json_data" :fields="COH_json_fields" :name="COH_filename" worksheet="核单报表">存为Excel</jsonexcel>
+          <button @click="coHstrData=[];"class="btn btn-secondary" type="button">清空</button>
+          <table class="table table-hover">
+            <thead>
+              <th v-for="(title,index) in titleOfCOHTable" :width="widthOfTH[index]">{{title}}</th>
+            </thead>
+            <tbody>
+              <tr v-for="row in coHstrData">
+                <td :title='row.id'>{{row.id}}</td>
+                <td :title='row.cstmr_ognz'>{{row.cstmr_ognz}}</td>
+                <td :title='row.id_contacter'>{{row.id_contacter}}</td>
+                <td :title='row.id_prjct_belongto'>{{row.id_prjct_belongto}}</td>
+                <td :title='row.id_product'>{{row.id_product}}</td>
+                <td :title='row.start_time'>{{row.start_time}}</td>
+                <td :title='row.end_time'>{{row.end_time}}</td>
+                <td :title='row.start_point'>{{row.start_point}}</td>
+                <td :title='row.end_point'>{{row.end_point}}</td>
+                <td :title='row.id_operater'>{{row.id_operater}}</td>
+                <td :title='row.actual_price'>{{row.actual_price}}</td>
+                <td :title='row.mileage'>{{row.mileage}}</td>
+                <td :title='row.park_fee'>{{row.park_fee}}</td>
+                <td :title='row.surcharge'>{{row.surcharge}}</td>
+                <td :title='row.use_surcharge'>{{row.use_surcharge}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>   
       </div>
     </div>
     <div class="modal fade" id="mdfRecorder" role="dialog" aria-labelledby="selectUseageLabel" data-backdrop="static" data-keyboard: false ref="mdfRecorder">
@@ -157,30 +205,32 @@
 <script>
 import datepicker from 'vue2-datepicker';
 import qs from 'qs';
+import jsonexcel from 'vue-json-excel/JsonExcel.vue';
 Date.prototype.format = function(fmt) { 
-     var o = { 
-        "M+" : this.getMonth()+1,                 //月份 
-        "d+" : this.getDate(),                    //日 
-        "h+" : this.getHours(),                   //小时 
-        "m+" : this.getMinutes(),                 //分 
-        "s+" : this.getSeconds(),                 //秒 
-        "q+" : Math.floor((this.getMonth()+3)/3), //季度 
-        "S"  : this.getMilliseconds()             //毫秒 
-    }; 
-    if(/(y+)/.test(fmt)) {
-            fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+  var o = { 
+    "M+" : this.getMonth()+1,                 //月份 
+    "d+" : this.getDate(),                    //日 
+    "h+" : this.getHours(),                   //小时 
+    "m+" : this.getMinutes(),                 //分 
+    "s+" : this.getSeconds(),                 //秒 
+    "q+" : Math.floor((this.getMonth()+3)/3), //季度 
+    "S"  : this.getMilliseconds()             //毫秒 
+  }; 
+  if(/(y+)/.test(fmt)) {
+    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+  }
+  for(var k in o) {
+    if(new RegExp("("+ k +")").test(fmt)){
+      fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
     }
-     for(var k in o) {
-        if(new RegExp("("+ k +")").test(fmt)){
-             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
-         }
-     }
-    return fmt; 
+  }
+  return fmt; 
 }
   export default {
     data () {
       return {
-        queryContent:{
+        currentUserId:this.$store.state.user.id_user,
+        coQC:{
           keyWord:'',
           dateRange:[],
         },      	
@@ -192,37 +242,67 @@ Date.prototype.format = function(fmt) {
         rulesPriceForTheClient:[],
         shortcuts:false,
         rcdrSetFromDBSForModifying:[],
-        titleOfTable:['订单ID','单位','订车人','项目','产品','开始','结束','起点','终点','司机','车辆','里程','停车','垫付','垫付说明'],
+        titleOfTable:['订单ID','单位','订车人','项目','产品','开始','结束','起点','终点','司机','车辆','里程','停车','垫付','垫付用途'],
         widthOfTH:['4','10','6','10','8','6','6','7','7','6','6','6','6','6','6'],
         equipments:[],
-        employees:[]
+        employees:[],
+        
+        titleOfCOHTable:['订单ID','单位','订车人','项目','产品','开始','结束','起点','终点','司机','成交价','里程','停车','垫付','垫付用途'],
+        COHQC:{
+          dateRange:[],
+        },
+        coHstrData:[],
+        COH_json_data:[],
+        COH_json_fields:{},
+        COH_filename:'核单报表',
+        COH_volName:{
+          '订单ID':'id',
+          '单位':'cstmr_ognz',
+          '订车人':'id_contacter',
+          '项目':'id_prjct_belongto',
+          '产品':'id_product',
+          '开始':'start_time',
+          '结束':'end_time',
+          '起点':'start_point',
+          '终点':'end_point',
+          '里程':'mileage',
+          '成交价':'actual_price',
+          '停车费':'park_fee',
+          '垫付':'surcharge',
+          '垫付用途':'use_surcharge',
+          '司机':'id_operater',
+          '车辆':'id_equipment',
+          '备注':'mem',
+          '核单人':'id_verifyer',
+          '核单时间':'time_verify',
+          '给司机的信息':'msg_for_driver',
+        },
       }
     },
     components: {
-     datepicker
+     datepicker,
+     jsonexcel
     },    
     methods: {
       getRcdrsForModifying() {
         if(this.rcdrSetFromDBSForModifying.length>0) {
           this.rcdrSetFromDBSForModifying=[];
         }
-        if(this.queryContent.dateRange.length<2){//如果日期填写不全,默认是过去1周
+        if(this.coQC.dateRange.length<2 || this.coQC.dateRange[0].length<10 || this.coQC.dateRange[1].length<10){//如果日期填写不全,默认是过去1周
           var day1=new Date();
           day1.setDate(day1.getDate() - 7);
-          this.queryContent.dateRange[0]= day1.format("yyyy-MM-dd");
+          this.coQC.dateRange[0]= day1.format("yyyy-MM-dd");
           var day2 = new Date();
           day2.setDate(day2.getDate());
-          this.queryContent.dateRange[1] = day2.format("yyyy-MM-dd");
+          this.coQC.dateRange[1] = day2.format("yyyy-MM-dd");
         }
-        this.queryContent.conditions="VehiclesNotChecked"
+        this.coQC.conditions="VehiclesNotChecked";
         var _this = this;
         this.$axios({
           method: 'post',
           url: 'getOrders.php',
-          data: qs.stringify(_this.queryContent)
+          data: qs.stringify(_this.coQC)
         }).then(function (response) {
-// console.log(response.data);
-// return;
           if(response.data.length<1) {
             _this.$toast({
               text: '没有符合条件的待核单记录',
@@ -232,6 +312,7 @@ Date.prototype.format = function(fmt) {
             return;
           } 
           _this.rcdrSetFromDBSForModifying = response.data;
+
         }).catch(function (error) {
           _this.$toast({
             text: '异步通信错误!'+error,
@@ -244,7 +325,6 @@ Date.prototype.format = function(fmt) {
         this.rcdrSetFromDBSForModifying=[];
       },
       clickedARow:function (dataRow) {
-// console.log(dataRow);
         this.slctdOrderForChecking=dataRow;
         this.slctdOrderForChecking.id_payer=this.slctdOrderForChecking.id_contacter;
         this.clonedRecorder=JSON.parse(JSON.stringify(this.slctdOrderForChecking));
@@ -341,18 +421,15 @@ Date.prototype.format = function(fmt) {
           }
         }
         this.slctdOrderForChecking.id_verifyer=this.$store.state.user.id_user;
-        var queryContent=this.slctdOrderForChecking;
-        queryContent.conditions="WithCheckedData";
-// console.log(queryContent);
-// return;
+        var coQC=this.slctdOrderForChecking;
+        coQC.conditions="WithCheckedData";
         //保存到数据库
         var _this = this;
         this.$axios({
           method: 'post',
           url: 'updateOrders.php',
-          data: qs.stringify(queryContent)
+          data: qs.stringify(coQC)
         }).then(function (response) {
-// console.log(response.data);
           if(response.data===true) {
             _this.$toast({
               text: '成功保存数据!',
@@ -389,7 +466,63 @@ Date.prototype.format = function(fmt) {
             arr.splice(index, 1);
           }
         });                
-      }          	
+      },
+      getCOHistoryData () {
+        if(this.COHQC.dateRange.length<2 || this.COHQC.dateRange[0].length<10 || this.COHQC.dateRange[1].length<10){//如果日期填写不全,默认是过去1周
+          var thisDay = new Date();
+          thisDay.setDate(thisDay.getDate());
+          this.COHQC.dateRange[0]= this.COHQC.dateRange[1] = thisDay.format("yyyy-MM-dd");
+        }
+        this.COH_filename="核单报表";
+        this.COH_filename+=this.COHQC.dateRange[0]+'_'+this.COHQC.dateRange[1];
+        this.COHQC.dateRange[0]+=(this.COHQC.dateRange[0].indexOf('00:00:00')==-1?' 00:00:00':'');
+        this.COHQC.dateRange[1]+=(this.COHQC.dateRange[1].indexOf('23:59:59')==-1?' 23:59:59':'');
+        this.COHQC.conditions="COHistory";
+        this.COHQC.uid=this.currentUserId;
+        this.coHstrData=[];
+        var _this = this;
+        this.$axios({
+          method: 'post',
+          url: 'getOrders.php',
+          data: qs.stringify(_this.COHQC)
+        }).then(function (response) {
+          if(response.data.length<1) {
+            _this.$toast({
+              text: '没有符合条件的待核单记录',
+              type: 'info',
+              duration: 2000
+            });
+            return;
+          } 
+          _this.coHstrData = response.data;
+          _this.coHstrData.forEach(function(item,index,array){
+            var ar=_this.projects.find((ele) => ele['id'] == item.id_prjct_belongto);
+            item.id_prjct_belongto=typeof(ar)=='undefined'?'':ar['name'];
+            var ar=_this.products.find((ele) => ele['id'] == item.id_product);
+            item.id_product=typeof(ar)=='undefined'?'':ar['name'];
+            var ar=_this.employees.find((ele) => ele['id'] == item.id_operater);
+            item.id_operater=typeof(ar)=='undefined'?'':ar['name'];
+            var ar=_this.employees.find((ele) => ele['id'] == item.id_verifyer);
+            item.id_verifyer=typeof(ar)=='undefined'?'':ar['name'];
+            var ar=_this.customers.find((ele) => ele['id'] == item.id_contacter);
+            item.id_contacter=typeof(ar)=='undefined'?'':ar['name'];
+            var ar=_this.equipments.find((ele) => ele['id'] == item.id_equipment);
+            item.id_equipment=typeof(ar)=='undefined'?'':ar['alias'];
+          });
+          _this.COH_json_data=[];
+          _this.COH_json_fields={};
+          _this.COH_json_data=_this.coHstrData;
+          for(var prop in _this.COH_volName) {
+            _this.COH_json_fields[prop]=_this.COH_volName[prop];
+          }
+        }).catch(function (error) {
+          _this.$toast({
+            text: '异步通信错误!'+error,
+            type: 'danger',
+            duration: 4000
+          });
+        });        
+      },          	
     },
     watch: {
       'slctdOrderForChecking.id_rule_price': {
@@ -400,14 +533,10 @@ Date.prototype.format = function(fmt) {
           var _this=this;
           var countMissMeal=0;
           this.rulesPrices.forEach(function(item, index, arr) {
-            //item:数组的当前元素,这里是一个对象
-            //index:当前索引号
-            //arr:数组对象本身
             if(_this.slctdOrderForChecking.id_rule_price===item.id) {
               //获取用车时长
               var sttTm=new Date(_this.slctdOrderForChecking.start_time);
               var ndTm=new Date(_this.slctdOrderForChecking.end_time);
-// console.log(sttTm);
               var rentDuration=(ndTm-sttTm)/1000/60;
               var overtime=rentDuration-item.duration_basic*60;//分钟
               overtime=overtime>0?overtime:0;
@@ -438,7 +567,7 @@ Date.prototype.format = function(fmt) {
     },
     beforeCreate:function() { 
       var _this = this;
-      var queryContent={};
+      var coQC={};
 
       //初始化项目的option
       this.projects=[];
@@ -497,11 +626,11 @@ Date.prototype.format = function(fmt) {
           });
         });
       this.equipments=[];
-      queryContent.conditions="All";
+      coQC.conditions="All";
       this.$axios({
             method: 'post',
             url: 'getEquipments.php',
-            data: qs.stringify(queryContent)
+            data: qs.stringify(coQC)
         }).then(function (response) {
           _this.equipments=response.data;
         }).catch(function (error) {
@@ -512,11 +641,11 @@ Date.prototype.format = function(fmt) {
           });
         });
       this.employees=[];
-      queryContent.conditions="All";
+      coQC.conditions="All";
       this.$axios({
             method: 'post',
             url: 'getEmployees.php',
-            data: qs.stringify(queryContent)
+            data: qs.stringify(coQC)
         }).then(function (response) {
           _this.employees=response.data;
         }).catch(function (error) {
@@ -527,12 +656,10 @@ Date.prototype.format = function(fmt) {
           });
         });
     }
-       
   }	
 </script>
 
 <style scoped>
-
 .clearBtn {
 	margin-right: 20px;
 }
@@ -552,16 +679,16 @@ table {
 #mdfRecorder input,#mdfRecorder select {
   width:80%;
 }
-#mdfRecorder .row {
+.row {
   margin-bottom: 5px;
 }
-.table table-hover {
+/*.table table-hover {
   font-size: 12px;
-}
+}*/
 .datepicker {
   margin-left: 10px;
 }
-#btnSearch {
+button {
   margin-left: 10px;
 }
 td {
@@ -575,5 +702,8 @@ td {
 }
 h5 {
   color: #007bff;
+}
+.tab-content {
+  margin-top: 10px;
 }
 </style>

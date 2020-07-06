@@ -1,40 +1,84 @@
 <template>
 <div class="father">
-  <h5>当前位置:物料管理/验收入库</h5>
-  <div class="container-fluid">
-    <div class="form-group form-inline searchbox">
-      <!-- <div class="col-lg"> -->
+  <ul class="nav nav-pills" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" data-toggle="pill" href="#newArrived">新到物料验收</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="pill" href="#giveBack">已领物料归还</a>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div id="newArrived" class="container-fluid tab-pane active">
+      <div class="form-inline searchbox">
         <span for="schKeyWds">关键词:</span>
         <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="物品名称,规格型号,品牌,库位等关键词">
         <button @click="getListOfMaterials" class="btn btn-primary " type="button">
           搜索物料
         </button>
-        <button @click="clearlistOfMaterials"class="btn btn-secondary" type="button" v-if="materials.length>0">清空</button>
-      <!-- </div> -->
+        <button @click="materials=[];"class="btn btn-secondary" type="button" v-if="materials.length>0">清空结果</button>
+      </div>
+      <div v-if="materials.length>0">
+        <table class="table table-hover">
+          <thead>
+            <th v-for="title,index in titleOfList" :width="width">{{title}}</th>
+          </thead>
+          <tbody>
+            <tr v-for="row in materials" @click="clickedARecorderToModify(row)">
+              <td :title="row.name">{{row.name}}</td>
+              <td :title="row.brand">{{row.brand}}</td>
+              <td :title="row.model">{{row.model}}</td>
+              <td :title="row.unit">{{row.unit}}</td>
+              <td title="包装单位">{{row.min_unit_packing}}</td>
+              <td :title="row.qty_stocks">{{row.qty_stocks}}</td>
+              <td title="保存位置">{{row.store_place}}</td>
+              <td :title="row.remark">{{row.remark}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>      
     </div>
-    <div class="listShower" v-if="materials.length>0">
-      <table class="table table-hover">
-        <thead>
-          <th v-for="title,index in titleOfList" :width="width">{{title}}</th>
-        </thead>
-        <tbody>
-          <tr v-for="row in materials" @click="clickedARecorderToModify(row)">
-            <!-- <td v-for="vlu in row" :title='vlu'>{{vlu}}</td> -->
-            <!-- <td title="物料ID">{{row.id}}</td> -->
-            <td :title="row.name">{{row.name}}</td>
-            <td :title="row.brand">{{row.brand}}</td>
-            <td :title="row.model">{{row.model}}</td>
-            <td :title="row.unit">{{row.unit}}</td>
-            <td title="包装单位">{{row.min_unit_packing}}</td>
-            <td :title="row.qty_stocks">{{row.qty_stocks}}</td>
-            <td title="保存位置">{{row.store_place}}</td>
-            <td :title="row.remark">{{row.remark}}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>      
+    <div id="giveBack" class="container-fluid tab-pane">
+      <div class="form-inline searchbox">
+        <datepicker class="datepicker" id="dateRange" v-model="unreturnedMQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="领用时间,默认上个月" :shortcuts="shortcuts" placeholder="领用的时间范围">
+        </datepicker>
+        <input class="form-control" v-model="unreturnedMQC.keyWord" title="物品物料名称,品牌,规格型号,用途等" placeholder="查询关键词" style="width:110px; background: #CEFFCE;">
+        <select class="form-control" v-model="unreturnedMQC.id_project" title="选择所属项目">
+          <option value="0">所有项目</option>
+          <option v-for="item in projects" :value="item.id">{{item.name}}</option>
+        </select>
+        <select class="form-control" v-model="unreturnedMQC.id_applyer" title="选择领用人">
+          <option value="0">所有领用人</option>
+          <option v-for="item in employees" :value="item.id">{{item.name}}</option>
+        </select>
+        <button id="btnSearch" class="btn btn-primary" type="button" @click="getUnreturnedMData">搜索数据</button>
+        <button class="btn btn-secondary" type="button" @click="unreturnedMs=[];" v-if="unreturnedMs.length>0">清空结果</button>        
+      </div>
+      <div v-if="unreturnedMs.length>0">
+        <table class="table table-hover">
+          <thead>
+            <th v-for="title,index in unreturnedTitle" :width="unreturnedWidth">{{title}}</th>
+          </thead>
+          <tbody>
+<!---->           
+            <tr v-for="row in unreturnedMs" @click="slctOnetoReturn(row)">
+              <td :title="row.id_applyer">{{getApplyer(row)}}</td>
+              <td :title="row.m_name">{{row.m_name}}</td>
+              <td :title="row.m_brand">{{row.m_brand}}</td>
+              <td :title="row.m_model">{{row.m_model}}</td>
+              <td :title="row.m_unit">{{row.m_unit}}</td>
+              <td title="包装容量">{{row.m_min_unit_packing}}</td>
+              <td :title="row.qty_distributed">{{row.qty_distributed}}</td>
+              <td :title="row.qty_returned">{{row.qty_returned}}</td>
+              <td title="领用用途">{{row.use_for}}</td>
+              <td :title="row.remark">{{row.remark}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>    
   </div>
-  <div class="modal fade" id="editerOfMaterial" role="dialog" aria-labelledby="editer" data-backdrop="static" data-keyboard: false>
+  <div class="modal fade" id="editerForNewArrived" role="dialog" aria-labelledby="editer" data-backdrop="static" data-keyboard: false>
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -86,27 +130,102 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button class="btn btn-primary" type="button" @click="saveInputedData">验收无误</button> 
+          <button class="btn btn-primary" type="button" @click="saveNewArrivedData">验收无误</button> 
         </div>  
       </div>
     </div>
-  </div>   
+  </div>
+  <div class="modal fade" id="editerForReturning" role="dialog" aria-labelledby="editer" data-backdrop="static" data-keyboard: false>
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span>返还物料验收单</span>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-lg form-inline">
+                <label for="aplr">原领用人:</label>
+                <select id="aplr" type="text" name="id_applyer" class="form-control" v-model="rtMtrl.id_applyer" title="原领用人" disabled>
+                  <option v-for="item in employees" :value="item.id">{{item.name}}</option>
+                </select>
+              </div>
+              <div class="col-lg form-inline">
+                <label for="mioTime">需归还数:</label>
+                <input id="mioTime" type="text" name="mio_qty" class="form-control" v-model="rtMtrl.mio_qty" title="还需归还的数量" readonly>
+              </div> 
+            </div>
+            <div class="row">
+              <div class="col-lg form-inline">
+                <label for="NmOfMAT">物料名称:</label>
+                <input id="NmOfMAT" type="text" name="m_name" class="form-control" v-model="rtMtrl.m_name" title="物料名称" readonly>
+              </div>
+              <div class="col-lg form-inline">
+                <label for="Unit">计量单位:</label>
+                <input id="Unit" type="text" name="m_unit" class="form-control" v-model="rtMtrl.m_unit" title="物料计量单位" readonly>
+              </div> 
+            </div>
+            <div class="row"> 
+              <div class="col-lg form-inline">
+                <label for="Brd">物料品牌:</label>
+                <input id="Brd" type="text" name="m_brand" class="form-control" v-model="rtMtrl.m_brand" title="厂家品牌" readonly>
+              </div>
+              <div class="col-lg form-inline">
+                <label for="Mdl">规格型号:</label>
+                <input id="Mdl" type="text" name="m_model" class="form-control" v-model="rtMtrl.m_model" title="规格型号" readonly>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg form-inline">
+                <label for="MUP">包装容量:</label>
+                <input id="MUP" type="text" name="m_min_unit_packing" class="form-control" v-model="rtMtrl.m_min_unit_packing" title="包装单位" readonly>
+              </div> 
+              <div class="col-lg form-inline">
+                <label for="StorePlc">存放库位:</label>
+                <input id="StorePlc" type="text" name="m_store_place" class="form-control" v-model="rtMtrl.m_store_place" title="库名区位架号层号位号" readonly>
+              </div>                                        
+            </div>
+            <div class="row">
+              <div class="col-lg form-inline">
+                <label for="QTY">返还数量:</label>
+                <input id="QTY" type="number" name="rtn_qty" class="form-control" v-model="rtn_qty" placeholder="返还数量" title="返还数量">
+              </div>
+              <div class="col-lg form-inline">
+                <label for="RMK">库管备注:</label>
+                <input id="RMK" type="text" name="mio_remark" class="form-control" v-model="mio_remark" placeholder="库管备注" title="库管备注">
+              </div>              
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary" type="button" @click="saveReturnedData">验收无误</button> 
+        </div>  
+      </div>
+    </div>
+  </div>
 </div>
 </template>
 
 
 <script>
 import qs from 'qs';
+import datepicker from 'vue2-datepicker';
+import jsonexcel from 'vue-json-excel/JsonExcel.vue';
   export default {
     data () {
       return {
         currentUserId:this.$store.state.user.id_user,
+        employees:[],
+        projects:[],
+        shortcuts:false,
+
         queryContent:{
           keyWord:'',
           conditions:''
         },
         materials:[],
-        titleOfList:['名称','品牌','型号','单位','包装单位','库存数','保存位置','备注'],
+        titleOfList:['名称','品牌','规格型号','计量单位','包装容量','库存数','保存位置','备注'],
         width:['12.5%','12.5%','12.5%','12.5%','12.5%','12.5%','12.5%','12.5%'],
         qty:0,
         material:{
@@ -118,7 +237,43 @@ import qs from 'qs';
           min_unit_packing:'',
           store_place:'',
           remark:'',
-          id_op:''
+          id_op:'',
+        },
+
+        unreturnedMQC:{
+          dateRange:[],
+          keyWord:'',
+          id_project:0,
+          id_applyer:0,
+        },
+        unreturnedMs:[],
+        unreturnedTitle:['申领人','物料名称','品牌','规格型号','计量单位','包装容量','已发放数','已归还数','领用用途','领用备注'],
+        unreturnedWidth:['10%','12.5%','10%','12%','8%','12.5%','8%','10%','7%','10%'],
+        rtMtrl:{
+          id:'',
+          id_applyer:'',
+          m_name:'',
+          m_unit:'',
+          m_brand:'',
+          m_model:'',
+          m_min_unit_packing:'',
+          m_store_place:'',
+          mio_qty:'',
+        },
+        mio_remark:'',
+        id_op:'',
+        rtn_qty:0,
+      }
+    },
+    components: {
+     datepicker,
+     jsonexcel
+    },
+    computed: {
+      getApplyer() {
+        return function (row) {
+          var empl=this.employees.find((ele) => ele['id'] == row.id_applyer);
+          return typeof(empl)=='undefined'?'':empl['name'];
         }
       }
     },
@@ -131,7 +286,6 @@ import qs from 'qs';
           url: 'getMaterials.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
-// console.log(response.data);
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到符合条件的记录!',
@@ -150,28 +304,11 @@ import qs from 'qs';
             });
           });
       },
-      clearlistOfMaterials() {
-        this.materials=[];
-        // this.titleOfList=[];
-      },
-      // newCreateMaterial() {
-      //   this.materials=[];
-      //   this.material.id='';
-      //   this.material.name='';
-      //   this.material.unit='';
-      //   this.material.brand='';
-      //   this.material.model='';
-      //   this.material.min_unit_packing='';
-      //   this.material.store_place='';
-      //   this.material.remark='';
-      //   this.isNew=true;
-      //   $('#editerOfMaterial').modal('toggle');
-      // },
       clickedARecorderToModify(dataRow) {
         this.material=dataRow;
-        $('#editerOfMaterial').modal('toggle');
+        $('#editerForNewArrived').modal('toggle');
       },
-      saveInputedData() {
+      saveNewArrivedData() {
         if(this.qty<=0) {
           this.$toast({
             text: '数量必须大于0!',
@@ -184,8 +321,6 @@ import qs from 'qs';
         this.queryContent.qty_inbound=this.qty;
         this.queryContent.conditions='updateQTYWithInboundData';
         this.queryContent.id_op=this.currentUserId;
-// console.log(this.queryContent);
-// return;
         var _this=this;
         var url='insertMaterialsInOutbound.php';
         this.$axios({
@@ -193,7 +328,6 @@ import qs from 'qs';
           url: url,
           data: qs.stringify(_this.queryContent)
         }).then(function (response) {
-// console.log(response.data);
             _this.materials=[];
             _this.material.id='';
             _this.material.name='';
@@ -214,7 +348,7 @@ import qs from 'qs';
                 type: 'success',
                 duration: 800
               });
-            $('#editerOfMaterial').modal('toggle');
+            $('#editerForNewArrived').modal('toggle');
           } else {
             console.log(response.data);
             _this.$toast({
@@ -222,7 +356,7 @@ import qs from 'qs';
                type: 'danger',
                duration: 2000
             });
-            $('#editerOfMaterial').modal('toggle');
+            $('#editerForNewArrived').modal('toggle');
           } 
         }).catch(function (error) {
           _this.$toast({
@@ -230,9 +364,150 @@ import qs from 'qs';
             type: 'danger',
             duration: 2000
           });
-          $('#editerOfMaterial').modal('toggle');
+          $('#editerForNewArrived').modal('toggle');
         });
-      }
+      },
+      getPreMonth() {
+        var n = new Date();
+        var year = n.getFullYear();
+        var month = n.getMonth();
+        if(month==0){
+          month=12;
+          year=year-1;
+        }
+        n = new Date(year,month, 0);
+        var dayCount = n.getDate();
+        if (month < 10) {
+          month = "0" + month;
+        }
+        var firstDay = year + "-" + month + "-" + "01";//上个月的第一天
+        var endDay = year + "-" + month + "-" + dayCount;//这个月的第一天
+        return {'firstDay':firstDay,'endDay':endDay};
+      },
+      getUnreturnedMData () {
+        var _this = this;
+        this.unreturnedMs=[];
+        this.unreturnedMQC.conditions="UNRETURNEDMMS";
+        if(this.unreturnedMQC.dateRange.length<2 || this.unreturnedMQC.dateRange[0].length<10 || this.unreturnedMQC.dateRange[1].length<10) {
+          var lastMonth=this.getPreMonth();
+          this.unreturnedMQC.dateRange[0]=lastMonth.firstDay;
+          this.unreturnedMQC.dateRange[1]=lastMonth.endDay;
+        }
+        this.unreturnedMQC.dateRange[0]+=(this.unreturnedMQC.dateRange[0].indexOf('00:00:00')==-1?' 00:00:00':'');
+        this.unreturnedMQC.dateRange[1]+=(this.unreturnedMQC.dateRange[1].indexOf('23:59:59')==-1?' 23:59:59':'');
+        this.$axios({
+          method: 'post',
+          url: 'getUnreturndMaterials.php',
+          data: qs.stringify(_this.unreturnedMQC)
+          }).then(function (response) {
+// console.log(response.data);
+// return;
+            if(response.data.length<1) {
+              _this.$toast({
+                text: '找不到符合条件的记录!',
+                type: 'info',
+                duration: 1000
+              });              
+            } else {
+              _this.unreturnedMs=response.data;
+            }
+          }).catch(function (error) {
+            console.log(error);
+            _this.$toast({
+               text: '异步通信错误!'+error,
+               type: 'danger',
+               duration: 4000
+            });
+          });
+      },
+      slctOnetoReturn (r) {
+        this.rtMtrl=r;
+        this.rtMtrl.mio_qty=Number(this.rtMtrl.qty_distributed)-Number(this.rtMtrl.qty_returned);
+        $('#editerForReturning').modal('toggle');
+      },
+      saveReturnedData () {
+        this.rtMtrl.id_op=this.currentUserId;
+        this.rtMtrl.mio_remark=this.mio_remark;
+        this.rtMtrl.rtn_qty=this.rtn_qty;
+        if(this.rtMtrl.rtn_qty=='' || this.rtMtrl.rtn_qty==0) {
+          this.$toast({
+            text: '数量不符合要求!',
+            type: 'info',
+            duration: 1500
+          });
+          return;
+        }
+        this.rtMtrl.conditions='updateAMIOWithReturnData';
+        var _this=this;
+        var url='insertMaterialsInOutbound.php';
+        this.$axios({
+          method: 'post',
+          url: url,
+          data: qs.stringify(_this.rtMtrl)
+        }).then(function (response) {
+// console.log(response.data);
+            if(response.data===true) {
+              _this.$toast({
+                text: '成功保存数据!',
+                type: 'success',
+                duration: 800
+              });
+              var i=_this.unreturnedMs.findIndex(function(item){return item.id==_this.rtMtrl.id});
+              _this.unreturnedMs.splice(i,1);
+              _this.mio_remark='';
+              _this.id_op='';
+              _this.rtn_qty=0;
+            $('#editerForReturning').modal('toggle');
+          } else {
+            $('#editerForReturning').modal('toggle');
+            console.log(response.data);
+            _this.$toast({
+               text: '通信错误!'+response.data,
+               type: 'danger',
+               duration: 2000
+            });
+          } 
+        }).catch(function (error) {
+          $('#editerForReturning').modal('toggle');
+          _this.$toast({
+            text: '异步通信错误!'+error,
+            type: 'danger',
+            duration: 2000
+          });
+        });
+      },
+    },
+    beforeCreate:function() { 
+      var _this = this;
+      var coQC={};
+      this.projects=[];
+      this.$axios({
+        method: 'post',
+        url: 'getProject.php'
+      }).then(function (response) {
+        _this.projects=response.data;
+      }).catch(function (error) {
+        _this.$toast({
+          text: '异步通信错误!'+error,
+          type: 'danger',
+          duration: 4000
+        });
+      });
+      this.employees=[];
+      coQC.conditions="All";
+      this.$axios({
+            method: 'post',
+            url: 'getEmployees.php',
+            data: qs.stringify(coQC)
+        }).then(function (response) {
+          _this.employees=response.data;
+        }).catch(function (error) {
+          _this.$toast({
+             text: '异步通信错误!'+error,
+             type: 'danger',
+              duration: 4000
+          });
+        });
     }    
   }  
 </script>
@@ -244,13 +519,24 @@ import qs from 'qs';
 h5 {
   color: #007bff;
 }
-#editerOfMaterial input,#editerOfMaterial select {
+#editerForNewArrived input,#editerForNewArrived select {
   width: 70%;
 }
-.row {
-  margin-top: 10px;
+#editerForReturning input,#editerForReturning select {
+  width: 70%;
 }
-.searchbox button {
-  margin-left: 10px;
+.tab-content,.row {
+  margin-top: 5px;
 }
+.searchbox button,.searchbox input,.searchbox select {
+  margin-left: 5px;
+}
+.searchbox {
+  margin-bottom: 5px;  
+}
+.tab-pane {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
 </style>

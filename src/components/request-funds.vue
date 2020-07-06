@@ -187,7 +187,7 @@ Date.prototype.format = function(fmt) {
         var _this = this;
         this.listOfRequestFunds=[];
         this.queryContent.conditions="NotApprovedOrNotPassedApproving";
-        this.queryContent.id_applyer=currentUserId;
+        this.queryContent.id_applyer=this.currentUserId;
         this.$axios({
           method: 'post',
           url: 'getRequestFunds.php',
@@ -296,14 +296,14 @@ Date.prototype.format = function(fmt) {
             });
             return false;
           }
-          if(this.requestFunds.remark.length<4) {
-            this.$toast({
-              text: '请填写备注信息,不少于4个字',
-              type: 'info',
-              duration: 2000
-            });
-            return;
-          }
+          // if(this.requestFunds.remark.length<4) {
+          //   this.$toast({
+          //     text: '请填写备注信息,不少于4个字',
+          //     type: 'info',
+          //     duration: 2000
+          //   });
+          //   return;
+          // }
           queryContent.conditions='NewCreateRequestFunds';
         }
 // console.log(queryContent);

@@ -49,37 +49,37 @@
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputNameOfMAT">名称:</label>
-                <input id="inputNameOfMAT" type="text" name="mtname" class="form-control" v-model="material.mtname" placeholder="物料名称" title="物料名称" readonly>
+                <input id="inputNameOfMAT" type="text" name="mtname" class="form-control" v-model="rqstdMaterial.mtname" placeholder="物料名称" title="物料名称" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputUnit">单位:</label>
-                <input id="inputUnit" type="text" name="unit" class="form-control" v-model="material.unit" placeholder="物料计量单位" title="物料计量单位" readonly>
+                <input id="inputUnit" type="text" name="unit" class="form-control" v-model="rqstdMaterial.unit" placeholder="物料计量单位" title="物料计量单位" readonly>
               </div> 
             </div>
             <div class="row"> 
               <div class="col-lg form-inline">
                 <label for="inputBrand">品牌:</label>
-                <input id="inputBrand" type="text" name="brand" class="form-control" v-model="material.brand" placeholder="厂家品牌" title="厂家品牌" readonly>
+                <input id="inputBrand" type="text" name="brand" class="form-control" v-model="rqstdMaterial.brand" placeholder="厂家品牌" title="厂家品牌" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputModel">型号:</label>
-                <input id="inputModel" type="text" name="model" class="form-control" v-model="material.model" placeholder="规格型号" title="规格型号" readonly>
+                <input id="inputModel" type="text" name="model" class="form-control" v-model="rqstdMaterial.model" placeholder="规格型号" title="规格型号" readonly>
               </div>
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputMin_unit_packing">包装:</label>
-                <input id="inputMin_unit_packing" type="text" name="min_unit_packing" class="form-control" v-model="material.min_unit_packing" placeholder="如:300ml/瓶,12瓶/箱等" title="包装单位" readonly>
+                <input id="inputMin_unit_packing" type="text" name="min_unit_packing" class="form-control" v-model="rqstdMaterial.min_unit_packing" placeholder="如:300ml/瓶,12瓶/箱等" title="包装单位" readonly>
               </div> 
               <div class="col-lg form-inline">
                 <label for="inputStorePlace">库位:</label>
-                <input id="inputStorePlace" type="text" name="store_place" class="form-control" v-model="material.store_place" placeholder="如:A库/B区/C架/6层/1位" title="库名区位架号层号位号" readonly>
+                <input id="inputStorePlace" type="text" name="store_place" class="form-control" v-model="rqstdMaterial.store_place" placeholder="如:A库/B区/C架/6层/1位" title="库名区位架号层号位号" readonly>
               </div>                                        
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputQty">申请:</label>
-                <input id="inputQty" type="number" name="qty_applied" class="form-control" v-model="material.qty" placeholder="申请领用数量" title="申请领用数量" readonly>
+                <input id="inputQty" type="number" name="qty_applied" class="form-control" v-model="rqstdMaterial.qty" placeholder="申请领用数量" title="申请领用数量" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputRemark">发放:</label>
@@ -113,7 +113,7 @@ import qs from 'qs';
         widthA:['12.5%','12.5%','12.5%','12.5%','12.5%','12.5%','12.5%','12.5%'],
         // qty:0,
         listOfAppliedMts:[],
-        material:{
+        rqstdMaterial:{
           id:'',
           name:'',
           unit:'',
@@ -137,15 +137,16 @@ import qs from 'qs';
     methods:{
       clickedARecorderToModify(dataRow) {
 // console.log(dataRow);
-        this.material=dataRow;
+        this.rqstdMaterial=dataRow;
         this.distributer.id_material=dataRow.id_material;
         this.distributer.id_op=this.currentUserId;
         this.distributer.id_applyForm=dataRow.id;
         $('#editerOfMaterial').modal('toggle');
       },
       saveDistributedData() {
-// console.log(this.material);
-        if(Number(this.distributer.qty)<=0 || Number(this.distributer.qty)>Number(this.material.qty)) {
+// console.log(this.distributer);
+// return;
+        if(Number(this.distributer.qty)<=0 || Number(this.distributer.qty)>Number(this.rqstdMaterial.qty)) {
           this.$toast({
             text: '数量必须大于0,并且不超过申请数量!',
             type: 'info',
@@ -177,7 +178,7 @@ import qs from 'qs';
                 arr.splice(index, 1);
               }
             });
-            _this.material={};
+            _this.rqstdMaterial={};
             _this.queryContent={
               keyWord:'',
               conditions:''

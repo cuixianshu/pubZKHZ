@@ -350,7 +350,8 @@ h5 {
 }
 .radio-group {
 /*  display:inline-block; 
-  width:40px;*/
+  width:40px;
+*/
   height: 1.2em;
   vertical-align:middle;
   margin-top:-2px;

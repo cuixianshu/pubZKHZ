@@ -78,7 +78,7 @@
                 <input id="inputDueQty" type="number" name="qty_stocks" class="form-control" v-model="material.qty_stocks" placeholder="应有库存数量" title="应有库存数量" readonly>
               </div>
               <div class="col-lg form-inline">
-                <label for="inputActualQty">实有:</label>
+                <label for="inputActualQty" style="color:red;">实有:</label>
                 <input id="inputActualQty" type="number" name="qty_actual" class="form-control" v-model="material.qty_actual" placeholder="实有数量" title="实际盘点数量">
               </div>              
             </div>
@@ -142,7 +142,6 @@ import qs from 'qs';
               });              
             } else {
               _this.materials=response.data;
-// console.log(_this.materials);
             }
           }).catch(function (error) {
             console.log(error);
@@ -158,7 +157,8 @@ import qs from 'qs';
       },
       clickedARecorderToModify(dataRow) {
         this.material=dataRow;
-        this.material.qty_actual=0;
+        this.material.qty_actual=this.material.qty_stocks;
+// console.log(this.material);
         $('#editerOfMaterial').modal('toggle');
       },
       saveInventoryData() {

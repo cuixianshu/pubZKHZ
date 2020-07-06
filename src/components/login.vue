@@ -26,7 +26,10 @@
         </a>
       </p>
       <p>
-        Copyright © 2020 中科会展(大连)有限公司. All rights reserved.
+        中科会展(大连)有限公司
+      </p> 
+      <p>
+        Copyright © 2020 JOYCLERK CONFERENCE AND EXHIBITION (Dalian) Co.,ltd. All rights reserved.
       </p>        
     </div>
   </div>
@@ -52,8 +55,11 @@ export default ({
       }  
     },
     forgotPswd() {
-      console.log("忘记密码");
-      // this.$store.commit('changeLogin',true);
+      this.$toast({
+        text: '请联系管理员处理!',
+        type: 'info',
+        duration: 3000
+      });
     }
   }
 })

@@ -8,7 +8,7 @@
         <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="时间区间,默认最近7天" :shortcuts="shortcuts" placeholder="发生业务的时间范围"></datepicker> 
         <button class="btn btn-primary" @click="getOrders">🔍获取数据</button>
       </div>
-      <div class="listOfSelectedRecorders" v-if="rcdrsSetFromDBSForRequesting.length>0">
+      <div class="listOfSelectedRecorders pre-scrollable" v-if="rcdrsSetFromDBSForRequesting.length>0">
         <table class="table table-hover">
           <thead>
             <th v-for="title,index in headerOfList" @click="allCheckboxClicked" :width="widthOfTH[index]">{{title}}</th>

@@ -8,7 +8,7 @@
           <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位等搜索关键词">
           <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="收款的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="收款的时间范围"></datepicker> 
           <button class="btn btn-primary" @click="getListOfTurnedInFunds">🔍获取数据</button>
-          <button class="btn btn-secondary" @click="clearList" v-if="listOfTurnInFunds.length>0">清除</button>            
+          <button class="btn btn-secondary" @click="listOfTurnInFunds=[];" v-if="listOfTurnInFunds.length>0">清除</button>            
         </div>          
       </div>
     </div>
@@ -18,8 +18,14 @@
           <th v-for="title,index in titlesOfList" :width="widthOfTH[index]">{{title}}</th>
         </thead>
         <tbody>
-          <tr v-for="row,index in listOfTurnInFunds" @click="clickedARowInShower(row)">
-            <td v-for="vlu in row" :title="vlu">{{vlu}}</td>
+          <tr v-for="(row,index) in listOfTurnInFunds" @click="clickedARowInShower(row)">
+            <td title="缴款ID">{{row.id}}</td>
+            <td title="缴款人">{{getTurninName(row)}}</td>
+            <td title="缴款项目">{{getProjectName(row)}}</td>
+            <td title="缴款事由">{{row.cause}}</td>
+            <td title="缴款金额">{{row.amount}}</td>
+            <td title="缴款方式">{{getPayWay(row)}}</td>
+            <td title="缴款备注">{{row.remark}}</td>
           </tr>
         </tbody>
       </table>
@@ -40,14 +46,16 @@
             <div id="detailsForCashier" class="container-fluid">
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="slctCashierProject">项目</label>
-                  <select id="slctCashierProject" type="text" name="cashierProject" class="form-control" placeholder="所属项目" v-model="cashier.id_project" title="所属项目" disabled>
-                    <option v-for="item in projects" :value="item.id">{{item.name}}</option>}
+                  <label for="payer">缴款</label>
+                  <select id="payer" type="text" name="payer" class="form-control" v-model="cashier.id_payer" title="缴款人" disabled>
+                    <option v-for="item in employees" :value="item.id">{{item.name}}</option>}
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="inputDateOfCashier">时间</label>
-                  <input id="inputDateOfCashier" type="text" class="form-control" :value="cashier.time_paid" placeholder="缴款时间" readonly>
+                  <label for="natrue">性质</label>
+                  <select id="natrue" type="text" class="form-control" v-model="cashier.natrue" title="款项性质" disabled>
+                    <option v-for="item in natrues" :value="item.id">{{item.name}}</option>}
+                  </select>
                 </div>
               </div>
               <div class="row">
@@ -118,8 +126,8 @@ Date.prototype.format = function(fmt) {
           dateRange:[],
           conditions:''
         },
-        titlesOfList:[],
-        widthOfTH:['5%','11%','8%','6%','8%','10%','7%','12%','6%','7%','5%','11%','4%'],
+        titlesOfList:['缴款ID','缴款人','项目','事由','金额','方式','缴款备注'],
+        widthOfTH:['9%','11%','20%','20%','10%','10%','20%'],
         listOfTurnInFunds:[],
         currentUserId:this.$store.state.user.id_user,
         cashier:{
@@ -129,16 +137,20 @@ Date.prototype.format = function(fmt) {
           id_project:'',
           id_way_pay:'',
           remark:'',
-          time_paid:'', 
+          natrue:1, 
           account:'中科平安',
           id_account:1,
-          way:'电汇',
-          project:'',
+          // way:'电汇',
           id_cashier:''
         },
         ourAccounts:[],
         wayOfPayment:[],
-        projects:[]
+        projects:[],
+        employees:[],
+        natrues:[
+          {id:1,name:'上缴款项'},
+          {id:2,name:'归还借款'},
+        ],
 
       }
     },
@@ -150,14 +162,16 @@ Date.prototype.format = function(fmt) {
         if(this.queryContent.dateRange.length<2 || !this.queryContent.dateRange[0] || !this.queryContent.dateRange[1]){//如果日期填写不全,默认是过去1周
           var day1=new Date();
           day1.setDate(day1.getDate() - 7);
-          this.queryContent.dateRange[0]= day1.format("yyyy-MM-dd")+" 00:00:00";
+          this.queryContent.dateRange[0]= day1.format("yyyy-MM-dd");
           var day2 = new Date();
           day2.setDate(day2.getDate());
-          this.queryContent.dateRange[1] = day2.format("yyyy-MM-dd")+" 23:59:59";
+          this.queryContent.dateRange[1] = day2.format("yyyy-MM-dd");
         }       
+        this.queryContent.dateRange[0]+=(this.queryContent.dateRange[0].indexOf('00:00:00')==-1?' 00:00:00':'');
+        this.queryContent.dateRange[1]+=(this.queryContent.dateRange[1].indexOf('23:59:59')==-1?' 23:59:59':'');
         var _this = this;
         this.listOfTurnInFunds=[];
-        this.titlesOfList=[];
+        // this.titlesOfList=[];
         this.queryContent.conditions="NotCollected";
         this.$axios({
           method: 'post',
@@ -172,11 +186,7 @@ Date.prototype.format = function(fmt) {
               });              
             } else {
               _this.listOfTurnInFunds=response.data;
-              for(var title in response.data[0]) {
-                _this.titlesOfList.push(title);
-              }             
             }
-
           }).catch(function (error) {
             console.log(error);
             _this.$toast({
@@ -196,19 +206,21 @@ Date.prototype.format = function(fmt) {
         this.cashier.account='中科平安';
         this.cashier.id_account=1;
         this.cashier.id_cashier=this.currentUserId;
+        this.cashier.natrue=dataRow.nature;
+        this.cashier.signature_code=dataRow.signature_code;
         $('#mdlCashier').modal('toggle');
       },
       saveTheCollectedData() {
-        var queryContent={
-          id_turn_in_funds:this.cashier.id_turn_in_funds,
-          id_account:this.cashier.id_account,
-          id_way_pay:this.cashier.id_way_pay,
-          remark:this.cashier.remark,
-          amount:this.cashier.amount,
-          id_cashier:this.currentUserId,
-          conditions:'',
-          id_project:this.cashier.id_project
-        };
+        // var queryContent={
+        //   id_turn_in_funds:this.cashier.id_turn_in_funds,
+        //   id_account:this.cashier.id_account,
+        //   id_way_pay:this.cashier.id_way_pay,
+        //   remark:this.cashier.remark,
+        //   amount:this.cashier.amount,
+        //   id_cashier:this.currentUserId,
+        //   conditions:'',
+        //   id_project:this.cashier.id_project
+        // };
 
         if(this.cashier.amount<this.cashier.amount) {
           this.$toast({
@@ -218,14 +230,27 @@ Date.prototype.format = function(fmt) {
           });
           return false;
         }
-        queryContent.conditions='ByTurnInFunds';
+        // queryContent.conditions='ByTurnInFunds';
+        this.cashier.conditions='ByTurnInFunds';
+        // var arr = Object.keys(this.cashier.signature_code);
+        if(!this.cashier.signature_code) {
+          this.cashier.id_request='';
+          this.cashier.id_pay='';
+        } else {
+          var o={};
+          o = JSON.parse(this.cashier.signature_code);
+          this.cashier.id_request=o.id_request;
+          this.cashier.id_pay=o.id_pay;
+        }
 
         var _this=this;
         this.$axios({
           method: 'post',
           url: 'updateCashier.php',
-          data: qs.stringify(queryContent)
+          data: qs.stringify(_this.cashier)
           }).then(function (response) {
+console.log(response.data);
+// return;
             if(response.data===true) {
               $('#mdlCashier').modal('toggle'); 
               _this.$toast({
@@ -258,22 +283,28 @@ Date.prototype.format = function(fmt) {
             $('#mdlCashier').modal('toggle');
           });        
       },
-      clearList () {
-        this.listOfTurnInFunds=[];
-        this.titlesOfList=[];
-      },
-      collectByHand() {
-        this.cashier.id_turn_in_funds='';
-        $('#mdlCashier').modal('toggle');
-        this.cashier.account='中科平安';
-        this.cashier.id_account=1;
-        this.cashier.way='现金';
-        this.cashier.id_way_pay=1;
-        this.cashier.amount=0;
-        this.cashier.remark='';        
-      }
     },
     watch:{
+    },
+    computed: {
+      getTurninName() {
+        return function (r) {
+          var stf=this.employees.find((ele) => ele['id'] == r.id_payer);
+          return typeof(stf)=='undefined'?'':stf['name'];
+        }
+      },
+      getProjectName() {
+        return function (r) {
+          var prjct=this.projects.find((ele) => ele['id'] == r.id_project);
+          return typeof(prjct)=='undefined'?'':prjct['name'];
+        }
+      },
+      getPayWay() {
+        return function (r) {
+          var WP=this.wayOfPayment.find((ele) => ele['id'] == r.id_way_pay);
+          return typeof(WP)=='undefined'?'':WP['name'];
+        }
+      },
     },
     beforeCreate:function() {
       var _this=this;
@@ -319,6 +350,22 @@ Date.prototype.format = function(fmt) {
           duration: 4000
         });
       });            
+    this.employees=[];
+    var queryContent={};
+    queryContent.conditions="All";
+    this.$axios({
+          method: 'post',
+          url: 'getEmployees.php',
+          data: qs.stringify(queryContent)
+      }).then(function (response) {
+        _this.employees=response.data;
+      }).catch(function (error) {
+        _this.$toast({
+           text: '异步通信错误!'+error,
+           type: 'danger',
+            duration: 4000
+        });
+      });
     }    
   } 
 </script>

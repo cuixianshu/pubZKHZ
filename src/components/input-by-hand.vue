@@ -145,10 +145,11 @@ export default {
         endDate:'',
         startPoint:'',
         endPoint:'',
-        id_operator:this.$store.state.user.id_user,
+        id_operator:'',
         id_equipment:'',
         id_payer:'',
-        mem:''
+        mem:'',
+        id_creater:this.$store.state.user.id_user
       },
       customers:[],
       projects:[],
@@ -254,7 +255,10 @@ export default {
           _this.newOrder.mem='';
           _this.newOrder.startDate='';
           _this.newOrder.endDate='';
-          _this.newOrder.numOfContract='';                
+          _this.newOrder.id_operator='';
+          _this.newOrder.numOfContract=''; 
+          _this.newOrder.id_creater=_this.$store.state.user.id_user;
+          _this.newOrder.id_booker=''
         } else {
           console.log(response.data);
           _this.$toast({

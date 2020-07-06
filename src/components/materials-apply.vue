@@ -67,65 +67,83 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <span>物料申领单</span>
+          <span>物料申领单</span><span id="tip" v-if="rqst_Material.is_need_return==1">注意:{{rqst_Material.name}},用后须归还!</span>
         </div>
         <div class="modal-body">
           <div class="container-fluid">
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputNameOfMAT">名称:</label>
-                <input id="inputNameOfMAT" type="text" name="name" class="form-control" v-model="material.name" placeholder="物料名称" title="物料名称" readonly>
+                <input id="inputNameOfMAT" type="text" name="name" class="form-control" v-model="rqst_Material.name" placeholder="物料名称" title="物料名称" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputUnit">单位:</label>
-                <input id="inputUnit" type="text" name="unit" class="form-control" v-model="material.unit" placeholder="物料计量单位" title="物料计量单位" readonly>
+                <input id="inputUnit" type="text" name="unit" class="form-control" v-model="rqst_Material.unit" placeholder="物料计量单位" title="物料计量单位" readonly>
               </div> 
             </div>
             <div class="row"> 
               <div class="col-lg form-inline">
                 <label for="inputBrand">品牌:</label>
-                <input id="inputBrand" type="text" name="brand" class="form-control" v-model="material.brand" placeholder="厂家品牌" title="厂家品牌" readonly>
+                <input id="inputBrand" type="text" name="brand" class="form-control" v-model="rqst_Material.brand" placeholder="厂家品牌" title="厂家品牌" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputModel">型号:</label>
-                <input id="inputModel" type="text" name="model" class="form-control" v-model="material.model" placeholder="规格型号" title="规格型号" readonly>
+                <input id="inputModel" type="text" name="model" class="form-control" v-model="rqst_Material.model" placeholder="规格型号" title="规格型号" readonly>
               </div>
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputMin_unit_packing">包装:</label>
-                <input id="inputMin_unit_packing" type="text" name="min_unit_packing" class="form-control" v-model="material.min_unit_packing" placeholder="如:300ml/瓶,12瓶/箱等" title="包装单位" readonly>
+                <input id="inputMin_unit_packing" type="text" name="min_unit_packing" class="form-control" v-model="rqst_Material.min_unit_packing" placeholder="如:300ml/瓶,12瓶/箱等" title="包装单位" readonly>
               </div> 
               <div class="col-lg form-inline">
                 <label for="inputStorePlace">库位:</label>
-                <input id="inputStorePlace" type="text" name="store_place" class="form-control" v-model="material.store_place" placeholder="如:A库/B区/C架/6层/1位" title="库名区位架号层号位号" readonly>
+                <input id="inputStorePlace" type="text" name="store_place" class="form-control" v-model="rqst_Material.store_place" placeholder="如:A库/B区/C架/6层/1位" title="库名区位架号层号位号" readonly>
               </div>                                        
             </div>
             <div class="row">
               <div class="col-lg form-inline">
-                <label for="inputQty">数量:</label>
-                <input id="inputQty" type="number" name="qty" class="form-control" v-model="qty" placeholder="申请领用数量" title="申请领用数量">
+                <label for="inputProject">项目:</label>
+                <select id="inputProject" type="text" name="id_project" class="form-control" v-model="rqst_Material.id_project" placeholder="所属项目" title="所属项目">
+                  <option :value="item.id" v-for="item in projects">{{item.name}}</option>
+                </select>
               </div>
               <div class="col-lg form-inline">
-                <label for="inputRemark">备注:</label>
-                <input id="inputRemark" type="text" name="remark" class="form-control" v-model="material.remark" placeholder="备注信息" title="备注信息">
-              </div>              
+                <label for="inputUseFor">用途:</label>
+                <input id="inputUseFor" type="text" name="use_for" class="form-control" v-model="rqst_Material.use_for" placeholder="物料用途" title="请输入物料用途,不少于2个字">
+              </div>
             </div>
             <div class="row">
               <div class="col-lg form-inline">
-                <label for="inputProject">项目:</label>
-                <select id="inputProject" type="text" name="id_project" class="form-control" v-model="id_project" placeholder="所属项目" title="所属项目">
-                  <option :value="item.id" v-for="item in projects">{{item.name}}</option>
-                </select>                
+                <label for="inputQty">数量:</label>
+                <input id="inputQty" type="number" name="qty" class="form-control" v-model="rqst_Material.qty" placeholder="申请领用数量" title="申请领用数量">
               </div>
               <div class="col-lg form-inline">
-              </div>
+                <label for="inputRemark">备注:</label>
+                <input id="inputRemark" type="text" name="remark" class="form-control" v-model="rqst_Material.remark" placeholder="备注信息" title="备注信息">
+              </div>              
             </div>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button class="btn btn-primary" type="button" @click="commitApply">提交申请</button> 
+          <button class="btn btn-primary" type="button" @click="showRemindReturning">提交申请</button> 
+        </div>  
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="remindreturning" role="dialog" aria-labelledby="remindreturning" data-backdrop="static" data-keyboard: false>
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5>归还提醒</h5>
+        </div>
+        <div class="modal-body">
+          <h5 class="warningForReturn">物品:{{rqst_Material.name}}</h5><h5 class="warningForReturn">用后须归还!确定要领用吗?</h5>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary" type="button" @click="commitApply">确定</button> 
         </div>  
       </div>
     </div>
@@ -149,9 +167,8 @@ import qs from 'qs';
         width:['12.5%','12.5%','12.5%','12.5%','12.5%','12.5%','12.5%','12.5%'],
         titleOfAppliedMaterialsList:['所属项目','名称','品牌','型号','单位','包装单位','申请数量','申请时间','进度'],
         widthA:['12%','11%','11%','11%','11%','11%','11%','11%','11%'],
-        qty:0,
         listOfAppliedMts:[],
-        material:{
+        rqst_Material:{
           id:'',
           name:'',
           unit:'',
@@ -160,10 +177,12 @@ import qs from 'qs';
           min_unit_packing:'',
           store_place:'',
           remark:'',
-          id_op:''
+          id_op:'',
+          id_project:1,
+          use_for:'',
+          qty:0,
         },
         projects:[],
-        id_project:''
       }
     },
     methods:{
@@ -200,12 +219,11 @@ import qs from 'qs';
         // this.titleOfMaterialsList=[];
       },
       clickedARecorderToModify(dataRow) {
-        this.material=dataRow;
-        $('#editerOfMaterial').modal('toggle');
+        this.rqst_Material=dataRow;
+        $('#editerOfMaterial').modal('toggle');//打开
       },
-      commitApply() {
-// console.log(this.material);
-        if(Number(this.qty)<=0 || Number(this.qty)>Number(this.material.availableQtyForApplying)) {
+      showRemindReturning() {
+        if(Number(this.rqst_Material.qty)<=0 || Number(this.rqst_Material.qty)>Number(this.rqst_Material.availableQtyForApplying)) {
           this.$toast({
             text: '数量必须大于0,并且不超过库存数!',
             type: 'info',
@@ -213,7 +231,7 @@ import qs from 'qs';
           });
           return;
         }
-        if(this.id_project.length<1) {
+        if(this.rqst_Material.id_project.length<1) {
           this.$toast({
             text: '请选择项目!',
             type: 'info',
@@ -221,13 +239,24 @@ import qs from 'qs';
           });
           return;
         }
-        this.queryContent=this.material;
-        this.queryContent.qty_apply=this.qty;
+        if(this.rqst_Material.use_for.length<2) {
+          this.$toast({
+            text: '用途不能少于2个字!',
+            type: 'info',
+            duration: 1500
+          });
+          return;
+        }        
+        $('#editerOfMaterial').modal('toggle');//关闭
+        $('#remindreturning').modal('toggle');//打开
+      },
+      commitApply() {
+        // $('#remindreturning').modal('toggle');
+// console.log(this.rqst_Material);
+
+        this.queryContent=this.rqst_Material;
         this.queryContent.conditions='insertMaterialApplying';
         this.queryContent.id_op=this.currentUserId;
-        this.queryContent.id_project=this.id_project;
-// console.log(this.queryContent);
-// return;
         var _this=this;
         var url='insertMaterialsApplying.php';
         this.$axios({
@@ -236,9 +265,10 @@ import qs from 'qs';
           data: qs.stringify(_this.queryContent)
         }).then(function (response) {
 // console.log(response.data);
+// return;
+            $('#remindreturning').modal('toggle');
             _this.materials=[];
-            _this.material={};
-            _this.qty=0;
+            _this.rqst_Material={};
             _this.queryContent={
               keyWord:'',
               conditions:''
@@ -249,23 +279,22 @@ import qs from 'qs';
                 type: 'success',
                 duration: 800
               });
-            $('#editerOfMaterial').modal('toggle');
           } else {
+            $('#remindreturning').modal('toggle');
             console.log(response.data);
             _this.$toast({
                text: '通信错误!'+response.data,
                type: 'danger',
                duration: 2000
             });
-            $('#editerOfMaterial').modal('toggle');
           } 
         }).catch(function (error) {
+          $('#remindreturning').modal('toggle');
           _this.$toast({
             text: '异步通信错误!'+error,
             type: 'danger',
             duration: 2000
           });
-          $('#editerOfMaterial').modal('toggle');
         });
       },
       getListOfAppliedMaterials() {
@@ -364,5 +393,11 @@ h5 {
 }
 .searchbox button {
   margin-left: 10px;
+}
+#tip {
+  color:red;
+}
+.warningForReturn {
+  color:#dc3545;
 }
 </style>
