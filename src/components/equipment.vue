@@ -4,10 +4,10 @@
   <div id="clientDepartment" class="container-fluid">
     <div class="form-group form-inline searchBar">
       <div class="col-lg">
-        <span for="schKeyWds">关键词:</span>
-        <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="名称、品牌、型号等">
+<!--         <span for="schKeyWds">关键词:</span>
+        <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="名称、品牌、型号等"> -->
         <button @click="getListOfEquipments" class="btn btn-primary" type="button">
-          搜索数据
+          获取数据
         </button>
         <button @click="clearlistOfEquipments"class="btn btn-secondary" type="button" v-if="equipments.length>0">清空</button>
       </div>
@@ -124,32 +124,18 @@ import qs from 'qs';
           remark:'',
           is_own:1
         },
-        employees:[]
+        employees:this.$store.state.employees,
       }
     },
     methods:{
       getListOfEquipments() {
+        // console.log(this.employees);
         var _this = this;
-        this.equipments=[];
+        this.equipments=this.$store.state.myEqpmts;
         this.titleOfList=[];
-        this.$axios.get('getEquipments.php')
-          .then(function (response) {
-            if(response.data.length>0) {
-              _this.equipments = response.data;
-              var ttl='';
-              for(ttl in response.data[0]) {
-                _this.titleOfList.push(ttl);
-              }              
-            } else {
-              this.$toast({
-                text: '没有符合条件的记录',
-                type: 'info',
-                duration: 2000
-              });              
-            }
-          }).catch(function (error) {
-            console.log(error);
-          });
+        for(var ttl in this.equipments[0]) {
+          this.titleOfList.push(ttl);
+        }              
       },
       clearlistOfEquipments() {
         this.equipments=[];
@@ -184,7 +170,7 @@ import qs from 'qs';
       },
       saveInputedData() {
         for(var prop in this.equipment) {
-          if(prop!=='is_own' && prop!=='id' && prop!=='id_responsible_person' && prop!=='available' && prop!=='remark') {
+          if(prop!=='is_own' && prop!=='id' && prop!=='id_responsible_person' && prop!=='available' && prop!=='remark' && prop!=='name_responsible_person') {
             if(this.equipment[prop].length<2) {
             this.$toast({
               text: prop+'不能少于2个字',
@@ -234,6 +220,7 @@ import qs from 'qs';
             _this.equipment.id_responsible_person=1;
             _this.equipment.name_responsible_person='';
             _this.equipment.remark='';
+            _this.$store.dispatch('getMyEqpmts',_this);
           } else {
             console.log(response.data);
             _this.$toast({
@@ -254,17 +241,6 @@ import qs from 'qs';
       }
     },
     beforeCreate:function() {
-      //初始化员工option
-      this.employees=[];
-      var _this = this;
-      this.$axios({
-        method: 'post',
-        url: 'getEmployees.php'
-      }).then(function (response) {
-        _this.employees=response.data;
-      }).catch(function (error) {
-        console.log(error);
-      });
     }     
   }  
 </script>

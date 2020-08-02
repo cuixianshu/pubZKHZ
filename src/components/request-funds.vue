@@ -7,11 +7,11 @@
           <label for="queryConditions">关键词:</label> 
           <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="请款人,用途等搜索关键词">
           <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请款的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="请款的时间范围"></datepicker> 
-          <button class="btn btn-primary" @click="getListOfRequestFunds">🔍获取数据</button>
+          <button class="btn btn-primary" @click="getListOfRequestFunds">🔍获取我的请款记录</button>
           <button class="btn btn-secondary" @click="clearList" v-if="listOfRequestFunds.length>0">清除</button> 
         </div>
         <div class="col-lg-4 form-inline">           
-          <button id="byhand-fee" @click="newCreateRequestFunds(1)" class="btn btn-primary" type="button">新报销单</button>
+          <button id="byhand-fee" @click="newCreateRequestFunds(1)" class="btn btn-primary" type="button">新费用/报销单</button>
           <button id="byhand-borrow" @click="newCreateRequestFunds(2)" class="btn btn-primary" type="button">新借款单</button>
         </div>          
       </div>
@@ -20,16 +20,16 @@
     <div class="showerOfRequestFunds" v-if="listOfRequestFunds.length>0">
       <table class="table table-hover">
         <thead>
-          <th v-for="title,index in titlesOfList" >{{title}}</th>
-          <!-- <th><input class="checkbox" type="checkbox" @click=""></th>:width="widthOfTH[index]" -->
+          <th v-for="(title,index) in titlesOfList" :width="widthOfTH[index]">{{title}}</th>
+          <!-- <th><input class="checkbox" type="checkbox" @click=""></th> -->
         </thead>
         <tbody>
           <tr v-for="row,index in listOfRequestFunds" @click="clickedARowInShower(row)">
             <!-- <td v-for="vlu in row" :title="vlu">{{vlu}}</td> -->
-            <td :title="row.id">{{row.id}}</td>
-            <td :title="row.id_project">{{row.id_project}}</td>
+            <td title="款项性质">{{getNature(row)}}</td>
+            <td :title="row.id_project">{{getProject(row)}}</td>
             <td :title="row.amount">{{row.amount}}</td>
-            <td :title="row.id_way_pay">{{row.id_way_pay}}</td>
+            <td title="付款方式">{{getWayOfPayment(row)}}</td>
             <td :title="row.account">{{row.account}}</td>
             <td :title="row.use_for">{{row.use_for}}</td>
             <td :title="row.remark">{{row.remark}}</td>
@@ -50,17 +50,17 @@
             <span v-else>
               <h5>请款单---{{natureText}}</h5>
             </span>  
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>  
-              </button>  
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>  
+            </button>  
           </div>
           <div class="modal-body">
             <div class="container-fluid">
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctProject">项目</label>
-                  <select id="slctProject" type="text" name="Project" class="form-control" placeholder="所属项目" v-model="requestFunds.project" title="所属项目" :disabled="requestFunds.result_approved==1">
-                    <option v-for="item in projects">{{item.prjct}}</option>}
+                  <select id="slctProject" type="text" name="Project" class="form-control" placeholder="所属项目" v-model="requestFunds.id_project" title="所属项目" :disabled="requestFunds.result_approved==1">
+                    <option v-for="item in projects" :value="item.id">{{item.name}}</option>}
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
@@ -75,8 +75,8 @@
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="requestFunds.way" placeholder="收款方式" title="收款方式" :disabled="requestFunds.result_approved==1">
-                    <option v-for="item in wayOfPayment">{{item.name}}</option>}
+                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="requestFunds.id_way_pay" placeholder="收款方式" title="收款方式" :disabled="requestFunds.result_approved==1">
+                    <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>}
                   </select>
                 </div>
               </div>
@@ -87,7 +87,7 @@
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputRemark">备注</label>
-                  <input id="inputRemark" type="text" class="form-control" name="otherInCashier" v-model="requestFunds.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字" :disabled="requestFunds.result_approved==1">
+                  <input id="inputRemark" type="text" class="form-control" name="otherInCashier" v-model="requestFunds.remark" title="发票或票据号、备注信息,不超过64个字" placeholder="发票或票据号、备注信息" :disabled="requestFunds.result_approved==1">
                 </div>
               </div>
               <div class="row" v-if="requestFunds.result_approved==0 || requestFunds.result_approved2==0">
@@ -144,8 +144,8 @@ Date.prototype.format = function(fmt) {
           dateRange:[],
           conditions:''
         },
-        titlesOfList:['申请ID','项目ID','金额','支付方式','账号名和账号','用途','备注','请款日期','请款进度'],
-        widthOfTH:['5%','11%','8%','6%','8%','10%','7%','12%','6%','7%','5%','11%','4%'],
+        titlesOfList:['款项性质','项目','金额','支付方式','账号名和账号','用途','备注','请款日期','请款进度'],
+        widthOfTH:['6%','8%','8%','9%','19%','18%','12%','9%','11%'],
         listOfRequestFunds:[],
         idOfRequestFunds:'',
         currentUserId:this.$store.state.user.id_user,
@@ -165,8 +165,8 @@ Date.prototype.format = function(fmt) {
           result_approved2:'',
           nature:1
         },
-        wayOfPayment:[],
-        projects:[],
+        wayOfPayment:this.$store.state.waysOfPayment,
+        projects:this.$store.state.projects,
         natureText:'借备用金'
 
       }
@@ -193,7 +193,7 @@ Date.prototype.format = function(fmt) {
           url: 'getRequestFunds.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
-// console.log(response.data);
+            console.log(response.data);
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到符合条件的记录!',
@@ -216,37 +216,32 @@ Date.prototype.format = function(fmt) {
       clickedARowInShower(dataRow) {
 // console.log(dataRow);
         this.idOfRequestFunds=dataRow.id;
-        this.requestFunds.id=dataRow.id;
-        this.requestFunds.account=dataRow.account;
-        this.requestFunds.id_way_pay=dataRow.id_way_pay;
-        this.requestFunds.amount=dataRow.amount;
-        this.requestFunds.remark=dataRow.remark;
-        this.requestFunds.id_project=dataRow.id_project;
-        this.requestFunds.use_for=dataRow.use_for;
-        this.requestFunds.reason_reject=dataRow.reason_reject;
-        this.requestFunds.result_approved=dataRow.result_approved;
-        this.requestFunds.reason_reject2=dataRow.reason_reject2;
-        this.requestFunds.result_approved2=dataRow.result_approved2;
+        this.requestFunds=dataRow;
+        // this.requestFunds.account=dataRow.account;
+        // this.requestFunds.id_way_pay=dataRow.id_way_pay;
+        // this.requestFunds.amount=dataRow.amount;
+        // this.requestFunds.remark=dataRow.remark;
+        // this.requestFunds.id_project=dataRow.id_project;
+        // this.requestFunds.use_for=dataRow.use_for;
+        // this.requestFunds.reason_reject=dataRow.reason_reject;
+        // this.requestFunds.result_approved=dataRow.result_approved;
+        // this.requestFunds.reason_reject2=dataRow.reason_reject2;
+        // this.requestFunds.result_approved2=dataRow.result_approved2;
        
-        for(var i=0;i<this.wayOfPayment.length;i++) {
-          if(this.requestFunds.id_way_pay=this.wayOfPayment[i].id) {
-            this.requestFunds.way=this.wayOfPayment[i]['name'];
-          }
-        }
-        for(var i=0;i<this.projects.length;i++) {
-          if(this.requestFunds.id_project==this.projects[i].id) {
-            this.requestFunds.project=this.projects[i].prjct;
-          }
-        }        
+        // for(var i=0;i<this.wayOfPayment.length;i++) {
+        //   if(this.requestFunds.id_way_pay=this.wayOfPayment[i].id) {
+        //     this.requestFunds.way=this.wayOfPayment[i]['name'];
+        //   }
+        // }
+        // for(var i=0;i<this.projects.length;i++) {
+        //   if(this.requestFunds.id_project==this.projects[i].id) {
+        //     this.requestFunds.project=this.projects[i].prjct;
+        //   }
+        // }        
         $('#mdlRequestFunds').modal('toggle');
       },
       saveTheRequestedData() {
-        for(var i=0;i<this.wayOfPayment.length;i++) {
-          if(this.requestFunds.way===this.wayOfPayment[i]['name']) {
-            this.requestFunds.id_way_pay=this.wayOfPayment[i]['id'];
-          }
-        }
-        if(this.requestFunds.project=='') {
+        if(this.requestFunds.id_project=='') {
           this.$toast({
             text: '请选择项目!',
             type: 'info',
@@ -254,6 +249,14 @@ Date.prototype.format = function(fmt) {
           });
           return false;          
         }        
+        if(this.requestFunds.id_way_pay=='') {
+          this.$toast({
+            text: '请选择付款方式!',
+            type: 'info',
+            duration: 2000
+          });
+          return false;          
+        }
         // var queryContent={
         //   id:this.idOfRequestFunds,
         //   id_way_pay:this.requestFunds.id_way_pay,
@@ -280,7 +283,7 @@ Date.prototype.format = function(fmt) {
           queryContent.conditions='ModifyRequestFunds';
         } else {
           this.listOfRequestFunds=[];
-          if(this.requestFunds.use_for.length<4) {
+          if(this.requestFunds.use_for.length<2) {
             this.$toast({
               text: '请输入用途!',
               type: 'info',
@@ -354,10 +357,10 @@ Date.prototype.format = function(fmt) {
         this.requestFunds.nature=nature;
         switch (nature) {
           case 1:
-            this.natureText='报销单';
+            this.natureText='费用/报销 申请单';
             break;
           case 2:
-            this.natureText='借款单';
+            this.natureText='借款 申请单';
             break;
         }
         this.clearList();
@@ -378,21 +381,21 @@ Date.prototype.format = function(fmt) {
       }
     },
     watch:{
-      'requestFunds.project':{
-        handler() {
-          for(var i=0;i<this.projects.length;i++) {
-            if(this.requestFunds.project==this.projects[i].prjct) {
-              this.requestFunds.id_project=this.projects[i].id;
-            }
-          }
-        }
-      }
+      // 'requestFunds.project':{
+      //   handler() {
+      //     for(var i=0;i<this.projects.length;i++) {
+      //       if(this.requestFunds.project==this.projects[i].prjct) {
+      //         this.requestFunds.id_project=this.projects[i].id;
+      //       }
+      //     }
+      //   }
+      // }
     },
     filters:{
 
     },
     computed: {
-      // row.result_approved
+      // is_paid
       getStatus() {
         return function(dataRow){
           if (!dataRow.result_approved && typeof(dataRow.result_approved)!="undefined" && dataRow.result_approved!=0){
@@ -404,41 +407,46 @@ Date.prototype.format = function(fmt) {
           } else if(dataRow.result_approved2==0) {
             return '请款未通过复审';
           } else {
-            return '已复审,待付款';
+            if(dataRow.is_paid==0) {
+              return '已复审,待付款';
+            } else {
+              return '已支付完毕';
+            }
           }
         } 
+      },
+      getNature () {
+        return function(r) {
+          switch(r.nature) {
+               case 1:
+                  return '报销费用';
+                  break;
+               case 2:
+                  return '借款备用';
+                  break;
+               case 3:
+                  return '采购请款';
+                  break;
+               case 4:
+                  return '机票退款';
+                  break;
+          } 
+        }
+      },
+      getProject () {
+        return function(r) {
+          var o=this.projects.find((ele) => ele['id'] == r.id_project);
+          return typeof(o)=='undefined'?'':o['name'];
+        }
+      },
+      getWayOfPayment () {
+        return function(r) {
+          var o=this.wayOfPayment.find((ele) => ele['id'] == r.id_way_pay);
+          return typeof(o)=='undefined'?'':o['name'];          
+        }
       }      
     },
     beforeCreate:function() {
-      var _this=this;
-      this.wayOfPayment=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfPayWay.php',
-      }).then(function (response) {
-        _this.wayOfPayment=response.data;
-      }).catch(function (error) {
-        console.log(error);
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-
-      this.projects=[];
-      this.$axios({
-        method: 'post',
-        url: 'getProject.php'
-      }).then(function (response) {
-        _this.projects=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger!',
-          duration: 4000
-        });
-      });            
     }    
   } 
 </script>

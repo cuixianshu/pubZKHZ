@@ -19,8 +19,8 @@
         </thead>
         <tbody>
           <tr v-for="(row,index) in listOfCashies" @click="clickedARowInShower(row)">
+<!--  ['收款ID','收款金额','收款方式','收款账户','备注信息','收款日期','收款人'] -->
             <td title="收款编号">{{row.id}}</td>
-            <td title="所属项目">{{row.project}}</td>
             <td title="收款金额">{{row.amount}}</td>
             <td title="收款方式">{{row.way_pay}}</td>
             <td title="收款账户">{{row.account}}</td>
@@ -46,27 +46,44 @@
             <div id="detailsForCheckingReceipts" class="container-fluid">
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="slctCashierProject">项目</label>
-                  <select id="slctCashierProject" type="text" name="cashierProject" class="form-control" placeholder="所属项目" v-model="approvedResult.id_project" title="所属项目">
-                    <option v-for="item in projects" :value="item.id">{{item.prjct}}</option>
+                  <label for="slctBsnsType">类型</label>
+                  <select id="slctBsnsType" type="text" class="form-control" v-model="approvedResult.business_type" title="收取款项的业务类型" disabled>
+                    <option value=1>销售回款(非机票)</option>
+                    <option value=2>上缴款项(非还款)</option>
+                    <option value=3>机票款(含退票费)</option>
+                    <option value=4>还款(员工欠款)</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="inputDateOfCashier">时间</label>
-                  <input id="inputDateOfCashier" type="text" class="form-control" :value="(new Date()).format('yyyy-MM-dd hh:mm:ss')" readonly>
                 </div>
-              </div>              
+              </div>
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="slctCashierAccount">账号</label>
-                  <select id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" placeholder="收款账号" v-model="approvedResult.id_account" title="收款账号">
-                    <option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>}
+                  <label for="slctAS">一级</label>
+                  <select id="slctAS" type="text" class="form-control" name="ture" v-model="approvedResult.id_accounting_sub" title="一级会计科目" @change="accSubChanged()">
+                    <option  value=0>一级科目</option>
+                    <option v-for="item in accountingSubjects" :value="item.id">{{item.code_num+item.name}}</option>
+                  </select>
+                </div>
+                <div class="col-lg  form-inline">
+                  <label for="slctNature">二级</label>
+                  <select id="slctNature" type="text" class="form-control" name="ture" v-model="approvedResult.id_detailed_accounting" title="二级会计科目">
+                    <option  value=0>二级科目</option>
+                    <option v-for="item in DAsAtTheAccSub" :value="item.id">{{item.code_num+item.name}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg  form-inline">
+                  <label for="slctCA">账号</label>
+                  <select id="slctCA" type="text" class="form-control" placeholder="收款账号" v-model="approvedResult.id_account" title="收款账号">
+                    <option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="approvedResult.id_way_pay" placeholder="收款方式" title="收款方式">
-                    <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>}
+                  <select id="slctWayOfCashier" type="text" class="form-control" v-model="approvedResult.id_way_pay" placeholder="收款方式" title="收款方式">
+                    <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>
                   </select>
                 </div>
               </div>
@@ -131,15 +148,19 @@ Date.prototype.format = function(fmt) {
           dateRange:[],
           conditions:''
         },
-        titlesOfList:['收款ID','项目','收款金额','收款方式','收款账户','备注信息','收款日期','收款人'],
-        widthOfTH:['8%','12%','12%','12%','12%','12%','12%','12%'],
+        titlesOfList:['收款ID','收款金额','收款方式','收款账户','备注信息','收款日期','收款人'],
+        widthOfTH:['14%','14%','15%','15%','14%','14%','14%'],
         listOfCashies:[],
         currentUserId:this.$store.state.user.id_user,
         approvedResult:{
         },
-        ourAccounts:[],
-        wayOfPayment:[],
-        projects:[]
+        ourAccounts:this.$store.state.ourAccounts,
+        wayOfPayment:this.$store.state.waysOfPayment,
+        projects:this.$store.state.projects,
+        accountingSubjects:this.$store.state.accountingSubjects,
+        detailedAccountings:this.$store.state.detailedAccountings,
+        DAsAtTheAccSub:[],
+
       }
     },
     components: {
@@ -162,31 +183,40 @@ Date.prototype.format = function(fmt) {
           method: 'post',
           url: 'getCashiers.php',
           data: qs.stringify(_this.queryContent)
-          }).then(function (response) {
-// console.log(response.data);
-// return;
-            if(response.data.length<1) {
-              _this.$toast({
-                text: '找不到符合条件的记录!',
-                type: 'info',
-                duration: 1000
-              });              
-            } else {
-              _this.listOfCashies=response.data;
-            }
-
-          }).catch(function (error) {
-            console.log(error);
+        }).then(function (response) {
+          console.log(response.data);
+          if(response.data.length<1) {
             _this.$toast({
-               text: '异步通信错误!'+error,
-               type: 'danger',
-               duration: 4000
-            });
+              text: '找不到符合条件的记录!',
+              type: 'info',
+              duration: 1000
+            });              
+          } else {
+            _this.listOfCashies=response.data;
+          }
+        }).catch(function (error) {
+          console.log(error);
+          _this.$toast({
+            text: '异步通信错误!'+error,
+            type: 'danger',
+            duration: 4000
           });
+        });
       },
       clickedARowInShower(dataRow) {
         this.approvedResult=dataRow;
-        this.approvedResult.id_confirmer=this.currentUserId
+        this.approvedResult.id_confirmer=this.currentUserId;
+        // this.approvedResult.id_accounting_sub=0;
+        if(this.approvedResult.id_detailed_accounting) {
+          var o=this.detailedAccountings.find((ele) => ele['id'] == this.approvedResult.id_detailed_accounting);
+          this.approvedResult.id_accounting_sub=typeof(o)=='undefined'?0:o['id_patent'];
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.approvedResult.id_accounting_sub);
+        } else {
+          this.approvedResult.id_accounting_sub=0;
+          this.approvedResult.id_detailed_accounting=0;
+          this.DAsAtTheAccSub=[];
+        }
+        // console.log(this.detailedAccountings);
         $('#checkReceipts').modal('toggle');
       },
       saveTheApprovedData() {
@@ -207,91 +237,56 @@ Date.prototype.format = function(fmt) {
           method: 'post',
           url: 'updateCashier.php',
           data: qs.stringify(queryContent)
-          }).then(function (response) {
-// console.log(response.data);
-            if(response.data===true) {
-              $('#checkReceipts').modal('toggle'); 
-              _this.$toast({
-                text: "操作成功",
-                type: 'success',
-                duration: 1000
-              });
-            //更新数据
-              for(var i=0;i<_this.listOfCashies.length;i++) {
-                if(_this.listOfCashies[i]['id']==_this.approvedResult.id) {
-                  _this.listOfCashies.splice(i,1);
-                  i--;  
-                }
-              }
-            } else {
-              _this.$toast({
-                text: '操作失败,请稍后再试!',
-                type: 'danger',
-                duration: 4000
-              });
-              $('#checkReceipts').modal('toggle');             
-            }
-          }).catch(function (error) {
-            console.log(error);
+        }).then(function (response) {
+          console.log(response.data);
+          if(response.data===true) {
+            $('#checkReceipts').modal('toggle'); 
             _this.$toast({
-              text: '异步通信错误!'+error,
+              text: "操作成功",
+              type: 'success',
+              duration: 1000
+            });
+          //更新数据
+            var ci=_this.listOfCashies.findIndex((ele) => ele['id'] == _this.approvedResult.id);
+            _this.listOfCashies.splice(ci,1);
+          } else {
+            console.log(response.data);
+            _this.$toast({
+              text: '操作失败,请稍后再试!',
               type: 'danger',
               duration: 4000
             });
-            $('#checkReceipts').modal('toggle');
-          });        
+            $('#checkReceipts').modal('toggle');             
+          }
+        }).catch(function (error) {
+          console.log(error);
+          _this.$toast({
+            text: '异步通信错误!'+error,
+            type: 'danger',
+            duration: 4000
+          });
+          $('#checkReceipts').modal('toggle');
+        });        
       },
       clearList () {
         this.listOfCashies=[];
-      }
+      },
+      accSubChanged() {
+        if(this.approvedResult.id_accounting_sub) {
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.approvedResult.id_accounting_sub);
+        } else {
+          this.DAsAtTheAccSub=[];
+        }
+        this.approvedResult.id_detailed_accounting=0;
+        // console.log(this.DAsAtTheAccSub);
+      },
+
     },
     computed:{
     },
     watch:{
     },
     beforeCreate:function() {
-      var _this=this;
-      this.ourAccounts=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfOurAccount.php',
-      }).then(function (response) {
-        _this.ourAccounts=response.data;
-      }).catch(function (error) {
-        console.log(error);
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-      this.wayOfPayment=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfPayWay.php',
-      }).then(function (response) {
-        _this.wayOfPayment=response.data;
-      }).catch(function (error) {
-        console.log(error);
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-      this.projects=[];
-      this.$axios({
-        method: 'post',
-        url: 'getProject.php'
-      }).then(function (response) {
-        _this.projects=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger!',
-          duration: 4000
-        });
-      });       
     }    
   } 
 </script>

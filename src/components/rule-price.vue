@@ -130,8 +130,8 @@ export default {
         id_operater:this.$store.state.user.id_user
       },
       isNewCreate:false,
-      clntPrntOgnztns:[],
-      products:[]
+      clntPrntOgnztns:this.$store.state.clntParentOgnztns,
+      products:this.$store.state.products,
     }
   },
   methods: {
@@ -308,33 +308,7 @@ export default {
   },
   beforeCreate:function() {
     var _this=this;
-    this.clntPrntOgnztns=[];
     var queryContent={keyWord:''};
-    this.$axios({
-          method: 'post',
-          url: 'getClntPrntOgnztn.php',
-          data:qs.stringify(queryContent)
-      })
-      .then(function (response) {
-        _this.clntPrntOgnztns=response.data;
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    this.products=[];
-    this.$axios({
-      method: 'post',
-      url: 'getProduct.php',
-    }).then(function (response) {
-      _this.products=response.data;
-    }).catch(function (error) {
-      console.log(error);
-      _this.$toast({
-        text: '异步通信错误!'+error,
-        type: 'danger',
-        duration: 4000
-      });
-    });
     this.listOfRulePrice=[];
     this.titleOfList=[];
     this.$axios({

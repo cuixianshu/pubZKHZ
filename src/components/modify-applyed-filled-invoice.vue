@@ -56,7 +56,7 @@
                 <div class="col-lg  form-inline">
                   <label for="slctCstmrOgnztnName">抬头</label>
                   <select id="slctCstmrOgnztnName" type="text" class="form-control" name="cstmrOgnztnName" v-model="infoInRequestInvoice.cstmrOgnztnName" placeholder="发票中的单位名称" title="单位名称抬头">
-                    <option v-for="item in listOfCstmrOgnztnFullName">{{item}}</option>
+                    <option v-for="item in listOfCustomerOgnztn">{{item.name}}</option>
                   </select>
                 </div>
               </div>
@@ -317,11 +317,11 @@ Date.prototype.format = function(fmt) {
           	index:''
           },
           parentRow:{},
-          listOfOurCompanys:[],
-          listOfInvoiceType:[],
-          listOfCustomerOgnztn:[],
+          listOfOurCompanys:this.$store.state.ourCompanies,
+          listOfInvoiceType:this.$store.state.typesOfInvoices,
+          listOfCustomerOgnztn:this.$store.state.clntParentOgnztns,
           listOfCstmrOgnztnFullName:[],
-          listOfProject:[],
+          listOfProject:this.$store.state.projects,
           clonedDetailsOfFilling:''
 
 		}
@@ -892,64 +892,6 @@ Date.prototype.format = function(fmt) {
       }	  
 	},
     beforeCreate:function() {
-      var _this = this;
-      this.listOfOurCompanys=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfOurCompanys.php'
-        }).then(function (response) {
-          _this.listOfOurCompanys=response.data;
-        }).catch(function (error) {
-          console.log(error);
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });
-      this.listOfInvoiceType=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfTypeOfInvoice.php'
-        }).then(function (response) {
-          _this.listOfInvoiceType=response.data;
-        }).catch(function (error) {
-          console.log(error);
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });      
-      this.listOfCustomerOgnztn=[];
-      var queryContent={keyWord:''};
-      this.$axios({
-            method: 'post',
-            url: 'getClntPrntOgnztn.php',
-            data:qs.stringify(queryContent)
-        })
-        .then(function (response) {
-          _this.listOfCustomerOgnztn=response.data;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      this.listOfProject=[];
-      this.$axios({
-        method: 'post',
-        url: 'getProject.php'
-        }).then(function (response) {
-          for(var i=0;i<response.data.length;i++) {
-            _this.listOfProject[i]=(response.data[i].prjct).substring(0,(response.data[i].prjct).indexOf('@'));  
-          }
-        }).catch(function (error) {
-          console.log(error);
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });
     }	
   }	
 </script>

@@ -12,7 +12,7 @@
 	    <div id="project" class="col-md-3 form-inline">
 	      <label for="slctProject" class="require">*项目</label>
 	      <select id="slctProject" type="text" name="idOfProject" class="form-control" placeholder="所属项目" v-model="newOrder.id_project" title="选择此单所属项目" required>
-	        <option v-for="item in projects" :value="item.id">{{item.prjct}}</option>
+	        <option v-for="item in projects" :value="item.id">{{item.name}}</option>
 	      </select>
 	    </div>
 	    <div id="product" class="col-md-3 form-inline">
@@ -96,7 +96,7 @@
 	    </div>
 		<div class="col-lg">
 		  <button class="btn btn-secondary clearBtn" @click="clearNewSaleDataForm">清空</button>
-		  <button class="btn btn-primary saveBtn" @click="saveNewOrderToDBS">保存</button>
+		  <button class="btn btn-primary saveBtn" @click="saveNewOrder">保存</button>
 		</div>	
 	  </div>
 	</div>	
@@ -152,10 +152,10 @@ export default {
         id_creater:this.$store.state.user.id_user
       },
       customers:[],
-      projects:[],
-      equipments:[],
+      projects:this.$store.state.projects,
+      equipments:this.$store.state.myEqpmts,
       products:[],
-      operators:[],
+      operators:this.$store.state.myEmplys,
     };
   },
   components: {
@@ -165,7 +165,7 @@ export default {
     clearNewSaleDataForm () {
       $("#manualInputPane input,select").val("");
     },
-    saveNewOrderToDBS:function () {
+    saveNewOrder:function () {//自动核单
       var en_zhTranslate={
         id_booker:'客户',
         id_product:'产品',
@@ -295,29 +295,13 @@ export default {
             duration: 4000
         });
       });
-    //初始化项目的option
-    this.projects=[];
-    this.$axios({
-          method: 'post',
-          url: 'getProject.php'
-      })
-      .then(function (response) {
-        _this.projects=response.data;
-      })
-      .catch(function (error) {
-        _this.$toast({
-           text: '异步通信错误!'+error,
-           type: 'danger!',
-            duration: 4000
-        });
-      });
     //初始化产品的option   
     this.products=[];
     var queryContent={};
     queryContent.conditions="ExceptVehicle";
     this.$axios({
           method: 'post',
-          url: 'getProduct.php',
+          url: 'getProducts.php',
           data: qs.stringify(queryContent)
       })
       .then(function (response) {
@@ -331,36 +315,6 @@ export default {
             duration: 4000
         });
       });      
-    //初始化'执行人'的option   
-    this.operators=[];
-    this.$axios({
-          method: 'post',
-          url: 'getEmployees.php'
-      })
-      .then(function (response) {
-        _this.operators=response.data;
-      })
-      .catch(function (error) {
-        _this.$toast({
-           text: '异步通信错误!'+error,
-           type: 'danger!',
-            duration: 4000
-        });
-      }); 
-    //初始化'装备'的option equipments
-    this.equipments=[];
-    this.$axios({
-          method: 'post',
-          url: 'getEquipments.php'
-      }).then(function (response) {
-        _this.equipments=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-           text: '异步通信错误!'+error,
-           type: 'danger!',
-            duration: 4000
-        });
-      });
   },
   watch: {  
     'newOrder.id_booker': {

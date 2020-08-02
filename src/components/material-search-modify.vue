@@ -33,6 +33,7 @@
             <td title="包装单位">{{row.min_unit_packing}}</td>
             <td :title="row.qty_stocks">{{row.qty_stocks}}</td>
             <td title="保存位置">{{row.store_place}}</td>
+            <td title="是否可以领用">{{getActiveStatus(row.is_active)}}</td>
             <td :title="row.remark">{{row.remark}}</td>
           </tr>
         </tbody>
@@ -79,9 +80,25 @@
             </div>
             <div class="row">
               <div class="col-lg form-inline">
+                <label for="actv">可领:</label>
+                <select id="actv" class="form-control" v-model="material.is_active" title="是否可以领用">
+                  <option v-for="item in activeStatus" :value="item.id">{{item.name}}</option>
+                </select>
+              </div>              
+              <div class="col-lg form-inline">
+                <label for="actv">归还:</label>
+                <select id="actv" class="form-control" v-model="material.is_need_return" title="使用后是否要归还">
+                  <option v-for="item in whetherReturns" :value="item.id">{{item.name}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg form-inline">
                 <label for="inputRemark">备注:</label>
                 <input id="inputRemark" type="text" name="remark" class="form-control" v-model="material.remark" placeholder="备注信息" title="备注信息">
-              </div>              
+              </div>
+              <div class="col-lg form-inline">
+              </div>
             </div>
           </div>
         </div>
@@ -108,8 +125,10 @@ import qs from 'qs';
         },
         isNew:false,
         materials:[],
-        titleOfList:['名称','品牌','型号','单位','包装单位','库存数','保存位置','备注'],
-        width:['12.5%','12.5%','12.5%','12.5%','12.5%','12.5%','12.5%','12.5%'],
+        titleOfList:['名称','品牌','型号','单位','包装单位','库存数','保存位置','是否可领用','备注'],
+        width:['12%','11%','11%','11%','11%','11%','11%','11%','11%'],
+        activeStatus:[{id:0,name:'不能领用'},{id:1,name:'可以领用'}],
+        whetherReturns:[{id:0,name:'使用后,不需归还'},{id:1,name:'使用后,必须归还'}],
         material:{
           id:'',
           name:'',
@@ -119,37 +138,15 @@ import qs from 'qs';
           min_unit_packing:'',
           store_place:'',
           remark:'',
-          id_op:''
+          id_op:'',
+          is_active:1,
+          is_need_return:1,
         }
       }
     },
     methods:{
       getListOfMaterials() {
-        var _this = this;
-        this.materials=[];
-        this.$axios({
-          method: 'post',
-          url: 'getMaterials.php',
-          data: qs.stringify(_this.queryContent)
-          }).then(function (response) {
-// console.log(response.data);
-            if(response.data.length<1) {
-              _this.$toast({
-                text: '找不到符合条件的记录!',
-                type: 'info',
-                duration: 1000
-              });              
-            } else {
-              _this.materials=response.data;
-            }
-          }).catch(function (error) {
-            console.log(error);
-            _this.$toast({
-               text: '异步通信错误!'+error,
-               type: 'danger',
-               duration: 4000
-            });
-          });
+        this.materials=this.$store.state.materials;
       },
       clearlistOfMaterials() {
         this.materials=[];
@@ -174,19 +171,23 @@ import qs from 'qs';
         $('#editerOfMaterial').modal('toggle');
       },
       saveInputedData() {
+// console.log(this.material);
+// return;
         var dict={
           name:'名称',
           unit:'单位',
           brand:'品牌',
           model:'型号',
           min_unit_packing:'包装',
-          store_place:'库位'
+          store_place:'库位',
+          is_active:'可领用状态',
+          is_need_return:'归还',
         };
         for(var prop in this.material) {
           if(prop!=='id' && prop!=='id_op' && prop!=='remark' && prop!=='unit') {
-            if(this.material[prop].length<2) {
+            if(this.material[prop] && this.material[prop].length<1) {
             this.$toast({
-              text: dict[prop]+'不能少于2个字',
+              text: dict[prop]+'至少1个字',
               type: 'info',
               duration: 2000
             });
@@ -207,7 +208,7 @@ import qs from 'qs';
         var url='';
         if(!this.isNew) {
           url='updateMaterials.php';
-          this.material.conditions='ModifyPlaceOrRemark';
+          this.material.conditions='ModifyTheMaterial';
         } else {
           url='insertMaterials.php';
         }
@@ -234,6 +235,8 @@ import qs from 'qs';
             _this.material.min_unit_packing='';
             _this.material.store_place='';
             _this.material.remark='';
+            _this.$store.dispatch('getMaterials',_this);
+            _this.materials=_this.$store.state.materials;
 
           } else {
             console.log(response.data);
@@ -256,7 +259,15 @@ import qs from 'qs';
     },
     beforeCreate:function() {
 
-    }     
+    },
+    computed:{
+      getActiveStatus() {
+        return function (id) {
+          var elmt=this.activeStatus.find((ele) => ele['id'] == id);
+          return typeof(elmt)=='undefined'?'':elmt['name'];
+        }
+      }
+    },
   }  
 </script>
 

@@ -2,16 +2,18 @@
 <div class="father">
   <ul class="nav nav-pills" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" data-toggle="pill" href="#newArrived">新到物料验收</a>
+      <a class="nav-link active" data-toggle="pill" href="#newArrived">验收新到(非采购)物料</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" data-toggle="pill" href="#giveBack">已领物料归还</a>
+      <a class="nav-link" data-toggle="pill" href="#purchased">验收采购物料(含工程)</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" data-toggle="pill" href="#giveBack">验收员工归还物料</a>
     </li>
   </ul>
   <div class="tab-content">
     <div id="newArrived" class="container-fluid tab-pane active">
       <div class="form-inline searchbox">
-        <span for="schKeyWds">关键词:</span>
         <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="物品名称,规格型号,品牌,库位等关键词">
         <button @click="getListOfMaterials" class="btn btn-primary " type="button">
           搜索物料
@@ -33,6 +35,40 @@
               <td :title="row.qty_stocks">{{row.qty_stocks}}</td>
               <td title="保存位置">{{row.store_place}}</td>
               <td :title="row.remark">{{row.remark}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>      
+    </div>
+    <div id="purchased" class="container-fluid tab-pane">
+      <div class="form-inline searchbox">
+        <datepicker class="datepicker" id="dateRange" v-model="pcsQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请购时间,默认上个月" :shortcuts="shortcuts" placeholder="请购的时间范围">
+        </datepicker>
+        <input type="text" class="form-control" v-model="pcsQC.keyWord"  placeholder="请输入关键词" title="物品名称,规格型号,品牌,规格型号等关键词">
+        <button @click="getListOfPcsings" class="btn btn-primary " type="button">
+          搜索采购单
+        </button>
+        <button @click="purchasings=[];"class="btn btn-secondary" type="button" v-if="purchasings.length>0">清空结果</button>
+      </div>
+      <div v-if="purchasings.length>0">
+        <table class="table table-hover">
+          <thead>
+            <th v-for="(title,index) in pcsnsTitle" :width="pcsnsWidth">{{title}}</th>
+          </thead>
+          <tbody>
+            <tr v-for="row in purchasings" @click="clickedAPcsnsForAC(row)">
+              <td :title="getProject(row)">{{getProject(row)}}</td>
+              <td :title="row.name">{{row.name}}</td>
+              <td :title="row.brand">{{row.brand}}</td>
+              <td :title="row.model">{{row.model}}</td>
+              <td :title="row.detail">{{row.detail}}</td>
+              <td :title="row.quantity">{{row.quantity}}</td>
+              <td :title="row.unit">{{row.unit}}</td>
+              <td :title="row.e_seller">{{row.e_seller}}</td>
+              <td :title="row.e_amount">{{row.e_amount}}</td>
+              <td :title="row.date_applied">{{row.date_applied}}</td>
+              <td :title="getPurchaser(row)">{{getPurchaser(row)}}</td>
+              <td title="请购时的备注信息">{{row.remark}}</td>
             </tr>
           </tbody>
         </table>
@@ -60,7 +96,6 @@
             <th v-for="title,index in unreturnedTitle" :width="unreturnedWidth">{{title}}</th>
           </thead>
           <tbody>
-<!---->           
             <tr v-for="row in unreturnedMs" @click="slctOnetoReturn(row)">
               <td :title="row.id_applyer">{{getApplyer(row)}}</td>
               <td :title="row.m_name">{{row.m_name}}</td>
@@ -177,7 +212,7 @@
             </div>
             <div class="row">
               <div class="col-lg form-inline">
-                <label for="MUP">包装容量:</label>
+                <label for="MUP">包装单位:</label>
                 <input id="MUP" type="text" name="m_min_unit_packing" class="form-control" v-model="rtMtrl.m_min_unit_packing" title="包装单位" readonly>
               </div> 
               <div class="col-lg form-inline">
@@ -199,30 +234,86 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button class="btn btn-primary" type="button" @click="saveReturnedData">验收无误</button> 
+          <button class="btn btn-primary" type="button" @click="saveReturnedData">验收无误</button>
+        </div>  
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="purchasing" role="dialog" aria-labelledby="editer" data-backdrop="static" data-keyboard: false>
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span>采购验收单</span>
+        </div>
+        <div class="modal-body">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-lg form-inline">
+                <label for="iptName">请购名称:</label>
+                <input id="iptName" type="text" class="form-control" :value="thePurchasing.name" title="请购名称" readonly>
+              </div>
+              <div class="col-lg form-inline">
+                <label for="aplr">采购申请:</label>
+                <input id="aplr" type="text" class="form-control" :value="getApplyer(thePurchasing)" title="采购申请人" readonly>
+<!--                 <select id="aplr" type="text" class="form-control" v-model="thePurchasing.id_applier" title="采购申请人" disabled>
+                  <option v-for="item in employees" :value="item.id">{{item.name}}</option>
+                </select> -->
+              </div>
+            </div>
+            <div class="row"> 
+              <div class="col-lg form-inline">
+                <label for="Brd">采购品牌:</label>
+                <input id="Brd" type="text" class="form-control" :value="thePurchasing.brand" title="采购品牌的厂家或品牌" readonly>
+              </div>
+              <div class="col-lg form-inline">
+                <label for="Mdl">规格型号:</label>
+                <input id="Mdl" type="text" class="form-control" :value="thePurchasing.model" title="规格型号" readonly>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg form-inline">
+                <label for="MUP">包装单位:</label>
+                <input id="MUP" type="text" class="form-control" v-model="thePurchasing.unit" placeholder="例:100g/袋,24袋/箱" title="包装单位,如:100g/袋,24袋/箱">
+              </div> 
+              <div class="col-lg form-inline">
+                <label for="QTY">验收数量:</label>
+                <input id="QTY" type="number" name="rtn_qty" class="form-control" v-model="thePurchasing.qtyAC" placeholder="验收数量" title="验收数量">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg form-inline">
+                <label for="iptMem">备注信息:</label>
+                <input id="iptMem" type="text" class="form-control" v-model="thePurchasing.remark_ac" placeholder="验收的备注信息" title="验收备注信息">
+              </div> 
+              <div class="col-lg form-inline">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary" type="button" @click="saveACData">确认验收</button>
         </div>  
       </div>
     </div>
   </div>
 </div>
 </template>
-
-
 <script>
-import qs from 'qs';
-import datepicker from 'vue2-datepicker';
-import jsonexcel from 'vue-json-excel/JsonExcel.vue';
+  import qs from 'qs';
+  import datepicker from 'vue2-datepicker';
   export default {
     data () {
       return {
         currentUserId:this.$store.state.user.id_user,
-        employees:[],
-        projects:[],
+        employees:this.$store.state.employees,
+        projects:this.$store.state.projects,
         shortcuts:false,
 
         queryContent:{
           keyWord:'',
-          conditions:''
+          conditions:'',
+          dateRange:[],
         },
         materials:[],
         titleOfList:['名称','品牌','规格型号','计量单位','包装容量','库存数','保存位置','备注'],
@@ -239,7 +330,6 @@ import jsonexcel from 'vue-json-excel/JsonExcel.vue';
           remark:'',
           id_op:'',
         },
-
         unreturnedMQC:{
           dateRange:[],
           keyWord:'',
@@ -263,46 +353,24 @@ import jsonexcel from 'vue-json-excel/JsonExcel.vue';
         mio_remark:'',
         id_op:'',
         rtn_qty:0,
+
+        pcsnsTitle:['项目','名称','品牌','规格型号','详情','数量','单位','供应商','购买金额','请购日期','采购员','备注信息'],
+        pcsnsWidth:['7%','7%','8%','10%','10%','6%','6%','8%','8%','12%','8%','10%'],
+        purchasings:[],
+        pcsQC:{
+          keyWord:'',
+          conditions:'',
+          dateRange:[],
+        },
+        thePurchasing:{},
       }
     },
     components: {
      datepicker,
-     jsonexcel
-    },
-    computed: {
-      getApplyer() {
-        return function (row) {
-          var empl=this.employees.find((ele) => ele['id'] == row.id_applyer);
-          return typeof(empl)=='undefined'?'':empl['name'];
-        }
-      }
     },
     methods:{
       getListOfMaterials() {
-        var _this = this;
-        this.materials=[];
-        this.$axios({
-          method: 'post',
-          url: 'getMaterials.php',
-          data: qs.stringify(_this.queryContent)
-          }).then(function (response) {
-            if(response.data.length<1) {
-              _this.$toast({
-                text: '找不到符合条件的记录!',
-                type: 'info',
-                duration: 1000
-              });              
-            } else {
-              _this.materials=response.data;
-            }
-          }).catch(function (error) {
-            console.log(error);
-            _this.$toast({
-               text: '异步通信错误!'+error,
-               type: 'danger',
-               duration: 4000
-            });
-          });
+        this.materials=this.$store.state.materials;
       },
       clickedARecorderToModify(dataRow) {
         this.material=dataRow;
@@ -359,6 +427,7 @@ import jsonexcel from 'vue-json-excel/JsonExcel.vue';
             $('#editerForNewArrived').modal('toggle');
           } 
         }).catch(function (error) {
+          console.log(error);
           _this.$toast({
             text: '异步通信错误!'+error,
             type: 'danger',
@@ -399,26 +468,25 @@ import jsonexcel from 'vue-json-excel/JsonExcel.vue';
           method: 'post',
           url: 'getUnreturndMaterials.php',
           data: qs.stringify(_this.unreturnedMQC)
-          }).then(function (response) {
-// console.log(response.data);
-// return;
-            if(response.data.length<1) {
-              _this.$toast({
-                text: '找不到符合条件的记录!',
-                type: 'info',
-                duration: 1000
-              });              
-            } else {
-              _this.unreturnedMs=response.data;
-            }
-          }).catch(function (error) {
-            console.log(error);
+        }).then(function (response) {
+          console.log(response.data);
+          if(response.data.length<1) {
             _this.$toast({
-               text: '异步通信错误!'+error,
-               type: 'danger',
-               duration: 4000
-            });
+              text: '找不到符合条件的记录!',
+              type: 'info',
+              duration: 1000
+            });              
+          } else {
+            _this.unreturnedMs=response.data;
+          }
+        }).catch(function (error) {
+          console.log(error);
+          _this.$toast({
+            text: '异步通信错误!'+error,
+            type: 'danger',
+            duration: 4000
           });
+        });
       },
       slctOnetoReturn (r) {
         this.rtMtrl=r;
@@ -445,30 +513,138 @@ import jsonexcel from 'vue-json-excel/JsonExcel.vue';
           url: url,
           data: qs.stringify(_this.rtMtrl)
         }).then(function (response) {
-// console.log(response.data);
-            if(response.data===true) {
-              _this.$toast({
-                text: '成功保存数据!',
-                type: 'success',
-                duration: 800
-              });
-              var i=_this.unreturnedMs.findIndex(function(item){return item.id==_this.rtMtrl.id});
-              _this.unreturnedMs.splice(i,1);
-              _this.mio_remark='';
-              _this.id_op='';
-              _this.rtn_qty=0;
+          console.log(response.data);
+          if(response.data===true) {
+            _this.$toast({
+              text: '成功保存数据!',
+              type: 'success',
+              duration: 800
+            });
+            var i=_this.unreturnedMs.findIndex(function(item){return item.id==_this.rtMtrl.id});
+            _this.unreturnedMs.splice(i,1);
+            _this.mio_remark='';
+            _this.id_op='';
+            _this.rtn_qty=0;
             $('#editerForReturning').modal('toggle');
           } else {
             $('#editerForReturning').modal('toggle');
             console.log(response.data);
             _this.$toast({
-               text: '通信错误!'+response.data,
-               type: 'danger',
-               duration: 2000
+              text: '通信错误!'+response.data,
+              type: 'danger',
+              duration: 2000
             });
           } 
         }).catch(function (error) {
           $('#editerForReturning').modal('toggle');
+          console.log(error);
+          _this.$toast({
+            text: '异步通信错误!'+error,
+            type: 'danger',
+            duration: 2000
+          });
+        });
+      },
+      getListOfPcsings() {
+        var _this = this;
+        this.purchasings=[];
+        this.pcsQC.conditions="UnAcceptanceChecked";
+        if(this.pcsQC.dateRange.length<2 || this.pcsQC.dateRange[0].length<10 || this.pcsQC.dateRange[1].length<10) {
+          var lastMonth=this.getPreMonth();
+          this.pcsQC.dateRange[0]=lastMonth.firstDay;
+          this.pcsQC.dateRange[1]=lastMonth.endDay;
+        }
+        this.pcsQC.dateRange[0]+=(this.pcsQC.dateRange[0].indexOf('00:00:00')==-1?' 00:00:00':'');
+        this.pcsQC.dateRange[1]+=(this.pcsQC.dateRange[1].indexOf('23:59:59')==-1?' 23:59:59':'');
+        this.$axios({
+          method: 'post',
+          url: 'getAppliedPurchasings.php',
+          data: qs.stringify(_this.pcsQC)
+        }).then(function (response) {
+          console.log(response.data);
+          if(response.data.length<1) {
+            _this.$toast({
+              text: '找不到符合条件的记录!',
+              type: 'info',
+              duration: 1000
+            });              
+          } else {
+            _this.purchasings=response.data;
+          }
+        }).catch(function (error) {
+          console.log(error);
+          _this.$toast({
+            text: '异步通信错误!'+error,
+            type: 'danger',
+            duration: 4000
+          });
+        });
+      },
+      clickedAPcsnsForAC (r) {
+        this.thePurchasing=r;
+        this.thePurchasing.qtyAC=r.quantity;
+        this.thePurchasing.remark_ac='';
+        // this.thePurchasing.unit='';
+        $('#purchasing').modal('toggle');
+        console.log(this.thePurchasing);
+      },
+      saveACData () {
+        if(this.thePurchasing.qtyAC<=0) {
+          this.$toast({
+            text: '验收数量必须大于0!',
+            type: 'info',
+            duration: 1500
+          });
+          return;
+        }
+        if(this.thePurchasing.unit.length<1) {
+          this.$toast({
+            text: '包装单位最少1个字!',
+            type: 'info',
+            duration: 1500
+          });
+          return;
+        }
+        this.queryContent=this.thePurchasing;
+        this.queryContent.conditions='UpdateWithAcceptanceCheckedData';
+        this.queryContent.id_op=this.currentUserId;
+// console.log(this.queryContent);
+// return;
+        var _this=this;
+        var url='updateApplyPurchasing.php';
+        this.$axios({
+          method: 'post',
+          url: url,
+          data: qs.stringify(_this.queryContent)
+        }).then(function (response) {
+          console.log(response.data);
+          if(response.data===true) {
+            $('#purchasing').modal('toggle');
+            var index=_this.purchasings.findIndex((item)=>item.id==_this.thePurchasing.id);
+            _this.purchasings.splice(index,1);
+            _this.thePurchasing={};
+            _this.queryContent={
+              keyWord:'',
+              conditions:'',
+              dateRange:[],
+            };
+            _this.$toast({
+              text: '成功保存数据!',
+              type: 'success',
+              duration: 800
+            });
+          } else {
+            $('#purchasing').modal('toggle');
+            console.log(response.data);
+            _this.$toast({
+              text: '通信错误!'+response.data,
+              type: 'danger',
+              duration: 2000
+            });
+          } 
+        }).catch(function (error) {
+          $('#purchasing').modal('toggle');
+          console.log(error);
           _this.$toast({
             text: '异步通信错误!'+error,
             type: 'danger',
@@ -477,37 +653,27 @@ import jsonexcel from 'vue-json-excel/JsonExcel.vue';
         });
       },
     },
+    computed:{
+      getApplyer() {
+        return function (row) {
+          var empl=this.employees.find((ele) => ele['id'] == row.id_applier);
+          return typeof(empl)=='undefined'?'':empl['name'];
+        }
+      },
+      getProject() {
+        return function (r) {
+          var o=this.projects.find((ele) => ele['id'] == r.id_project);
+          return typeof(o)=='undefined'?'':o['name'];
+        }
+      },
+      getPurchaser() {
+        return function (r) {
+          var o=this.employees.find((ele) => ele['id'] == r.e_id_enquiryer);
+          return typeof(o)=='undefined'?'':o['name'];
+        }
+      }
+    },
     beforeCreate:function() { 
-      var _this = this;
-      var coQC={};
-      this.projects=[];
-      this.$axios({
-        method: 'post',
-        url: 'getProject.php'
-      }).then(function (response) {
-        _this.projects=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-      this.employees=[];
-      coQC.conditions="All";
-      this.$axios({
-            method: 'post',
-            url: 'getEmployees.php',
-            data: qs.stringify(coQC)
-        }).then(function (response) {
-          _this.employees=response.data;
-        }).catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });
     }    
   }  
 </script>
@@ -519,11 +685,8 @@ import jsonexcel from 'vue-json-excel/JsonExcel.vue';
 h5 {
   color: #007bff;
 }
-#editerForNewArrived input,#editerForNewArrived select {
-  width: 70%;
-}
-#editerForReturning input,#editerForReturning select {
-  width: 70%;
+.modal input,.modal select {
+  width: 75%;
 }
 .tab-content,.row {
   margin-top: 5px;
@@ -538,5 +701,13 @@ h5 {
   margin-top: 5px;
   margin-bottom: 5px;
 }
-
+table {
+  overflow: auto;
+}
+td {
+  overflow:hidden; 
+  white-space:nowrap; 
+  text-overflow:ellipsis;
+  max-width: 50px;
+}
 </style>

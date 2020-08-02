@@ -7,18 +7,18 @@
         <div class="col-lg">
           <span for="schKeyWds">关键词:</span>
           <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="项目名称\物品名称\规格型号\厂家品牌等">
-          <button @click="getListOfAppliedPurchasingWithCommitedEnquiry" class="btn btn-primary" type="button">搜索数据</button>
-          <button @click="clearlistOfAppliedPurchasingWithCommitedEnquiry"class="btn btn-secondary" type="button" v-if="listOfAppliedPurchasingWithCommitedEnquiry.length>0">清空</button>
+          <button @click="getapldPcsgWithCmtdEqrys" class="btn btn-primary" type="button">搜索数据</button>
+          <button @click="clearApldPcsgWithCmtdEqrys"class="btn btn-secondary" type="button" v-if="apldPcsgWithCmtdEqrys.length>0">清空</button>
         </div>        
       </div>
     </div>
-    <div class="listShower" v-if="listOfAppliedPurchasingWithCommitedEnquiry.length>0">
+    <div class="listShower" v-if="apldPcsgWithCmtdEqrys.length>0">
       <table class="table table-hover">
         <thead>
           <th v-for="title,index in titleOfAppliedList">{{title}}</th>
         </thead>
         <tbody>
-          <tr v-for="row in listOfAppliedPurchasingWithCommitedEnquiry" @click="clickedARecorderToApprove(row)">
+          <tr v-for="row in apldPcsgWithCmtdEqrys" @click="clickedARecorderToApprove(row)">
             <td v-for="vlu in row" :title='vlu'>{{vlu}}</td>
           </tr>
         </tbody>
@@ -29,8 +29,8 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5>审核比价--请购ID:{{detailsInAppliedPurchasing.id}}</h5>
-          <h6>物品:{{detailsInAppliedPurchasing.name}}({{detailsInAppliedPurchasing.unit}})</h6>
+          <h5>审核比价--请购ID:{{dtlsInApldPcsg.id}}</h5>
+          <h6>物品:{{dtlsInApldPcsg.name}}({{dtlsInApldPcsg.unit}})</h6>
         </div>
         <div class="modal-body">
           <div class="container-fluid">
@@ -40,7 +40,7 @@
                   <th v-for="title,index in titleOfEnquiriedList">{{title}}</th>
                 </thead>
                 <tbody>
-                  <tr v-for="row in listOfCommitedEnquiryWithoutApproving" :style="row.is_made_deal?'color:red;font-weight:bold;':''" :title="row.is_made_deal?'已选中此行':'未选中'">
+                  <tr v-for="row in cmtdEqryWithoutAprvgs" :style="row.is_made_deal?'color:red;font-weight:bold;':''" :title="row.is_made_deal?'已选中此行':'未选中'">
                     <!-- <td v-for="vlu in row" :title='vlu'>{{vlu}}</td> -->
                     <td>{{row.seller}}</td>
                     <td>{{row.price_include_tax}}</td>
@@ -103,9 +103,9 @@ Date.prototype.format = function(fmt) {
         queryContent:{
           keyWord:'',
           conditions:'',
-          id_applyedPurchasing:''
+          id_apldPcsg:''
         },
-        detailsInAppliedPurchasing:{
+        dtlsInApldPcsg:{
           id:'',
           project:'',
           id_project:'',
@@ -126,39 +126,29 @@ Date.prototype.format = function(fmt) {
           idApprover:this.$store.state.user.id_user,
           id_selected_enquiry:''
         },
-        listOfAppliedPurchasingWithCommitedEnquiry:[],
+        apldPcsgWithCmtdEqrys:[],
         titleOfAppliedList:[],
         titleOfAppliedListStatic:['请购ID','项目','物品','包装单位','数量','品牌','规格型号','细节','期望日期','备注','申请人','询价'],
-        projects:[],
-        listOfCommitedEnquiryWithoutApproving:[],
+        projects:this.$store.state.projects,
+        cmtdEqryWithoutAprvgs:[],
         titleOfEnquiriedList:['商家','价格','金额','付款节点','到货日期','选定理由']
-        // showReasonBox:false
       }
     },
     methods:{
       saveApprovedData() {
         if(this.approvedResult.result==0 && this.approvedResult.whyDisagree.length<2) {
           this.$toast({
-             text: '如果不同意,请说明理由,且不少于2个字!',
-             type: 'info',
-             duration: 1500
+            text: '如果不同意,请说明理由,且不少于2个字!',
+            type: 'info',
+            duration: 1500
           });
           return;        
         }
         if(this.approvedResult.result==1) {
           this.approvedResult.whyDisagree='';
         }
-        this.approvedResult.idApplied=this.detailsInAppliedPurchasing.id;
+        this.approvedResult.idApplied=this.dtlsInApldPcsg.id;
         var _this=this;
-// console.log(this.approvedResult);
-// return;        
-
-
-
-        //需要更新tbl_enquiry_price
-        //
-        //
-        //
         var url='insertApproveEnquiryCompare.php';
         this.$axios({
           method: 'post',
@@ -166,55 +156,50 @@ Date.prototype.format = function(fmt) {
           data: qs.stringify(_this.approvedResult)
         }).then(function (response) {
           if(response.data===true) {
-              _this.$toast({
-                text: '成功保存数据!',
-                type: 'success',
-                duration: 800
-              });
+            _this.$toast({
+              text: '成功保存数据!',
+              type: 'success',
+              duration: 800
+            });
             $('#mdfRecorder').modal('toggle');
-            _this.clearlistOfAppliedPurchasingWithCommitedEnquiry();
-            _this.getListOfAppliedPurchasingWithCommitedEnquiry();
-            _this.detailsInAppliedPurchasing.id='';              
-            _this.detailsInAppliedPurchasing.project='';
-            _this.detailsInAppliedPurchasing.name='';
-            _this.detailsInAppliedPurchasing.unit='';
-            _this.detailsInAppliedPurchasing.quantity='';
-            _this.detailsInAppliedPurchasing.brand='';
-            _this.detailsInAppliedPurchasing.model='';
-            _this.detailsInAppliedPurchasing.detail='';
-            _this.detailsInAppliedPurchasing.neededDate='';
-            _this.detailsInAppliedPurchasing.remark='';
+            var idx=_this.apldPcsgWithCmtdEqrys.findIndex((item)=>item.id==_this.dtlsInApldPcsg.id);
+            _this.apldPcsgWithCmtdEqrys.splice(idx,1);
+            _this.dtlsInApldPcsg.id='';              
+            _this.dtlsInApldPcsg.project='';
+            _this.dtlsInApldPcsg.name='';
+            _this.dtlsInApldPcsg.unit='';
+            _this.dtlsInApldPcsg.quantity='';
+            _this.dtlsInApldPcsg.brand='';
+            _this.dtlsInApldPcsg.model='';
+            _this.dtlsInApldPcsg.detail='';
+            _this.dtlsInApldPcsg.neededDate='';
+            _this.dtlsInApldPcsg.remark='';
           } else {
         console.log(response.data);
             _this.$toast({
-               text: '通信错误!'+response.data,
-               type: 'danger',
-                duration: 4000
+              text: '通信错误!'+response.data,
+              type: 'danger',
+              duration: 4000
             });
             $('#mdfRecorder').modal('toggle');
           } 
         }).catch(function (error) {
           _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
+            text: '异步通信错误!'+error,
+            type: 'danger',
+            duration: 4000
           });
           $('#mdfRecorder').modal('toggle');
         });
       },
       clickedARecorderToApprove (dataRow) {
-// console.log(dataRow);
-// return;
-        // var el=e.toElement.parentElement;
-        this.detailsInAppliedPurchasing.id=dataRow.id;
-        this.detailsInAppliedPurchasing.name=dataRow.name;
-        this.detailsInAppliedPurchasing.unit=dataRow.unit;
-        this.listOfCommitedEnquiryWithoutApproving=[];
+        this.dtlsInApldPcsg.id=dataRow.id;
+        this.dtlsInApldPcsg.name=dataRow.name;
+        this.dtlsInApldPcsg.unit=dataRow.unit;
+        this.cmtdEqryWithoutAprvgs=[];
 
-        // this.approvedResult.idApplied=this.detailsInAppliedPurchasing.id;
-        // this.titleOfEnquiriedList=[];
         this.queryContent.conditions='commitedEnquiryWithoutApproving';
-        this.queryContent.id_applyedPurchasing=this.detailsInAppliedPurchasing.id;
+        this.queryContent.id_apldPcsg=this.dtlsInApldPcsg.id;
         
         var _this = this;
         this.$axios({
@@ -222,11 +207,12 @@ Date.prototype.format = function(fmt) {
           url: 'getEnquiries.php',
           data: qs.stringify(_this.queryContent)
         }).then(function (response) {
+          console.log(response.data);
           if(response.data.length>0) {
-            _this.listOfCommitedEnquiryWithoutApproving = response.data;
-            for(var i =0;i<_this.listOfCommitedEnquiryWithoutApproving.length;i++) {
-              if(_this.listOfCommitedEnquiryWithoutApproving[i].is_made_deal) {
-                _this.approvedResult.id_selected_enquiry=_this.listOfCommitedEnquiryWithoutApproving[i].id
+            _this.cmtdEqryWithoutAprvgs = response.data;
+            for(var i =0;i<_this.cmtdEqryWithoutAprvgs.length;i++) {
+              if(_this.cmtdEqryWithoutAprvgs[i].is_made_deal) {
+                _this.approvedResult.id_selected_enquiry=_this.cmtdEqryWithoutAprvgs[i].id
               }
             }
           } else {
@@ -241,8 +227,8 @@ Date.prototype.format = function(fmt) {
         });
         $('#mdfRecorder').modal('toggle');
       },
-      getListOfAppliedPurchasingWithCommitedEnquiry () {
-        this.listOfAppliedPurchasingWithCommitedEnquiry=[];
+      getapldPcsgWithCmtdEqrys () {
+        this.apldPcsgWithCmtdEqrys=[];
         this.titleOfAppliedList=[];
         this.queryContent.conditions='EnquiryCommitedNotApprovedAndComparedPrice';
         var _this = this;
@@ -254,7 +240,7 @@ Date.prototype.format = function(fmt) {
 // console.log(response.data);
 // return;
           if(response.data.length>0) {
-            _this.listOfAppliedPurchasingWithCommitedEnquiry = response.data;
+            _this.apldPcsgWithCmtdEqrys = response.data;
             var ttl='';
             for(ttl in response.data[0]) {
               _this.titleOfAppliedList.push(ttl);
@@ -270,8 +256,8 @@ Date.prototype.format = function(fmt) {
           console.log(error);
         });
       },
-      clearlistOfAppliedPurchasingWithCommitedEnquiry() {
-        this.listOfAppliedPurchasingWithCommitedEnquiry=[];
+      clearApldPcsgWithCmtdEqrys() {
+        this.apldPcsgWithCmtdEqrys=[];
         this.titleOfAppliedList=[];
       }
     },
@@ -281,20 +267,6 @@ Date.prototype.format = function(fmt) {
       }
     },
     beforeCreate() {
-      var _this = this;
-     this.projects=[];
-      this.$axios({
-            method: 'post',
-            url: 'getProject.php'
-        }).then(function (response) {
-          _this.projects=response.data;
-        }).catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger!',
-              duration: 4000
-          });
-        });
     },
     watch:{
 

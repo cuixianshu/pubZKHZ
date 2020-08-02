@@ -58,46 +58,60 @@
             <div id="detailsForCashier" class="container-fluid">
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="slctCashierProject">项目名称</label>
-                  <select id="slctCashierProject" type="text" name="cashierProject" class="form-control" placeholder="所属项目" v-model="cashier.id_project" title="所属项目">
-                    <option v-for="item in projects" :value="item.id">{{item.prjct}}</option>}
+                  <label for="iptType">类型</label>
+                  <input id="iptType" type="text" class="form-control" value="收机票款" title="收机票款" readonly>
+                </div>
+                <div class="col-lg  form-inline">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg  form-inline">
+                  <label for="slctAS">一级</label>
+                  <select id="slctAS" type="text" class="form-control" name="ture" v-model="cashier.id_accounting_sub" title="一级会计科目" @change="acc_subChanged()">
+                    <option  value=0>一级科目</option>
+                    <option v-for="item in accountingSubjects" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
                 </div>
+                <div class="col-lg  form-inline">
+                  <label for="slctNature">二级</label>
+                  <select id="slctNature" type="text" class="form-control" name="ture" v-model="cashier.id_detailed_accounting" title="二级会计科目">
+                    <option  value=0>二级科目</option>
+                    <option v-for="item in DAsAtTheAccSub" :value="item.id">{{item.code_num+item.name}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctCashierAccount">收款账号</label>
                   <select id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" placeholder="收款账号" v-model="cashier.id_account" title="收款账号">
-                    <option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>}
+                    <option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>
                   </select>
                 </div>
-              </div>
-              <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfCashier">收款方式</label>
                   <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="cashier.id_way_pay" placeholder="收款方式" title="收款方式">
-                    <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>}
+                    <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>
                   </select>
-                </div>
-                <div class="col-lg  form-inline">
-                  <label for="inputAmountIncludeInsurance">收含险额</label>
-                  <input id="inputAmountIncludeInsurance" type="number" class="form-control" name="amountIncludeInsurance" v-model="cashier.amountIncludeInsurance" placeholder="收取的票价、税、保险之和" title="收取的票价、税、保险之和">
                 </div>
               </div>
               <div class="row">
+                <div class="col-lg  form-inline">
+                  <label for="inputAmountIncludeInsurance">票价税险</label>
+                  <input id="inputAmountIncludeInsurance" type="number" class="form-control" name="amountIncludeInsurance" v-model="cashier.amountIncludeInsurance" placeholder="收取的票价、税、保险之和" title="收取的票价、税、保险之和">
+                </div>
                 <div class="col-lg  form-inline">
                   <label for="inputRefoundFee">收退票费</label>
                   <input id="inputRefoundFee" type="number" class="form-control" name="refoundFee" v-model="cashier.refoundFee" placeholder="收取的退票手续费金额" title="收取的退票手续费金额">
                 </div>
+              </div>
+              <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputChangeFee">收改签费</label>
                   <input id="inputChangeFee" type="number" class="form-control" name="changeFee" v-model="cashier.changeFee" placeholder="改签费用" title="收取的改签费用金额">
                 </div>
-              </div>
-              <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputOther">备注信息</label>
                   <input id="inputOther" type="text" class="form-control" name="otherInCashier" v-model="cashier.other" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
-                </div>
-                <div class="col-lg  form-inline">
                 </div>
               </div>
             </div>
@@ -157,12 +171,16 @@ Date.prototype.format = function(fmt) {
           amountIncludeInsurance:0,
           refoundFee:0,
           changeFee:0,
-          number_ticket:''
+          number_ticket:'',
+          id_accounting_sub:0,
+          id_detailed_accounting:0,
         },
-        ourAccounts:[],
-        wayOfPayment:[],
-        projects:[]
-
+        ourAccounts:this.$store.state.ourAccounts,
+        wayOfPayment:this.$store.state.waysOfPayment,
+        projects:this.$store.state.projects,
+        accountingSubjects:this.$store.state.accountingSubjects,
+        detailedAccountings:this.$store.state.detailedAccountings,
+        DAsAtTheAccSub:[],
       }
     },
     components: {
@@ -222,6 +240,15 @@ Date.prototype.format = function(fmt) {
         this.cashier.other='';
 // console.log(this.stateOfTheTicket);
 // return;
+        if(this.cashier.id_detailed_accounting) {
+          var o=this.detailedAccountings.find((ele) => ele['id'] == this.cashier.id_detailed_accounting);
+          this.cashier.id_accounting_sub=typeof(o)=='undefined'?0:o['id_patent'];
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.cashier.id_accounting_sub);
+        } else {
+          this.cashier.id_accounting_sub=0;
+          this.cashier.id_detailed_accounting=0;
+          this.DAsAtTheAccSub=[];
+        }
         $('#mdlCashier').modal('toggle');
       },
       saveTheCollectedData() {
@@ -236,7 +263,9 @@ Date.prototype.format = function(fmt) {
         var queryContent=this.cashier;
         queryContent.id_cashier=this.currentUserId;
         queryContent.conditions='SaveTktCollection';
-
+        queryContent.business_type=3;
+console.log(queryContent);
+return;
 // 需同时更新cashier表和airticket.tbl_tickets
         var _this=this;
         this.$axios({
@@ -279,8 +308,15 @@ Date.prototype.format = function(fmt) {
       },
       clearList () {
         this.listOfTickets=[];
-        // this.titlesOfList=[];
-      }
+      },
+      acc_subChanged() {
+        if(this.cashier.id_accounting_sub) {
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.cashier.id_accounting_sub);
+        } else {
+          this.DAsAtTheAccSub=[];
+        }
+        this.cashier.id_detailed_accounting=0;
+      },
     },
     watch:{
     },
@@ -310,49 +346,6 @@ Date.prototype.format = function(fmt) {
       }
     },
     beforeCreate:function() {
-      var _this=this;
-      this.ourAccounts=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfOurAccount.php',
-      }).then(function (response) {
-        _this.ourAccounts=response.data;
-      }).catch(function (error) {
-        console.log(error);
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-      this.wayOfPayment=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfPayWay.php',
-      }).then(function (response) {
-        _this.wayOfPayment=response.data;
-      }).catch(function (error) {
-        console.log(error);
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-
-      this.projects=[];
-      this.$axios({
-        method: 'post',
-        url: 'getProject.php'
-      }).then(function (response) {
-        _this.projects=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger!',
-          duration: 4000
-        });
-      });            
     }    
   } 
 </script>
@@ -395,8 +388,8 @@ table {
 #byhand {
   /*margin-left: 100px;*/
   position: absolute;
-  /*bottom: 0;*/
   right: 0;
+  /*bottom: 0;*/
 } 
 </style>
 

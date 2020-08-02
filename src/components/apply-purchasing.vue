@@ -6,7 +6,7 @@
         <div class="col-lg">
           <span for="schKeyWds">关键词:</span>
           <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="物品名称\规格型号\厂家品牌等">
-          <button @click="getListOfAppliedPurchasing" class="btn btn-primary" type="button">搜索数据</button>
+          <button @click="getListOfAppliedPurchasing" class="btn btn-primary" type="button" title="过去半年内的请购采购记录">搜索数据</button>
           <button @click="clearlistOfAppliedPurchasing"class="btn btn-secondary" type="button" v-if="listOfAppliedPurchasings.length>0">清空</button>
         </div>
         <div class="col-lg">
@@ -37,60 +37,61 @@
       </table>
     </div>      
   </div>
-  <div class="modal fade" id="mdfRecorder" role="dialog" aria-labelledby="mdfRecorder" data-backdrop="static" data-keyboard: false>
+  <div class="modal fade" id="mdlPurchasing" role="dialog" aria-labelledby="mdlPurchasing" data-backdrop="static" data-keyboard: false>
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5>采购申请单<span v-show="applyPurchasingList.id==''?false:true">--ID:{{applyPurchasingList.id}}</span></h5>
+          <h5>采购申请单<span v-show="APDetails.id==''?false:true">--ID:{{APDetails.id}}</span></h5>
         </div>
         <div class="modal-body">
             <div class="container-fluid">
               <div class="row">
                 <div class="col-lg form-inline">
                   <label for="slctProject" class="require">所属项目</label>
-                  <select id="slctProject" type="text" name="project" class="form-control" placeholder="所属项目" v-model="applyPurchasingList.id_project" title="选择所属项目" :readonly="applyingIsPassedApproving(applyPurchasingList.id)">
+                  <select id="slctProject" type="text" name="project" class="form-control" placeholder="所属项目" v-model="APDetails.id_project" title="选择所属项目" :readonly="applyingIsPassedApproving(APDetails.id)">
+                    <option value=0>请选择项目</option>
                     <option v-for="item in projects" :value="item.id">{{item.prjct}}</option>
                   </select>
                 </div>
                 <div class="col-lg form-inline">
                   <label for="nameOfMaterial" class="require">物品名称</label>
-                  <input id="nameOfMaterial" type="text" name="name" class="form-control" placeholder="物品名称" v-model="applyPurchasingList.name" title="物品名称" :readonly="applyingIsPassedApproving(applyPurchasingList.id)">
+                  <input id="nameOfMaterial" type="text" name="name" class="form-control" placeholder="物品名称" v-model="APDetails.name" title="物品名称" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>
               </div>
               <div class="row">                
                 <div class="col-lg form-inline">
                   <label for="inputUnit">计量单位</label>
-                  <input id="inputUnit" type="text" name="unit" class="form-control" placeholder="计量单位" v-model="applyPurchasingList.unit" title="计量单位" :readonly="applyingIsPassedApproving(applyPurchasingList.id)">
+                  <input id="inputUnit" type="text" name="unit" class="form-control" placeholder="计量单位" v-model="APDetails.unit" title="计量单位" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>          
                 <div class="col-lg form-inline">
                   <label for="inputQuantity" class="require">请购数量</label>
-                  <input id="inputQuantity" type="number" name="quantity" class="form-control" placeholder="请购数量" v-model="applyPurchasingList.quantity" title="请购数量,必须大于 0" :readonly="applyingIsPassedApproving(applyPurchasingList.id)">
+                  <input id="inputQuantity" type="number" name="quantity" class="form-control" placeholder="请购数量" v-model="APDetails.quantity" title="请购数量,必须大于 0" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg form-inline">
                   <label for="inputBrand" class="require">厂商品牌</label>
-                  <input id="inputBrand" type="text" name="brand" class="form-control" placeholder="厂商品牌" v-model="applyPurchasingList.brand" title="厂商品牌" :readonly="applyingIsPassedApproving(applyPurchasingList.id)">
+                  <input id="inputBrand" type="text" name="brand" class="form-control" placeholder="厂商品牌" v-model="APDetails.brand" title="厂商品牌" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>
                 <div class="col-lg form-inline">
                   <label for="inputModel" class="require">规格型号</label>
-                  <input id="inputModel" type="text" name="model" class="form-control" placeholder="规格型号" v-model="applyPurchasingList.model" title="规格型号" :readonly="applyingIsPassedApproving(applyPurchasingList.id)">
+                  <input id="inputModel" type="text" name="model" class="form-control" placeholder="规格型号" v-model="APDetails.model" title="规格型号" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>
               </div>
               <div class="row">    
                 <div class="col-lg form-inline">
                   <label for="inputDetail" class="require">用途说明</label>
-                  <input id="inputDetail" type="text" name="detail" class="form-control" placeholder="用途说明" v-model="applyPurchasingList.detail" title="用途说明" :readonly="applyingIsPassedApproving(applyPurchasingList.id)">
+                  <input id="inputDetail" type="text" name="detail" class="form-control" placeholder="用途说明" v-model="APDetails.detail" title="用途说明" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>
                 <div class="col-lg form-inline">
                   <label for="inptStartPoint" class="require">需要日期</label>
-                  <input id="inptStartPoint" type="date" name="date_needed" class="form-control" placeholder="需要日期" v-model="applyPurchasingList.date_needed" title="需要日期" :readonly="applyingIsPassedApproving(applyPurchasingList.id)">
+                  <input id="inptStartPoint" type="date" name="date_needed" class="form-control" placeholder="需要日期" v-model="APDetails.date_needed" title="需要日期" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg form-inline">
                   <label for="inputMem">备注说明</label>
-                  <input id="inputMem" type="text" name="material_mem" class="form-control" placeholder="备注说明" v-model="applyPurchasingList.remark" title="其它需要说明的事项" :readonly="applyingIsPassedApproving(applyPurchasingList.id)">
+                  <input id="inputMem" type="text" name="material_mem" class="form-control" placeholder="备注说明" v-model="APDetails.remark" title="其它需要说明的事项" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>
                 <div class="col-lg form-inline">
                 </div>
@@ -99,7 +100,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button class="btn btn-primary saveBtn" type="button" @click="saveApplyPurchasing" v-if="!applyingIsPassedApproving(applyPurchasingList.id)">保存</button> 
+          <button class="btn btn-primary saveBtn" type="button" @click="saveApplyPurchasing" v-if="!applyingIsPassedApproving(APDetails.id)">保存</button> 
         </div>  
       </div>
     </div>
@@ -109,24 +110,24 @@
 <script>
 import qs from 'qs';
 Date.prototype.format = function(fmt) { 
-     var o = { 
-        "M+" : this.getMonth()+1,                 //月份 
-        "d+" : this.getDate(),                    //日 
-        "h+" : this.getHours(),                   //小时 
-        "m+" : this.getMinutes(),                 //分 
-        "s+" : this.getSeconds(),                 //秒 
-        "q+" : Math.floor((this.getMonth()+3)/3), //季度 
-        "S"  : this.getMilliseconds()             //毫秒 
-    }; 
-    if(/(y+)/.test(fmt)) {
-            fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+  var o = { 
+    "M+" : this.getMonth()+1,                 //月份 
+    "d+" : this.getDate(),                    //日 
+    "h+" : this.getHours(),                   //小时 
+    "m+" : this.getMinutes(),                 //分 
+    "s+" : this.getSeconds(),                 //秒 
+    "q+" : Math.floor((this.getMonth()+3)/3), //季度 
+    "S"  : this.getMilliseconds()             //毫秒 
+  }; 
+  if(/(y+)/.test(fmt)) {
+    fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+  }
+  for(var k in o) {
+    if(new RegExp("("+ k +")").test(fmt)){
+      fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
     }
-     for(var k in o) {
-        if(new RegExp("("+ k +")").test(fmt)){
-             fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
-         }
-     }
-    return fmt; 
+  }
+  return fmt; 
 }  
   export default ({
     data() {
@@ -135,10 +136,10 @@ Date.prototype.format = function(fmt) {
           keyWord:'',
           conditions:''
         },
-        applyPurchasingList:{
+        APDetails:{
           id:'',
           project:'',
-          id_project:'',
+          id_project:0,
           name:'',
           unit:'',
           quantity:'',
@@ -152,13 +153,13 @@ Date.prototype.format = function(fmt) {
         },
         listOfAppliedPurchasings:[],
         titleOfList:['请购ID','项目','物品','数量','包装单位','品牌','型号','详情','需要日期','申请人','执行进度'],
-        projects:[],
-        employees:[]
+        projects:this.$store.state.projects,
+        employees:this.$store.state.myEmplys,
       }
     },
     methods:{
       saveApplyPurchasing() {
-        if(!this.applyPurchasingList.id_project) {
+        if(!this.APDetails.id_project) {
           this.$toast({
             text: '请选择所属项目',
             type: 'info',
@@ -166,7 +167,7 @@ Date.prototype.format = function(fmt) {
           });
           return;
         }
-        if(this.applyPurchasingList.name.length<2) {
+        if(this.APDetails.name.length<2) {
           this.$toast({
             text: '物品名称不能少于2个字',
             type: 'info',
@@ -174,7 +175,7 @@ Date.prototype.format = function(fmt) {
           });
           return;
         }
-        if(this.applyPurchasingList.unit.length<1) {
+        if(this.APDetails.unit.length<1) {
           this.$toast({
             text: '计量单位不能为空',
             type: 'info',
@@ -182,7 +183,7 @@ Date.prototype.format = function(fmt) {
           });
           return;
         }
-        if(this.applyPurchasingList.quantity<=0) {
+        if(this.APDetails.quantity<=0) {
           this.$toast({
             text: '这个数量不用申请',
             type: 'info',
@@ -190,7 +191,7 @@ Date.prototype.format = function(fmt) {
           });
           return;
         }
-        if(this.applyPurchasingList.brand.length<2) {
+        if(this.APDetails.brand.length<2) {
           this.$toast({
             text: '厂商品牌不能少于2个字',
             type: 'info',
@@ -198,7 +199,7 @@ Date.prototype.format = function(fmt) {
           });
           return;
         }
-        if(this.applyPurchasingList.model.length<2) {
+        if(this.APDetails.model.length<2) {
           this.$toast({
             text: '规格型号不能少于2个字',
             type: 'info',
@@ -206,7 +207,7 @@ Date.prototype.format = function(fmt) {
           });
           return;
         }
-        if(this.applyPurchasingList.detail.length<4) {
+        if(this.APDetails.detail.length<4) {
           this.$toast({
             text: '用途说明不能少于4个字',
             type: 'info',
@@ -214,7 +215,7 @@ Date.prototype.format = function(fmt) {
           });
           return;
         }
-        if((this.applyPurchasingList.date_needed < (new Date().format("yyyy-MM-dd"))) || this.applyPurchasingList.date_needed.length<8) {
+        if((this.APDetails.date_needed < (new Date().format("yyyy-MM-dd"))) || this.APDetails.date_needed.length<8) {
           this.$toast({
             text: '需要日期不能早于今天',
             type: 'info',
@@ -224,72 +225,73 @@ Date.prototype.format = function(fmt) {
         }
         var _this=this;
         var url='';
-        if(this.applyPurchasingList.id!=='') {
+        if(this.APDetails.id!=='') {
           url='updateApplyPurchasing.php';
-          this.applyPurchasingList.conditions='Modified'
+          this.APDetails.conditions='Modified'
         } else {
-          this.applyPurchasingList.conditions='InsertNew'
+          this.APDetails.conditions='InsertNew'
           url='insertNewToApplyPurchasing.php';
         }
         this.$axios({
           method: 'post',
           url: url,
-          data: qs.stringify(_this.applyPurchasingList)
+          data: qs.stringify(_this.APDetails)
         }).then(function (response) {
-// console.log(response.data);
-// return;
+          console.log(response.data);
           if(response.data===true) {
               _this.$toast({
-                 text: '成功保存数据!',
-                 type: 'success',
-                  duration: 800
+                text: '成功保存数据!',
+                type: 'success',
+                duration: 800
               });
-            $('#mdfRecorder').modal('toggle');
+            $('#mdlPurchasing').modal('toggle');
             _this.clearlistOfAppliedPurchasing();
             _this.getListOfAppliedPurchasing();
-            _this.applyPurchasingList.id='';              
-            _this.applyPurchasingList.project='';
-            _this.applyPurchasingList.name='';
-            _this.applyPurchasingList.unit='';
-            _this.applyPurchasingList.quantity='';
-            _this.applyPurchasingList.brand='';
-            _this.applyPurchasingList.model='';
-            _this.applyPurchasingList.detail='';
-            _this.applyPurchasingList.date_needed='';
-            _this.applyPurchasingList.remark='';
+            _this.APDetails.id='';              
+            _this.APDetails.id_project=0;
+            _this.APDetails.name='';
+            _this.APDetails.unit='';
+            _this.APDetails.quantity='';
+            _this.APDetails.brand='';
+            _this.APDetails.model='';
+            _this.APDetails.detail='';
+            _this.APDetails.date_needed='';
+            _this.APDetails.remark='';
           } else {
         console.log(response.data);
             _this.$toast({
-               text: '通信错误!'+response.data,
-               type: 'danger',
-                duration: 4000
+              text: '通信错误!'+response.data,
+              type: 'danger',
+              duration: 4000
             });
-            $('#mdfRecorder').modal('toggle');
+            $('#mdlPurchasing').modal('toggle');
           } 
         }).catch(function (error) {
           _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
+            text: '异步通信错误!'+error,
+            type: 'danger',
+            duration: 4000
           });
-          $('#mdfRecorder').modal('toggle');
+          $('#mdlPurchasing').modal('toggle');
         });
       },
       clickedARecorderToModify (dataRow) {
-        this.applyPurchasingList=dataRow;
-        $('#mdfRecorder').modal('toggle');
+        this.APDetails=dataRow;
+        this.APDetails.id_project=0;
+        $('#mdlPurchasing').modal('toggle');
       },
       getListOfAppliedPurchasing () {
         this.listOfAppliedPurchasings=[];
         // this.titleOfList=[];
         var _this = this;
-        this.queryContent.conditions='isNotFinishedWithState';
+        this.queryContent.conditions='Last6MonthAppliedPurchasingsWithState';
 
         this.$axios({
           method: 'post',
           url: 'getAppliedPurchasings.php',
           data: qs.stringify(_this.queryContent)
         }).then(function (response) {
+          console.log(response.data);
             if(response.data.length>0) {
               _this.listOfAppliedPurchasings = response.data;
             } else {
@@ -310,17 +312,17 @@ Date.prototype.format = function(fmt) {
       newCreateApplyPurchasing () {
         this.listOfAppliedPurchasings=[];
         // this.titleOfList=[];              
-        this.applyPurchasingList.id='';
-        this.applyPurchasingList.project='';
-        this.applyPurchasingList.name='';
-        this.applyPurchasingList.unit='';
-        this.applyPurchasingList.quantity='';
-        this.applyPurchasingList.brand='';
-        this.applyPurchasingList.model='';
-        this.applyPurchasingList.detail='';
-        this.applyPurchasingList.date_needed='';
-        this.applyPurchasingList.remark='';
-        $('#mdfRecorder').modal('toggle');
+        this.APDetails.id='';
+        this.APDetails.project='';
+        this.APDetails.name='';
+        this.APDetails.unit='';
+        this.APDetails.quantity='';
+        this.APDetails.brand='';
+        this.APDetails.model='';
+        this.APDetails.detail='';
+        this.APDetails.date_needed='';
+        this.APDetails.remark='';
+        $('#mdlPurchasing').modal('toggle');
       }
 
     },
@@ -358,8 +360,12 @@ Date.prototype.format = function(fmt) {
               return '询价比价中..';
             } else if(dataRow.state_of_enquiries==0 || dataRow.state_of_enquiries==1) {//已提交,未审核
               return '正审核比价..';
-            } else {
+            } else if(dataRow.is_finished==0) {
               return '正在采购中..';
+            } else if(dataRow.id_pio) {
+              return '已采购,已验收!';
+            } else {
+              return '已采购,待验收...';
             }
           }        
         }
@@ -381,32 +387,6 @@ Date.prototype.format = function(fmt) {
       }      
     },
     beforeCreate() {
-      var _this = this;
-      this.projects=[];
-      this.$axios({
-        method: 'post',
-        url: 'getProject.php'
-      }).then(function (response) {
-        _this.projects=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger!',
-          duration: 4000
-        });
-      });
-      
-      //初始化员工option
-      this.employees=[];
-      var _this = this;
-      this.$axios({
-        method: 'post',
-        url: 'getEmployees.php'
-      }).then(function (response) {
-        _this.employees=response.data;
-      }).catch(function (error) {
-        console.log(error);
-      });
     }
   })
 </script>
@@ -428,7 +408,7 @@ Date.prototype.format = function(fmt) {
   .container-fluid {
     width: 100%;
   }
-#mdfRecorder input,#mdfRecorder select {
+#mdlPurchasing input,#mdlPurchasing select {
   width: 80%;
 }  
 </style>

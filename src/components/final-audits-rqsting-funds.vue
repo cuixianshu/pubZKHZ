@@ -174,8 +174,8 @@ Date.prototype.format = function(fmt) {
           resultValue:0,
           reasonResult:''
         },
-        wayOfPayment:[],
-        projects:[]
+        wayOfPayment:this.$store.state.waysOfPayment,
+        projects:this.$store.state.projects,
 
       }
     },
@@ -321,35 +321,6 @@ Date.prototype.format = function(fmt) {
 
     },
     beforeCreate:function() {
-      var _this=this;
-      this.wayOfPayment=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfPayWay.php',
-      }).then(function (response) {
-        _this.wayOfPayment=response.data;
-      }).catch(function (error) {
-        console.log(error);
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-
-      this.projects=[];
-      this.$axios({
-        method: 'post',
-        url: 'getProject.php'
-      }).then(function (response) {
-        _this.projects=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger!',
-          duration: 4000
-        });
-      });            
     }    
   } 
 </script>

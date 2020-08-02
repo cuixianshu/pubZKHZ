@@ -163,9 +163,9 @@ import qs from 'qs';
         },
         listOfContracts:[],
         titleOfList:[],
-        ourCompanys:[],
-        employees:[],
-        payments:[],
+        ourCompanys:this.$store.state.ourCompanies,
+        employees:this.$store.state.employees,
+        payments:this.$store.state.waysOfPayment,
         isNew:false
       }
     },
@@ -174,25 +174,24 @@ import qs from 'qs';
         this.listOfContracts=[];
         this.titleOfList=[];
         var _this = this;
-        this.$axios.get('getContracts.php')
-          .then(function (response) {
-            if(response.data.length>0) {
-              _this.listOfContracts = response.data;
-              var ttl='';
-              for(ttl in response.data[0]) {
-                _this.titleOfList.push(ttl);
-              }              
-            } else {
-              _this.$toast({
-                text: '没有符合条件的记录',
-                type: 'info',
-                duration: 1000
-              });              
-            }
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        this.$axios.get('getContracts.php').then(function (response) {
+          if(response.data.length>0) {
+            _this.listOfContracts = response.data;
+            var ttl='';
+            for(ttl in response.data[0]) {
+              _this.titleOfList.push(ttl);
+            }              
+          } else {
+            _this.$toast({
+              text: '没有符合条件的记录',
+              type: 'info',
+              duration: 1000
+            });              
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
       },
       saveData () {
         if(this.contract.partA.length<4) {
@@ -396,43 +395,6 @@ console.log(response.data);
       }
     },
     beforeCreate:function() {
-      //初始化员工option
-      this.employees=[];
-      var _this = this;
-      this.$axios({
-            method: 'post',
-            url: 'getEmployees.php'
-        })
-        .then(function (response) {
-          _this.employees=response.data;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      //初始化我方公司option  payments
-      this.ourCompanys=[];
-      this.$axios({
-            method: 'post',
-            url: 'getListOfOurCompanys.php'
-        })
-        .then(function (response) {
-          _this.ourCompanys=response.data;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      //初始化支付方式option  
-      this.payments=[];
-      this.$axios({
-            method: 'post',
-            url: 'getListOfPayWay.php'
-        })
-        .then(function (response) {
-          _this.payments=response.data;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
     }    
 
   } 

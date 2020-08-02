@@ -8,21 +8,21 @@
           </datepicker>
           <input class="form-control" v-model="pcsQC.keyWord" title="物品名称,品牌,型号,详情,备注,供应商等" placeholder="查询关键字" style="width:110px; background: #CEFFCE;">
           <select class="form-control" v-model="pcsQC.id_project" title="选择所属项目">
-            <option :value="0">所有项目</option>
+            <option value="0">所有项目</option>
             <option v-for="item in projects" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="pcsQC.id_applier" title="请购人">
-            <option :value="0">所有请购人</option> 
+            <option value="0">所有请购人</option> 
             <option v-for="item in employees" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="pcsQC.id_purchasher" title="采购人">
-            <option :value="0">所有采购人</option> 
+            <option value="0">所有采购人</option> 
             <option v-for="item in employees" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="pcsQC.isFinished"  title="是否已完成">
-            <option :value="0">未完成</option>
-            <option :value="1">已完成</option>
-            <option :value="2">所有状态</option>
+            <option value="0">未完成</option>
+            <option value="1">已完成</option>
+            <option value="2">所有状态</option>
           </select>
           <button id="btnSearch" class="btn btn-primary" type="button" @click="getPurchaseData">搜索数据</button>
         </div>
@@ -53,7 +53,7 @@
               <td :title='row.remark'>{{row.remark}}</td>
               <td :title='row.id_project'>{{row.id_project}}</td>
               <td :title='row.e_seller'>{{row.e_seller}}</td>
-              <td :title='row.amount'>{{row.amount}}</td>
+              <td :title='row.e_amount'>{{row.e_amount}}</td>
               <td :title='row.e_id_enquiryer'>{{row.e_id_enquiryer}}</td>
               <td :title='row.date_finished'>{{row.date_finished}}</td>
             </tr>
@@ -92,8 +92,8 @@ export default {
   data() {
     return {
       shortcuts:false,
-      projects:[],
-      employees:[],
+      projects:this.$store.state.projects,
+      employees:this.$store.state.employees,
       pcsQC:{
         keyWord:'',
         dateRange:[],
@@ -208,36 +208,6 @@ export default {
     }
   },  
   beforeCreate () {
-    var _this = this;
-    var queryContent={};
-    this.projects=[];
-    this.$axios({
-      method: 'post',
-      url: 'getProject.php'
-    }).then(function (response) {
-      _this.projects=response.data;
-    }).catch(function (error) {
-      _this.$toast({
-        text: '异步通信错误!'+error,
-        type: 'danger',
-        duration: 4000
-      });
-    });
-    this.employees=[];
-    queryContent.conditions="All";
-    this.$axios({
-          method: 'post',
-          url: 'getEmployees.php',
-          data: qs.stringify(queryContent)
-      }).then(function (response) {
-        _this.employees=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-           text: '异步通信错误!'+error,
-           type: 'danger',
-            duration: 4000
-        });
-      });
   }   
 }
 </script>

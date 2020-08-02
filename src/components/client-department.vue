@@ -111,37 +111,11 @@ export default {
   },
   methods: {
     getListOfClientOgnztn () {
-      if(this.listOfClientOgnztn.length>0) {
-        this.listOfClientOgnztn=[];
-        this.titleOfList=[];
+      this.listOfClientOgnztn=this.$store.state.clntParentOgnztns;
+      this.titleOfList=[];
+      for(var ttl in this.listOfClientOgnztn[0]) {
+        this.titleOfList.push(ttl);
       }
-      var _this = this;
-      this.$axios({
-          method: 'post',
-          url: 'getClntPrntOgnztn.php',//
-          data: qs.stringify(_this.queryContent)
-      }).then(function (response) {
-// console.log(response.data)
-        if(response.data.length<1) {
-            _this.$toast({
-               text: '没有符合条件的记录',
-               type: 'info',
-                duration: 2000
-            });
-            return;
-        } 
-        var ttl='';
-        for(ttl in response.data[0]) {
-          _this.titleOfList.push(ttl);
-        }
-        _this.listOfClientOgnztn = response.data;
-      }).catch(function (error) {
-        _this.$toast({
-           text: '异步通信错误!'+error,
-           type: 'danger!',
-            duration: 4000
-        });
-      });
     },
     clearListOfClientOgnztn() {
       this.listOfClientOgnztn=[];
@@ -190,7 +164,10 @@ export default {
                  duration: 800
               });
             $('#mdfRecorder').modal('toggle');
+            _this.$store.dispatch('getCPOs',_this);
+            _this.listOfClientOgnztn=_this.$store.state.clntParentOgnztns;
           } else {
+            console.log(response.data);
             _this.$toast({
                text: '通信错误!'+response.data,
                type: 'danger',
@@ -219,12 +196,7 @@ export default {
                  duration: 800
               });
             $('#mdfRecorder').modal('toggle');
-            //从列表中移除
-            _this.listOfClientOgnztn.forEach(function(item, index, arr) {
-              if(item.id == _this.theClientOgnztn.id) {
-                arr.splice(index, 1);
-              }
-            });  
+            _this.$store.dispatch('getCPOs',_this);
           } else {
             _this.$toast({
                text: '通信错误!'+response.data,
@@ -245,6 +217,7 @@ export default {
 
     },
     newCreate () {
+      this.listOfClientOgnztn=[];
       this.theClientOgnztn.id='';
       this.theClientOgnztn.short_name='';
       this.theClientOgnztn.address='';

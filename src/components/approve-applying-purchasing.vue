@@ -8,18 +8,18 @@
           <span for="schKeyWds">关键词:</span>
           <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="项目名称\物品名称\规格型号\厂家品牌等">
           <button @click="getListOfAppliedPurchasing" class="btn btn-primary" type="button">搜索数据</button>
-          <button @click="clearlistOfAppliedPurchasing"class="btn btn-secondary" type="button" v-if="listOfAppliedPurchasings.length>0">清空</button>
+          <button @click="clearlistOfAppliedPurchasing"class="btn btn-secondary" type="button" v-if="listOfAPs.length>0">清空</button>
         </div>        
       </div>
 
     </div>
-    <div class="listShower" v-if="listOfAppliedPurchasings.length>0">
+    <div class="listShower" v-if="listOfAPs.length>0">
       <table class="table table-hover">
         <thead>
           <th v-for="title,index in titleOfList">{{title}}</th>
         </thead>
         <tbody>
-          <tr v-for="row in listOfAppliedPurchasings" @click="clickedARecorderToApprove(row)">
+          <tr v-for="row in listOfAPs" @click="clickedARecorderToApprove(row)">
             <td v-for="vlu in row" :title='vlu'>{{vlu}}</td>
           </tr>
         </tbody>
@@ -30,54 +30,58 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5>请购审核--请购ID:{{detailsInApplyPurchasing.id}}</h5>
+          <h5>请购审核--请购ID:{{detailsInAP.id}}</h5>
         </div>
         <div class="modal-body">
           <div class="container-fluid">
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="slctProject" class="require">所属项目</label>
-                <input id="slctProject" type="text" name="project" class="form-control" placeholder="所属项目" v-model="detailsInApplyPurchasing.project" title="选择所属项目" readonly>
+<!--                 <input id="slctProject" type="text" class="form-control" placeholder="所属项目" v-model="detailsInAP.id_project" title="所属项目" readonly> -->
+                <select id="slctProject" type="text" class="form-control" v-model="detailsInAP.id_project" title="所属项目" disabled>
+                  <option value=0>请选择项目</option>
+                  <option v-for="item in projects" :value="item.id">{{item.name}}</option>
+                </select>
               </div>
               <div class="col-lg form-inline">
                 <label for="nameOfMaterial" class="require">物品名称</label>
-                <input id="nameOfMaterial" type="text" name="name" class="form-control" placeholder="物品名称" v-model="detailsInApplyPurchasing.name" title="物品名称" readonly>
+                <input id="nameOfMaterial" type="text" name="name" class="form-control" placeholder="物品名称" v-model="detailsInAP.name" title="物品名称" readonly>
               </div>
             </div>
             <div class="row">                
               <div class="col-lg form-inline">
                 <label for="inputUnit">计量单位</label>
-                <input id="inputUnit" type="text" name="unit" class="form-control" placeholder="计量单位" v-model="detailsInApplyPurchasing.unit" title="计量单位" readonly>
+                <input id="inputUnit" type="text" name="unit" class="form-control" placeholder="计量单位" v-model="detailsInAP.unit" title="计量单位" readonly>
               </div>          
               <div class="col-lg form-inline">
                 <label for="inputQuantity" class="require">请购数量</label>
-                <input id="inputQuantity" type="number" name="quantity" class="form-control" placeholder="请购数量" v-model="detailsInApplyPurchasing.quantity" title="请购数量,必须大于 0" readonly>
+                <input id="inputQuantity" type="number" name="quantity" class="form-control" placeholder="请购数量" v-model="detailsInAP.quantity" title="请购数量,必须大于 0" readonly>
               </div>
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputBrand" class="require">厂商品牌</label>
-                <input id="inputBrand" type="text" name="brand" class="form-control" placeholder="厂商品牌" v-model="detailsInApplyPurchasing.brand" title="厂商品牌" readonly>
+                <input id="inputBrand" type="text" name="brand" class="form-control" placeholder="厂商品牌" v-model="detailsInAP.brand" title="厂商品牌" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputModel" class="require">规格型号</label>
-                <input id="inputModel" type="text" name="model" class="form-control" placeholder="规格型号" v-model="detailsInApplyPurchasing.model" title="规格型号" readonly>
+                <input id="inputModel" type="text" name="model" class="form-control" placeholder="规格型号" v-model="detailsInAP.model" title="规格型号" readonly>
               </div>
             </div>
             <div class="row">    
               <div class="col-lg form-inline">
                 <label for="inputDetail" class="require">详细说明</label>
-                <input id="inputDetail" type="text" name="detail" class="form-control" placeholder="详细说明" v-model="detailsInApplyPurchasing.detail" title="详细说明" readonly>
+                <input id="inputDetail" type="text" name="detail" class="form-control" placeholder="详细说明" v-model="detailsInAP.detail" title="详细说明" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="inptStartPoint" class="require">需要日期</label>
-                <input id="inptStartPoint" type="date" name="date_needed" class="form-control" placeholder="需要日期" v-model="detailsInApplyPurchasing.date_needed" title="需要日期" readonly>
+                <input id="inptStartPoint" type="date" name="date_needed" class="form-control" placeholder="需要日期" v-model="detailsInAP.date_needed" title="需要日期" readonly>
               </div>
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputMem">备注说明</label>
-                <input id="inputMem" type="text" name="material_mem" class="form-control" placeholder="备注说明" v-model="detailsInApplyPurchasing.remark" title="其它需要说明的事项" readonly>
+                <input id="inputMem" type="text" name="material_mem" class="form-control" placeholder="备注说明" v-model="detailsInAP.remark" title="其它需要说明的事项" readonly>
               </div>
               <div class="col-lg form-inline">
               </div>
@@ -134,7 +138,7 @@ Date.prototype.format = function(fmt) {
           keyWord:'',
           conditions:''
         },
-        detailsInApplyPurchasing:{
+        detailsInAP:{
           id:'',
           project:'',
           id_project:'',
@@ -156,9 +160,9 @@ Date.prototype.format = function(fmt) {
           conditions:''//用于通知后台如何操作
 
         },
-        listOfAppliedPurchasings:[],
+        listOfAPs:[],
         titleOfList:[],
-        projects:[]
+        projects:this.$store.state.projects,
       }
     },
     methods:{
@@ -174,7 +178,7 @@ Date.prototype.format = function(fmt) {
         if(this.approvedResult.result==1) {
           this.approvedResult.whyDisagree='';
         }
-        this.approvedResult.id_applyedPurchasing=this.detailsInApplyPurchasing.id;
+        this.approvedResult.id_applyedPurchasing=this.detailsInAP.id;
         this.approvedResult.conditions='Approved';
         var _this=this;
         var url='updateApplyPurchasing.php';
@@ -183,28 +187,27 @@ Date.prototype.format = function(fmt) {
           url: url,
           data: qs.stringify(_this.approvedResult)
         }).then(function (response) {
-// console.log(response.data);
-// return;
+          console.log(response.data);
+          $('#mdfRecorder').modal('toggle');
           if(response.data===true) {
-              _this.$toast({
-                 text: '成功保存数据!',
-                 type: 'success',
-                  duration: 800
-              });
-            $('#mdfRecorder').modal('toggle');
-            _this.clearlistOfAppliedPurchasing();
-            _this.getListOfAppliedPurchasing();
-            _this.detailsInApplyPurchasing={};
-            _this.detailsInApplyPurchasing.id='';              
-            _this.detailsInApplyPurchasing.project='';
-            _this.detailsInApplyPurchasing.name='';
-            _this.detailsInApplyPurchasing.unit='';
-            _this.detailsInApplyPurchasing.quantity='';
-            _this.detailsInApplyPurchasing.brand='';
-            _this.detailsInApplyPurchasing.model='';
-            _this.detailsInApplyPurchasing.detail='';
-            _this.detailsInApplyPurchasing.date_needed='';
-            _this.detailsInApplyPurchasing.remark='';
+            var index=_this.listOfAPs.findIndex((item)=>item.id==_this.detailsInAP.id);
+            _this.listOfAPs.splice(index,1);
+            _this.detailsInAP={};
+            // _this.detailsInAP.id='';
+            // _this.detailsInAP.id_project=0;              
+            // _this.detailsInAP.name='';
+            // _this.detailsInAP.unit='';
+            // _this.detailsInAP.quantity='';
+            // _this.detailsInAP.brand='';
+            // _this.detailsInAP.model='';
+            // _this.detailsInAP.detail='';
+            // _this.detailsInAP.date_needed='';
+            // _this.detailsInAP.remark='';
+            _this.$toast({
+               text: '成功保存数据!',
+               type: 'success',
+                duration: 800
+            });
           } else {
         console.log(response.data);
             _this.$toast({
@@ -224,33 +227,11 @@ Date.prototype.format = function(fmt) {
         });
       },
       clickedARecorderToApprove (dataRow) {
-        this.detailsInApplyPurchasing.id=dataRow.id;
-        this.detailsInApplyPurchasing.id_project=dataRow.id_project;
-        this.detailsInApplyPurchasing.name=dataRow.name;
-        this.detailsInApplyPurchasing.unit=dataRow.unit;
-        this.detailsInApplyPurchasing.quantity=dataRow.quantity;
-        this.detailsInApplyPurchasing.brand=dataRow.brand;
-        this.detailsInApplyPurchasing.model=dataRow.model;
-        this.detailsInApplyPurchasing.detail=dataRow.detail;
-        this.detailsInApplyPurchasing.date_needed=dataRow.date_needed;
-        this.detailsInApplyPurchasing.is_finished=dataRow.is_finished;
-        this.detailsInApplyPurchasing.remark=dataRow.remark;
-        this.detailsInApplyPurchasing.id_applier=dataRow.id_applier;
-        this.detailsInApplyPurchasing.date_applied=dataRow.date_applied;
-        this.detailsInApplyPurchasing.id_approver=dataRow.id_approver;
-        this.detailsInApplyPurchasing.date_approved=dataRow.date_approved;
-        this.detailsInApplyPurchasing.result_approved=dataRow.result_approved;
-        for(var i=0;i<this.projects.length;i++) {
-          if(this.detailsInApplyPurchasing.id_project===this.projects[i].id) {
-            this.detailsInApplyPurchasing.project=this.projects[i].prjct;
-          }
-        }
-// console.log(this.detailsInApplyPurchasing);
-// return;        
+        this.detailsInAP=dataRow;
         $('#mdfRecorder').modal('toggle');
       },
       getListOfAppliedPurchasing () {
-        this.listOfAppliedPurchasings=[];
+        this.listOfAPs=[];
         this.titleOfList=[];
 
         this.queryContent.conditions='not approved';
@@ -261,7 +242,7 @@ Date.prototype.format = function(fmt) {
           data: qs.stringify(_this.queryContent)
         }).then(function (response) {
             if(response.data.length>0) {
-              _this.listOfAppliedPurchasings = response.data;
+              _this.listOfAPs = response.data;
               var ttl='';
               for(ttl in response.data[0]) {
                 _this.titleOfList.push(ttl);
@@ -279,7 +260,7 @@ Date.prototype.format = function(fmt) {
           });
       },
       clearlistOfAppliedPurchasing() {
-        this.listOfAppliedPurchasings=[];
+        this.listOfAPs=[];
         this.titleOfList=[];
       }
     },
@@ -289,20 +270,6 @@ Date.prototype.format = function(fmt) {
       }
     },
     beforeCreate() {
-      var _this = this;
-     this.projects=[];
-      this.$axios({
-            method: 'post',
-            url: 'getProject.php'
-        }).then(function (response) {
-          _this.projects=response.data;
-        }).catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger!',
-              duration: 4000
-          });
-        });
     },
     watch:{
 

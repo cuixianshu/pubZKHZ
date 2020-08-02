@@ -42,7 +42,7 @@
         <div class="modal-content">  
           <div class="modal-header">
             <span>
-              <h5>请款初审---请款ID:{{requestFunds.id}}
+              <h5>请款初审---请款人:{{requestFunds.name_applyer}}
               </h5>
             </span>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -54,23 +54,23 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctProject">项目</label>
-                  <select id="slctProject" type="text" name="Project" class="form-control" placeholder="所属项目" v-model="requestFunds.project" title="所属项目" disabled><!-- disabled -->
+                  <select id="slctProject" type="text" name="Project" class="form-control" placeholder="所属项目" v-model="requestFunds.project" :title="requestFunds.project" disabled>
                     <option v-for="item in projects">{{item.name}}</option>}
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputUsage">用途</label>
-                  <input id="inputUsage" type="text" class="form-control" v-model="requestFunds.use_for" title="款项用途,不超过64个字" placeholder="款项用途,不超过64个字" disabled>
+                  <input id="inputUsage" type="text" class="form-control" v-model="requestFunds.use_for" :title="requestFunds.use_for" readonly>
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputCashiedAmount">金额</label>
-                  <input id="inputCashiedAmount" type="number" class="form-control" name="cashiedAmount" v-model="requestFunds.amount" placeholder="请款金额" title="请款金额" disabled>
+                  <input id="inputCashiedAmount" type="number" class="form-control" name="cashiedAmount" v-model="requestFunds.amount" title="请款金额" readonly>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="requestFunds.way_pay" placeholder="收款方式" title="收款方式" disabled>
+                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="requestFunds.way_pay" title="收款方式" disabled>
                     <option v-for="item in wayOfPayment">{{item.name}}</option>}
                   </select>
                 </div>
@@ -78,11 +78,11 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputAccount">账号</label>
-                  <input id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" placeholder="接收款项的账号" v-model="requestFunds.account" title="账号名和账号" disabled>
+                  <input id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" v-model="requestFunds.account" :title="requestFunds.account" readonly>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputRemark">备注</label>
-                  <input id="inputRemark" type="text" class="form-control" name="otherInCashier" v-model="requestFunds.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字" disabled>
+                  <input id="inputRemark" type="text" class="form-control" name="otherInCashier" v-model="requestFunds.remark" :title="requestFunds.remark" readonly>
                 </div>
               </div>
               <br>
@@ -175,8 +175,8 @@ Date.prototype.format = function(fmt) {
           resultValue:0,
           reasonResult:''
         },
-        wayOfPayment:[],
-        projects:[]
+        wayOfPayment:this.$store.state.waysOfPayment,
+        projects:this.$store.state.projects,
 
       }
     },
@@ -338,35 +338,6 @@ Date.prototype.format = function(fmt) {
       }
     },
     beforeCreate:function() {
-      var _this=this;
-      this.wayOfPayment=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfPayWay.php',
-      }).then(function (response) {
-        _this.wayOfPayment=response.data;
-      }).catch(function (error) {
-        console.log(error);
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-
-      this.projects=[];
-      this.$axios({
-        method: 'post',
-        url: 'getProject.php'
-      }).then(function (response) {
-        _this.projects=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger!',
-          duration: 4000
-        });
-      });            
     }    
   } 
 </script>

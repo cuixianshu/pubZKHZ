@@ -19,7 +19,7 @@
             <button @click="clearRcdrsInModifyer"class="btn btn-secondary" type="button" v-if="rcdrSetFromDBSForModifying.length>0">清空</button>
           </div>      
         </div>
-        <div class="pre-scrollable" v-if="rcdrSetFromDBSForModifying.length>0"><!-- form --> 
+        <div class="divfortable" v-if="rcdrSetFromDBSForModifying.length>0"><!-- form --> 
           <table class="table table-hover">
             <thead>
               <th v-for="(title,index) in titleOfTable" :width="widthOfTH[index]">{{title}}</th>
@@ -235,17 +235,17 @@ Date.prototype.format = function(fmt) {
           dateRange:[],
         },      	
         slctdOrderForChecking: {},
-        projects:[],
+        projects:this.$store.state.projects,
         customers:[],
-        products:[],
+        products:this.$store.state.products,
         rulesPrices:[],
         rulesPriceForTheClient:[],
         shortcuts:false,
         rcdrSetFromDBSForModifying:[],
         titleOfTable:['订单ID','单位','订车人','项目','产品','开始','结束','起点','终点','司机','车辆','里程','停车','垫付','垫付用途'],
         widthOfTH:['4','10','6','10','8','6','6','7','7','6','6','6','6','6','6'],
-        equipments:[],
-        employees:[],
+        equipments:this.$store.state.equipments,
+        employees:this.$store.state.employees,
         
         titleOfCOHTable:['订单ID','单位','订车人','项目','产品','开始','结束','起点','终点','司机','成交价','里程','停车','垫付','垫付用途'],
         COHQC:{
@@ -370,7 +370,7 @@ Date.prototype.format = function(fmt) {
         $('#mdfRecorder').modal('toggle');
       },      
       saveModifyedRcdr:function() {
-        var allowSpaceProps=['msg_for_driver','park_fee','surcharge','use_surcharge','mem','cstmr_ognz','id_cashier','id_contract','id_creater','id_fill_invoice','id_request_invoice','id_verifyer','quantity','time_create','time_verify','id_rule_price'];
+        var allowSpaceProps=['msg_for_driver','park_fee','surcharge','use_surcharge','mem','cstmr_ognz','id_cashier','id_contract','id_creater','id_fill_invoice','id_request_invoice','id_verifyer','quantity','time_create','time_verify','id_rule_price','amount_received'];
         var en_zhTranslate={
         actual_price:'售价',
         cstmr_ognz:'客户',
@@ -400,11 +400,13 @@ Date.prototype.format = function(fmt) {
         surcharge:'附费',
         time_create:'创建时间',
         time_verify:'核单时间',
-        use_surcharge:'说明'
+        use_surcharge:'说明',
+        amount_received:'已收金额',
 
         };
         for(var prop in this.slctdOrderForChecking){
-          if((this.slctdOrderForChecking[prop]=='' ||this.slctdOrderForChecking[prop]==0) && !allowSpaceProps.includes(prop)){
+          if((this.slctdOrderForChecking[prop]=='' || this.slctdOrderForChecking[prop]==0) && !allowSpaceProps.includes(prop)){
+            console.log(prop);
             this.$toast({
               text: en_zhTranslate[prop]+' 是必填项,不允许为0或空格!',
               type: 'danger',
@@ -486,6 +488,7 @@ Date.prototype.format = function(fmt) {
           url: 'getOrders.php',
           data: qs.stringify(_this.COHQC)
         }).then(function (response) {
+          console.log(response.data);
           if(response.data.length<1) {
             _this.$toast({
               text: '没有符合条件的待核单记录',
@@ -568,14 +571,12 @@ Date.prototype.format = function(fmt) {
     beforeCreate:function() { 
       var _this = this;
       var coQC={};
-
-      //初始化项目的option
-      this.projects=[];
+      this.customers=[];
       this.$axios({
         method: 'post',
-        url: 'getProject.php'
+        url: 'getContacters.php'
       }).then(function (response) {
-        _this.projects=response.data;
+        _this.customers=response.data;
       }).catch(function (error) {
         _this.$toast({
           text: '异步通信错误!'+error,
@@ -583,78 +584,19 @@ Date.prototype.format = function(fmt) {
           duration: 4000
         });
       });
-      this.customers=[];
-      this.$axios({
-            method: 'post',
-            url: 'getContacters.php'
-        }).then(function (response) {
-          _this.customers=response.data;
-        }).catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });
-      this.products=[];
-      this.$axios({
-            method: 'post',
-            url: 'getProduct.php'
-        })
-        .then(function (response) {
-          _this.products=response.data;
-
-        })
-        .catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });
       this.rulesPrices=[];
       this.$axios({
-            method: 'post',
-            url: 'getRulesPrice.php'
-        }).then(function (response) {
-          _this.rulesPrices=response.data;
-        }).catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
+        method: 'post',
+        url: 'getRulesPrice.php'
+      }).then(function (response) {
+        _this.rulesPrices=response.data;
+      }).catch(function (error) {
+        _this.$toast({
+          text: '异步通信错误!'+error,
+          type: 'danger',
+          duration: 4000
         });
-      this.equipments=[];
-      coQC.conditions="All";
-      this.$axios({
-            method: 'post',
-            url: 'getEquipments.php',
-            data: qs.stringify(coQC)
-        }).then(function (response) {
-          _this.equipments=response.data;
-        }).catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });
-      this.employees=[];
-      coQC.conditions="All";
-      this.$axios({
-            method: 'post',
-            url: 'getEmployees.php',
-            data: qs.stringify(coQC)
-        }).then(function (response) {
-          _this.employees=response.data;
-        }).catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });
+      });
     }
   }	
 </script>
@@ -665,10 +607,6 @@ Date.prototype.format = function(fmt) {
 }
 .saveBtn, .clearBtn {
 	width: 100px;
-}
-table {
-  overflow: auto;
-  font-size: 12px;
 }
 .query-body button {
   margin-right: 10px;
@@ -691,11 +629,15 @@ table {
 button {
   margin-left: 10px;
 }
+table {
+  overflow: auto;
+  font-size: 12px;
+}
 td {
-    overflow:hidden; 
-    white-space:nowrap; 
-    text-overflow:ellipsis;
-    max-width: 50px;
+  overflow:hidden; 
+  white-space:nowrap; 
+  text-overflow:ellipsis;
+  max-width: 50px;
 }
 .tipFormdfRecorder {
   color: red;
@@ -704,6 +646,11 @@ h5 {
   color: #007bff;
 }
 .tab-content {
-  margin-top: 10px;
+  margin-top: 5px;
+}
+.divfortable {
+  width: 100%;
+  overflow: scroll;
+  max-height: 620px;
 }
 </style>

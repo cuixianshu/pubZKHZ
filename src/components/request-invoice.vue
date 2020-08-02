@@ -149,9 +149,9 @@ Date.prototype.format = function(fmt) {
           dateRange:[],
         },
         widthOfTH:['5%','12%','12%','10%','13%','9%','6%','8%','8%','6%','6%','5%'],
-        listOfOurCompany:[],
-        listOfInvoiceType:[],
-        listOfCustomerOgnztn:[],
+        listOfOurCompany:this.$store.state.ourCompanies,
+        listOfInvoiceType:this.$store.state.typesOfInvoices,
+        listOfCustomerOgnztn:this.$store.state.clntParentOgnztns,
         cloneddetailsOfRequest:''
   	  }	
   	},
@@ -432,48 +432,6 @@ Date.prototype.format = function(fmt) {
       }                                          
     },
     beforeCreate:function() {
-      var _this = this;
-      this.listOfOurCompany=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfOurCompanys.php'
-        }).then(function (response) {
-          _this.listOfOurCompany=response.data;
-        }).catch(function (error) {
-          console.log(error);
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });
-      this.listOfInvoiceType=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfTypeOfInvoice.php'
-        }).then(function (response) {
-          _this.listOfInvoiceType=response.data;
-        }).catch(function (error) {
-          console.log(error);
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });      
-      this.listOfCustomerOgnztn=[];
-      var queryContent={keyWord:''};
-      this.$axios({
-            method: 'post',
-            url: 'getClntPrntOgnztn.php',
-            data:qs.stringify(queryContent)
-        })
-        .then(function (response) {
-          _this.listOfCustomerOgnztn=response.data;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
     }  	
   }	
 </script>

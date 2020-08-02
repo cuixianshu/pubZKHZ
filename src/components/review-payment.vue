@@ -42,7 +42,7 @@
         <div class="modal-content">  
           <div class="modal-header">
             <span>
-              <h5>付款复核---付款ID:{{payment.id}}--付款金额:{{payment.amount}}
+              <h5>付款复核---项目:{{payment.project}}
               </h5>
             </span>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -51,6 +51,32 @@
           </div>
           <div class="modal-body">
             <div class="container-fluid">
+              <div class="row">
+                <div class="col-lg  form-inline">
+                  <label for="iptNature">性质</label>
+                  <input id="iptNature" type="text" class="form-control" :value="payment.name_nature" title="请款时填写的款项性质" readonly>
+                </div>
+                <div class="col-lg  form-inline">
+                  <label for="iptUseFor">用途</label>
+                  <input id="iptUseFor" type="text" class="form-control" :value="payment.use_for"  title="款项用途" readonly>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg  form-inline">
+                  <label for="slctAS">一级</label>
+                  <select id="slctAS" type="text" class="form-control" name="ture" v-model="payment.id_accounting_sub" title="一级会计科目" @change="acc_subChanged()">
+                    <option  value=0>一级科目</option>
+                    <option v-for="item in accountingSubjects" :value="item.id">{{item.code_num+item.name}}</option>
+                  </select>
+                </div>
+                <div class="col-lg  form-inline">
+                  <label for="slctNature">二级</label>
+                  <select id="slctNature" type="text" class="form-control" name="ture" v-model="payment.id_detailed_accounting" title="二级会计科目">
+                    <option  value=0>二级科目</option>
+                    <option v-for="item in DAsAtTheAccSub" :value="item.id">{{item.code_num+item.name}}</option>
+                  </select>
+                </div>
+              </div>
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctpaymentAccount">付款</label>
@@ -82,7 +108,7 @@
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputRemark">备注</label>
-                  <input id="inputRemark" type="text" class="form-control" name="remark" v-model="payment.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
+                  <input id="inputRemark" type="text" class="form-control" name="remark" v-model="payment.remark" title="付款时的备注内容" placeholder="备注信息,不超过64个字">
                 </div>
               </div>
               <hr class="split-line">              
@@ -146,22 +172,17 @@ Date.prototype.format = function(fmt) {
         listOfPaidRqstedFunds:[],
         currentUserId:this.$store.state.user.id_user,
         payment:{
-          // account:'中科平安',
-          // way_pay:'',
-          // id_way_pay:1,
-          // amount:0,
-          // serial_paid:'',
-          // numbers_bills:'',
-          // remark:'',
-          // id_account:1,
-          // id_cashier:''
           result_reviewed:1,
-          opinion_reviewed:''
+          opinion_reviewed:'',
+          id_accounting_sub:0,
+          id_detailed_accounting:0,
         },
-        ourAccounts:[],
-        wayOfPayment:[],
-        projects:[]
-
+        ourAccounts:this.$store.state.ourAccounts,
+        wayOfPayment:this.$store.state.waysOfPayment,
+        projects:this.$store.state.projects,
+        accountingSubjects:this.$store.state.accountingSubjects,
+        detailedAccountings:this.$store.state.detailedAccountings,
+        DAsAtTheAccSub:[],
       }
     },
     components: {
@@ -185,8 +206,7 @@ Date.prototype.format = function(fmt) {
           url: 'getPaymentData.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
-// console.log(response.data);
-// return;
+            console.log(response.data);
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到符合条件的记录!',
@@ -196,7 +216,6 @@ Date.prototype.format = function(fmt) {
             } else {
               _this.listOfPaidRqstedFunds=response.data;
             }
-
           }).catch(function (error) {
             console.log(error);
             _this.$toast({
@@ -207,22 +226,36 @@ Date.prototype.format = function(fmt) {
           });
       },
       clickedARowInShower(dataRow) {
-        // this.resultOfReview.id=dataRow.id;
-        // this.numberOfInvoice=dataRow.num_of_invoice;
-        // this.amountInInvoice=dataRow.amount;
-        // this.payment.amount=this.amountInInvoice;
-        // this.payment.id_project=dataRow.id_project;
         this.payment=dataRow;
-
-        // this.payment.account=dataRow.account;
-        // this.payment.way_pay=dataRow.way_pay;
-        // this.payment.id_way_pay=dataRow.id_way_pay;
-        // this.payment.amount=dataRow.amount;
-       
+        if(this.payment.id_detailed_accounting) {
+          var o=this.detailedAccountings.find((ele) => ele['id'] == this.payment.id_detailed_accounting);
+          this.payment.id_accounting_sub=typeof(o)=='undefined'?0:o['id_patent'];
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.payment.id_accounting_sub);
+        } else {
+          this.payment.id_accounting_sub=0;
+          this.payment.id_detailed_accounting=0;
+          this.DAsAtTheAccSub=[];
+        }
+        this.payment.result_reviewed=1;
         $('#mdlReviewPaying').modal('toggle');
-// console.log(this.payment);
       },
       saveReviewing() {
+        if(!this.payment.id_accounting_sub) {
+          this.$toast({
+            text: '请选择一级会计科目!',
+            type: 'info',
+            duration: 2000
+          });
+          return false;          
+        }
+        if(!this.payment.id_detailed_accounting) {
+          this.$toast({
+            text: '请选择二级会计科目!',
+            type: 'info',
+            duration: 2000
+          });
+          return false;          
+        }
         if(!this.payment.id_account) {
           this.$toast({
             text: '请选择支付账户!',
@@ -290,18 +323,16 @@ Date.prototype.format = function(fmt) {
           serial_paid:this.payment.serial_paid,
           numbers_bills:this.payment.numbers_bills,
           result_reviewed:this.payment.result_reviewed,
-          opinion_reviewed:this.payment.opinion_reviewed
+          opinion_reviewed:this.payment.opinion_reviewed,
+          id_detailed_accounting:this.payment.id_detailed_accounting,
         };
-// console.log(queryContent);
-// return;
         var _this=this;
         this.$axios({
           method: 'post',
           url: 'updatePayment.php',
           data: qs.stringify(queryContent)
           }).then(function (response) {
-// console.log(response.data);
-// return;
+            console.log(response.data);
             if(response.data===true) {
               $('#mdlReviewPaying').modal('toggle'); 
               _this.$toast({
@@ -336,75 +367,63 @@ Date.prototype.format = function(fmt) {
       },
       clearList () {
         this.listOfPaidRqstedFunds=[];
-        // this.titlesOfList=[];
       },
-      collectByHand() {
-        this.resultOfReview.id='';
-        $('#mdlReviewPaying').modal('toggle');
-        this.payment.account='中科平安';
-        this.payment.id_account=1;
-        this.payment.way='现金';
-        this.payment.id_way_pay=1;
-        this.payment.amount=0;
-        this.payment.other='';        
-      }
+      acc_subChanged() {
+        if(this.payment.id_accounting_sub) {
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.payment.id_accounting_sub);
+        } else {
+          this.DAsAtTheAccSub=[];
+        }
+        // this.payment.id_detailed_accounting=0;
+        this.payment.id_detailed_accounting=0;
+        console.log(this.DAsAtTheAccSub);
+      },
     },
     watch:{
-      'payment.project':{
-        handler() {
-          for(var i=0;i<this.projects.length;i++) {
-            if(this.payment.project==this.projects[i].prjct) {
-              this.payment.id_project=this.projects[i].id;
-            }
-          }
-        }
-      }
+      // 'payment.project':{
+      //   handler() {
+      //     for(var i=0;i<this.projects.length;i++) {
+      //       if(this.payment.project==this.projects[i].prjct) {
+      //         this.payment.id_project=this.projects[i].id;
+      //       }
+      //     }
+      //   }
+      // },
     },
     beforeCreate:function() {
-      var _this=this;
-      this.ourAccounts=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfOurAccount.php',
-      }).then(function (response) {
-        _this.ourAccounts=response.data;
-      }).catch(function (error) {
-        console.log(error);
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-      this.wayOfPayment=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfPayWay.php',
-      }).then(function (response) {
-        _this.wayOfPayment=response.data;
-      }).catch(function (error) {
-        console.log(error);
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-
-      this.projects=[];
-      this.$axios({
-        method: 'post',
-        url: 'getProject.php'
-      }).then(function (response) {
-        _this.projects=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger!',
-          duration: 4000
-        });
-      });            
-    }    
+      // this.accountingSubjects=[];
+      // this.detailedAccountings=[];
+      // var _this=this;
+      // var queryContent={keyWord:'',conditions:''};
+      // this.$axios({
+      //   method: 'post',
+      //   url: 'getDetailedAccountings.php',
+      //   data: qs.stringify(queryContent)
+      // }).then(function (response) {
+      //   _this.detailedAccountings=response.data;
+      // }).catch(function (error) {
+      //   console.log(response.data);
+      //   _this.$toast({
+      //     text: '异步通信错误!'+error,
+      //     type: 'danger',
+      //     duration: 4000
+      //   });
+      // });
+      // this.$axios({
+      //   method: 'post',
+      //   url: 'getAccountingSubjects.php',
+      //   data: qs.stringify(queryContent)
+      // }).then(function (response) {
+      //   _this.accountingSubjects=response.data;
+      // }).catch(function (error) {
+      //   console.log(response.data);
+      //   _this.$toast({
+      //     text: '异步通信错误!'+error,
+      //     type: 'danger',
+      //     duration: 4000
+      //   });
+      // }); 
+    },
   } 
 </script>
 
@@ -422,10 +441,10 @@ datepicker {
   margin-left: 10px;  
 }
 td {
-    overflow:hidden; 
-    white-space:nowrap; 
-    text-overflow:ellipsis;
-    max-width: 50px;
+  overflow:hidden; 
+  white-space:nowrap; 
+  text-overflow:ellipsis;
+  max-width: 50px;
 }
 table {
   overflow: auto;

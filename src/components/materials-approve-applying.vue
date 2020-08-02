@@ -45,7 +45,7 @@
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputNameOfMAT">名称:</label>
-                <input id="inputNameOfMAT" type="text" name="name" class="form-control" v-model="notAprvdAplyMtrl.name" placeholder="物料名称" title="物料名称" readonly>
+                <input id="inputNameOfMAT" type="text" name="mtname" class="form-control" v-model="notAprvdAplyMtrl.mtname" placeholder="物料名称" title="物料名称" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputUnit">单位:</label>
@@ -123,14 +123,13 @@ import qs from 'qs';
           keyWord:'',
           conditions:''
         },
-        employees:[],
         listOfNBNAs:[],
         titleOfList:['所属项目','名称','品牌','型号','单位','包装单位','申请数量','申请时间','申请人'],
         width:['12%','11%','11%','11%','11%','11%','11%','11%','11%'],
         // qty:0,
         notAprvdAplyMtrl:{
           id:'',
-          name:'',
+          mtname:'',
           unit:'',
           brand:'',
           model:'',
@@ -147,7 +146,8 @@ import qs from 'qs';
           conditions:'WithApprovedApplyingData',//用于通知后台如何操作
           id_applyMaterials:''
         },
-        projects:[]
+        employees:this.$store.state.employees,
+        projects:this.$store.state.projects,
       }
     },
     methods:{
@@ -212,7 +212,7 @@ import qs from 'qs';
             // _this.listOfNBNAs=[];
             _this.notAprvdAplyMtrl={
               id:'',
-              name:'',
+              mtname:'',
               unit:'',
               brand:'',
               model:'',
@@ -264,11 +264,11 @@ import qs from 'qs';
           var r=dataRow.rslt_aprvd;
           var m=dataRow.id_mio;
           if (!r && typeof(r)!="undefined" && r!=0){//未审核
-            return '申请未审核';
+            return '已申请未审核';
           } else if(r==0) {//审核未过
-            return '没通过审核,';
+            return '没有通过审核,';
           } else if(!m && typeof(m)!="undefined" && m!=0) {//审核通过,未发放
-            return '已审核,待发放';
+            return '已审核待发放';
           } else {
             return '已发放';
           }
@@ -296,37 +296,6 @@ import qs from 'qs';
       }
     },
     beforeCreate:function() {
-      var _this = this;
-      this.employees=[];
-      var queryContent={};
-      queryContent.conditions="All";
-      this.$axios({
-            method: 'post',
-            url: 'getEmployees.php',
-            data: qs.stringify(queryContent)
-        }).then(function (response) {
-          _this.employees=response.data;
-        }).catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });
-
-      this.projects=[];
-      this.$axios({
-        method: 'post',
-        url: 'getProject.php'
-      }).then(function (response) {
-        _this.projects=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger!',
-          duration: 4000
-        });
-      }); 
     }
 
   }  

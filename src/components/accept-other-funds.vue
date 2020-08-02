@@ -5,8 +5,8 @@
       <div class="row">
         <div class="col-lg form-inline searchcontent">
           <label for="queryConditions">关键词:</label> 
-          <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位等搜索关键词">
-          <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="收款的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="收款的时间范围"></datepicker> 
+          <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="缴款事由、缴款备注、项目名等搜索关键词">
+          <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="缴款的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="缴款的时间范围"></datepicker> 
           <button class="btn btn-primary" @click="getListOfTurnedInFunds">🔍获取数据</button>
           <button class="btn btn-secondary" @click="listOfTurnInFunds=[];" v-if="listOfTurnInFunds.length>0">清除</button>            
         </div>          
@@ -21,7 +21,7 @@
           <tr v-for="(row,index) in listOfTurnInFunds" @click="clickedARowInShower(row)">
             <td title="缴款ID">{{row.id}}</td>
             <td title="缴款人">{{getTurninName(row)}}</td>
-            <td title="缴款项目">{{getProjectName(row)}}</td>
+            <!-- <td title="缴款项目">{{getProjectName(row)}}</td> -->
             <td title="缴款事由">{{row.cause}}</td>
             <td title="缴款金额">{{row.amount}}</td>
             <td title="缴款方式">{{getPayWay(row)}}</td>
@@ -60,6 +60,22 @@
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
+                  <label for="slctAS">一级</label>
+                  <select id="slctAS" type="text" class="form-control" name="ture" v-model="cashier.id_accounting_sub" title="一级会计科目" @change="acc_subChanged()">
+                    <option  value=0>一级科目</option>
+                    <option v-for="item in accountingSubjects" :value="item.id">{{item.code_num+item.name}}</option>
+                  </select>
+                </div>
+                <div class="col-lg  form-inline">
+                  <label for="slctNature">二级</label>
+                  <select id="slctNature" type="text" class="form-control" name="ture" v-model="cashier.id_detailed_accounting" title="二级会计科目">
+                    <option  value=0>二级科目</option>
+                    <option v-for="item in DAsAtTheAccSub" :value="item.id">{{item.code_num+item.name}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg  form-inline">
                   <label for="slctCashierAccount">账号</label>
                   <select id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" placeholder="收款账号" v-model="cashier.id_account" title="收款账号">
                     <option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>}
@@ -68,7 +84,7 @@
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfCashier">方式</label>
                   <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="cashier.id_way_pay" placeholder="收款方式" title="收款方式">
-                    <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>}
+                    <option v-for="item in waysOfPayment" :value="item.id">{{item.name}}</option>}
                   </select>
                 </div>
               </div>
@@ -126,31 +142,35 @@ Date.prototype.format = function(fmt) {
           dateRange:[],
           conditions:''
         },
-        titlesOfList:['缴款ID','缴款人','项目','事由','金额','方式','缴款备注'],
-        widthOfTH:['9%','11%','20%','20%','10%','10%','20%'],
+        titlesOfList:['缴款ID','缴款人','事由','金额','方式','缴款备注'],
+        widthOfTH:['16%','16%','20%','16%','16%','16%'],
         listOfTurnInFunds:[],
         currentUserId:this.$store.state.user.id_user,
         cashier:{
           amount:0,
           id_turn_in_funds:'',//缴款ID
           id_payer:'',
-          id_project:'',
           id_way_pay:'',
           remark:'',
           natrue:1, 
           account:'中科平安',
           id_account:1,
-          // way:'电汇',
-          id_cashier:''
+          id_cashier:'',
+          id_accounting_sub:0,
+          id_detailed_accounting:0,
+          business_type:2,
         },
-        ourAccounts:[],
-        wayOfPayment:[],
-        projects:[],
-        employees:[],
+        ourAccounts:this.$store.state.ourAccounts,
+        waysOfPayment:this.$store.state.waysOfPayment,
+        projects:this.$store.state.projects,
+        employees:this.$store.state.employees,
         natrues:[
-          {id:1,name:'上缴款项'},
+          {id:1,name:'上缴款项(非还款)'},
           {id:2,name:'归还借款'},
         ],
+        accountingSubjects:this.$store.state.accountingSubjects,
+        detailedAccountings:this.$store.state.detailedAccountings,
+        DAsAtTheAccSub:[],
 
       }
     },
@@ -200,28 +220,58 @@ Date.prototype.format = function(fmt) {
         this.cashier.amount=dataRow.amount;
         this.cashier.id_turn_in_funds=dataRow.id;
         this.cashier.id_payer=dataRow.id_payer;
-        this.cashier.id_project=dataRow.id_project;
+        // this.cashier.id_project=dataRow.id_project;
         this.cashier.id_way_pay=dataRow.id_way_pay;
         this.cashier.time_paid=dataRow.time_paid;
         this.cashier.account='中科平安';
         this.cashier.id_account=1;
         this.cashier.id_cashier=this.currentUserId;
         this.cashier.natrue=dataRow.nature;
+        if(this.cashier.natrue===1) {//上缴款
+          this.cashier.business_type=2;
+        } else if(this.cashier.natrue===2) {//还款
+          this.cashier.business_type=4;
+        }
         this.cashier.signature_code=dataRow.signature_code;
+        if(this.cashier.id_detailed_accounting) {
+          var o=this.detailedAccountings.find((ele) => ele['id'] == this.cashier.id_detailed_accounting);
+          this.cashier.id_accounting_sub=typeof(o)=='undefined'?0:o['id_patent'];
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.cashier.id_accounting_sub);
+        } else {
+          this.cashier.id_accounting_sub=0;
+          this.cashier.id_detailed_accounting=0;
+          this.DAsAtTheAccSub=[];
+        }
+// console.log(this.cashier);
+// return;
         $('#mdlCashier').modal('toggle');
       },
+      acc_subChanged() {
+        if(this.cashier.id_accounting_sub) {
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.cashier.id_accounting_sub);
+        } else {
+          this.DAsAtTheAccSub=[];
+        }
+        this.cashier.id_detailed_accounting=0;
+        // console.log(this.DAsAtTheAccSub);
+      },
       saveTheCollectedData() {
-        // var queryContent={
-        //   id_turn_in_funds:this.cashier.id_turn_in_funds,
-        //   id_account:this.cashier.id_account,
-        //   id_way_pay:this.cashier.id_way_pay,
-        //   remark:this.cashier.remark,
-        //   amount:this.cashier.amount,
-        //   id_cashier:this.currentUserId,
-        //   conditions:'',
-        //   id_project:this.cashier.id_project
-        // };
-
+        if(!this.cashier.id_accounting_sub) {
+          this.$toast({
+            text: '请选择一级会计科目!',
+            type: 'info',
+            duration: 2000
+          });
+          return false;
+        }
+        if(!this.cashier.id_detailed_accounting) {
+          this.$toast({
+            text: '请选择二级会计科目!',
+            type: 'info',
+            duration: 2000
+          });
+          return false;
+        }
         if(this.cashier.amount<this.cashier.amount) {
           this.$toast({
             text: '收款金额不对!',
@@ -242,15 +292,13 @@ Date.prototype.format = function(fmt) {
           this.cashier.id_request=o.id_request;
           this.cashier.id_pay=o.id_pay;
         }
-
+// return;
         var _this=this;
         this.$axios({
           method: 'post',
           url: 'updateCashier.php',
           data: qs.stringify(_this.cashier)
           }).then(function (response) {
-console.log(response.data);
-// return;
             if(response.data===true) {
               $('#mdlCashier').modal('toggle'); 
               _this.$toast({
@@ -266,6 +314,7 @@ console.log(response.data);
                 }
               }
             } else {
+              console.log(response.data);
               _this.$toast({
                 text: '操作失败,请稍后再试!',
                 type: 'danger',
@@ -301,71 +350,12 @@ console.log(response.data);
       },
       getPayWay() {
         return function (r) {
-          var WP=this.wayOfPayment.find((ele) => ele['id'] == r.id_way_pay);
+          var WP=this.waysOfPayment.find((ele) => ele['id'] == r.id_way_pay);
           return typeof(WP)=='undefined'?'':WP['name'];
         }
       },
     },
     beforeCreate:function() {
-      var _this=this;
-      this.ourAccounts=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfOurAccount.php',
-      }).then(function (response) {
-        _this.ourAccounts=response.data;
-      }).catch(function (error) {
-        console.log(error);
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-      this.wayOfPayment=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfPayWay.php',
-      }).then(function (response) {
-        _this.wayOfPayment=response.data;
-      }).catch(function (error) {
-        console.log(error);
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-
-      this.projects=[];
-      this.$axios({
-        method: 'post',
-        url: 'getProject.php'
-      }).then(function (response) {
-        _this.projects=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger!',
-          duration: 4000
-        });
-      });            
-    this.employees=[];
-    var queryContent={};
-    queryContent.conditions="All";
-    this.$axios({
-          method: 'post',
-          url: 'getEmployees.php',
-          data: qs.stringify(queryContent)
-      }).then(function (response) {
-        _this.employees=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-           text: '异步通信错误!'+error,
-           type: 'danger',
-            duration: 4000
-        });
-      });
     }    
   } 
 </script>

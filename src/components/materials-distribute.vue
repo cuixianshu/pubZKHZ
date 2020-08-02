@@ -125,7 +125,7 @@ import qs from 'qs';
           id_op:'',
           qty:0
         },
-        employees:[],
+        employees:this.$store.state.employees,
         distributer:{
           qty:0,
           id_material:'',
@@ -254,23 +254,6 @@ import qs from 'qs';
       }
     },
     beforeCreate:function() {
-      var _this = this;
-      this.employees=[];
-      var queryContent={};
-      queryContent.conditions="All";
-      this.$axios({
-            method: 'post',
-            url: 'getEmployees.php',
-            data: qs.stringify(queryContent)
-        }).then(function (response) {
-          _this.employees=response.data;
-        }).catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });
     }    
   }  
 </script>

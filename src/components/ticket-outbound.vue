@@ -131,12 +131,6 @@ Date.prototype.format = function(fmt) {
      datepicker
     },    
     methods: {
-      // aRowInListClicked (indexRow) {
-      //     this.listOfCheckboxStatement[indexRow]=!this.listOfCheckboxStatement[indexRow];
-      //     this.changeAllCheckboxStatus("requesting");
-      //     // $("#"+indexRow).attr("checked",this.listOfCheckboxStatement[indexRow]);
-      //     // console.log(this.listOfCheckboxStatement[indexRow]);
-      // },
       getTkts:function() {
         this.allRequestCheckbox=false;
         if(this.setOftickets.length>0) {
@@ -180,7 +174,6 @@ Date.prototype.format = function(fmt) {
       checkboxClickedInTable(i) {
         this.listOfCheckboxStatement[i]=!this.listOfCheckboxStatement[i];
         this.changeAllCheckboxStatus();
-// console.log(this.listOfCheckboxStatement);
       },
       outboundSeletcedTkts() {
         if(this.listOfSelectedTickets.length) {
@@ -191,7 +184,6 @@ Date.prototype.format = function(fmt) {
             this.listOfSelectedTickets.push(this.setOftickets[i]);
           }
         }
-
         if(this.listOfSelectedTickets.length<1) {
           this.$toast({
             text: "请勾选至少一条记录!",
@@ -200,17 +192,11 @@ Date.prototype.format = function(fmt) {
             });
           return;
         }
-
         $('#outboundShower').modal('toggle');
       },
       allCheckboxClicked() {
         this.allRequestCheckbox=!this.allRequestCheckbox;
         this.listOfCheckboxStatement = new Array(this.setOftickets.length).fill(this.allRequestCheckbox);
-        //数据更新后更新DOM
-        // this.$nextTick(()=> {
-        //   this.listOfCheckboxStatement = new Array(this.setOftickets.length).fill(this.allRequestCheckbox);
-        // });
-// console.log(this.listOfCheckboxStatement);
       },
       changeAllCheckboxStatus() {
         for(var i=0;i<this.listOfCheckboxStatement.length;i++) {
@@ -232,8 +218,6 @@ Date.prototype.format = function(fmt) {
         for(var i=0;i<this.listOfSelectedTickets.length;i++) {
           numbersOfSelectedTickets.push(this.listOfSelectedTickets[i]['number_ticket']);
         }
-// console.log(numbersOfSelectedTickets);
-// return;
       var _this=this;
       this.$axios({
         method: 'post',
@@ -242,7 +226,6 @@ Date.prototype.format = function(fmt) {
         }).then(function (response) {
           $('#outboundShower').modal('toggle');
           if(response.data===true) {
-
             for(var index=0;index<_this.setOftickets.length;index++) {
               if(numbersOfSelectedTickets.includes(_this.setOftickets[index]['number_ticket'])) {
                   _this.setOftickets.splice(index, 1);
@@ -254,7 +237,6 @@ Date.prototype.format = function(fmt) {
             }
             _this.allRequestCheckbox=false;
             _this.listOfSelectedTickets=[];
-
             _this.$toast({
               text: "出库操作成功!",
               type: 'success',
@@ -284,20 +266,6 @@ Date.prototype.format = function(fmt) {
       }                                          
     },
     beforeCreate:function() {
-      var _this=this;
-      this.listOfCustomerOgnztn=[];
-      var queryContent={keyWord:''};
-      this.$axios({
-            method: 'post',
-            url: 'getClntPrntOgnztn.php',
-            data:qs.stringify(queryContent)
-        })
-        .then(function (response) {
-          _this.listOfCustomerOgnztn=response.data;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
     }   
   } 
 </script>

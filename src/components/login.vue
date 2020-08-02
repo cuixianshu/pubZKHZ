@@ -49,10 +49,8 @@ export default ({
   methods:{
     login() {
       if((Object.keys(this.$store.state.user)).length<1) {
-        this.$store.dispatch('getLoginedUser',{'logining_user':this.logining_user,'vue':this});
+        this.$store.dispatch('tryToLongin',{'logining_user':this.logining_user,'vue':this});
       }
-      if(this.$store.state.isLogined) {
-      }  
     },
     forgotPswd() {
       this.$toast({

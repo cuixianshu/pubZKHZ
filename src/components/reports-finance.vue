@@ -10,9 +10,6 @@
     <li class="nav-item">
       <a class="nav-link" data-toggle="pill" href="#invoice">发票报表</a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" data-toggle="pill" href="#emp-debt">员工欠款查询</a>
-    </li>
   </ul>
   <div class="tab-content">
     <div id="rcpt" class="container-fluid tab-pane active">
@@ -20,12 +17,8 @@
         <div class="form-inline" v-if="rcptnData.length<1">
           <datepicker class="datepicker" id="dateRange" v-model="rcptQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="收款时间,默认上个月" :shortcuts="shortcuts" placeholder="收款的时间范围">
           </datepicker>
-          <select class="form-control" v-model="rcptQC.id_project" title="选择所属项目">
-            <option :value="0">所有项目</option>
-            <option v-for="item in projects" :value="item.id">{{item.name}}</option>
-          </select>
-           <select class="form-control" v-model="rcptQC.id_cashier" title="出纳员">
-            <option :value="0">所有出纳</option> 
+          <select class="form-control" v-model="rcptQC.id_cashier" title="出纳员">
+            <option value="0">所有出纳</option> 
             <option v-for="item in employees" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="rcptQC.id_way" title="收款方式">
@@ -33,13 +26,13 @@
             <option v-for="item in payments" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="rcptQC.acnt" title="收款账号">
-            <option :value="0">所有账号</option>
+            <option value="0">所有账号</option>
             <option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>
           </select>
           <select class="form-control" v-model="rcptQC.isReviewed"  title="是否已复核">
-            <option :value="0">未复核</option>
-            <option :value="1">已复核</option>
-            <option :value="2">所有状态</option>
+            <option value="0">未复核</option>
+            <option value="1">已复核</option>
+            <option value="2">复核状态</option>
           </select>
           <button id="btnSearch" class="btn btn-primary" type="button" @click="getRcptCashData">搜索数据</button>
         </div>
@@ -48,7 +41,7 @@
       <div v-if="rcptnData.length>0">
         <span class="tip">
           共{{rcptnData.length}}次。
-          收款总额:{{rcptnTotalAmount}}元。
+          收款总额:{{rcptnTotalAmount.toFixed(2)}}元。
         </span>
         <jsonexcel class="btn btn-primary" :data="rcpt_json_data" :fields="rcpt_json_fields" :name="rcpt_filename" worksheet="财务收款报表">存为Excel</jsonexcel>
         <button class="btn btn-secondary" type="button" @click="rcptnData=[]">清空</button>
@@ -69,6 +62,8 @@
               <td :title='row.id_project'>{{row.id_project}}</td>
               <td :title='row.time_confirm'>{{getReviewText(row)}}</td>
               <td :title='row.other'>{{row.other}}</td>
+              <td :title='row.id_detailed_accounting'>{{row.id_detailed_accounting}}</td>
+              <td :title='row.business_type'>{{row.business_type}}</td>
             </tr>
           </tbody>
         </table>
@@ -81,14 +76,14 @@
           </datepicker>
           <input class="form-control" v-model="payQC.keyWord" title="用途,发票号,收款账号,银行流水号等" placeholder="查询关键字" style="width:110px; background: #CEFFCE;">
           <select class="form-control" v-model="payQC.id_project" title="选择所属项目">
-            <option :value="0">所有项目</option>
+            <option value="0">所有项目</option>
             <option v-for="item in projects" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="payQC.id_nature" title="选择款项性质">
             <option v-for="item in payNatures" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="payQC.id_applyer" title="选择请款人">
-            <option :value="0">所有请款人</option>
+            <option value="0">所有请款人</option>
             <option v-for="item in employees" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="payQC.way" title="付款方式">
@@ -96,7 +91,7 @@
             <option v-for="item in payments" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="payQC.acnt" title="付款账号">
-            <option :value="0">所有账号</option>
+            <option value="0">所有账号</option>
             <option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>
           </select>
           <button id="btnSearch" class="btn btn-primary" type="button" @click="getPayData">搜索数据</button>
@@ -106,7 +101,7 @@
       <div v-if="payData.length>0">
         <span class="tip">
           共{{payData.length}}次。
-          付款总额:{{payTotalAmount}}元。
+          付款总额:{{payTotalAmount.toFixed(2)}}元。
         </span>
         <jsonexcel class="btn btn-primary" :data="pay_json_data" :fields="pay_json_fields" :name="pay_filename" worksheet="付款报表">存为Excel</jsonexcel>
         <button class="btn btn-secondary" type="button" @click="payData=[]">清空</button>
@@ -119,6 +114,7 @@
           <tbody>
             <tr v-for="row in payData">
               <td :title='row.r_nature'>{{row.r_nature}}</td>
+              <td :title='row.id_detailed_accounting'>{{row.id_detailed_accounting}}</td>
               <td :title='row.id'>{{row.id}}</td>
               <td :title='row.id_account'>{{row.id_account}}</td>
               <td :title='row.id_way_pay'>{{row.id_way_pay}}</td>
@@ -141,11 +137,11 @@
           </datepicker>
           <input class="form-control" v-model="invoiceQC.keyWord" title="发票号,抬头,商品名,金额,备注等" placeholder="查询关键字" style="width:110px; background: #CEFFCE;">
           <select class="form-control" v-model="invoiceQC.id_project" title="选择所属项目">
-            <option :value="0">所有项目</option>
+            <option value="0">所有项目</option>
             <option v-for="item in projects" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="invoiceQC.id_ourCompany" title="出具发票公司名">
-            <option :value="0">全部公司</option>
+            <option value="0">全部公司</option>
             <option v-for="item in ourCompanys" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="invoiceQC.isCanceled" title="作废状态">
@@ -165,7 +161,7 @@
       <div v-if="invoiceData.length>0">
         <span class="tip">
           共{{countOfInvoices}}张。
-          开票总额:{{invoiceTotalAmount}}元。
+          开票总额:{{invoiceTotalAmount.toFixed(2)}}元。
         </span>
         <jsonexcel class="btn btn-primary" :data="invoice_json_data" :fields="invoice_json_fields" :name="invoice_filename" worksheet="发票报表">存为Excel</jsonexcel>
         <button class="btn btn-secondary" type="button" @click="invoiceData=[]">清空</button>
@@ -195,9 +191,6 @@
         </table>
       </div>
     </div>
-    <div id="emp-debt" class="container-fluid tab-pane">
-      建设中...
-    </div> 
   </div>    
 </div>
 </template>
@@ -230,31 +223,31 @@ export default {
   data() {
     return {
       shortcuts:false,
-      projects:[],
-      employees:[],
-      payments:[],
-      ourAccounts:[],
-      ourCompanys:[],
-      typeOfInvoices:[],
-      clntParentOgnztns:[],
+      projects:this.$store.state.projects,
+      employees:this.$store.state.employees,
+      payments:this.$store.state.waysOfPayment,
+      ourAccounts:this.$store.state.ourAccounts,
+      ourCompanys:this.$store.state.ourCompanies,
+      typeOfInvoices:this.$store.state.typesOfInvoices,
+      clntParentOgnztns:this.$store.state.clntParentOgnztns,
 
       rcptQC:{
         dateRange:[],
-        id_project:0,
+        // id_project:0,
         id_cashier:0,
         id_way:0,
         acnt:0,
         isReviewed:2,
       },
       rcptnData:[],
-      rcptTitles:['收款ID','收款账号','收款方式','收款金额','收款人','收款时间','所属项目','复核时间','备注'],
+      rcptTitles:['收款ID','收款账号','收款方式','收款金额','收款人','收款时间','所属项目','复核时间','备注','会计科目编码','收款类型'],
       rcptWidths:['7%','9%','7%','7%','8%','9%','9%','13%','9%','13%','9%'],
       rcptnTotalAmount:0,
       rcpt_json_fields:{},
       rcpt_json_data:[],
       rcpt_filename:'收款报表', 
       rcpt_volName:{
-        '项目':'id_project',
+        // '项目':'id_project',
         '账户':'id_account',
         '方式':'id_way_pay',
         '金额':'amount',
@@ -264,7 +257,10 @@ export default {
         '复核人':'id_confirmer',
         '复核评语':'describe_confirm',
         '备注':'other',
+        '收款类型':'business_type',
+        '会计科目编码':'id_detailed_accounting',
       },
+      business_types:[{id:1,name:'非机票销售'},{id:2,name:'上缴款'},{id:3,name:'机票'},{id:4,name:'还款'}],
 
       payQC:{
         keyWord:'',
@@ -276,8 +272,8 @@ export default {
         acnt:0,
       },
       payData:[],
-      payTitles:['款项性质','付款ID','付款账号','付款方式','付款金额','请款人','付款时间','所属项目','款项用途','发票号码','备注'],
-      payWidths:['7%','6%','7%','5%','8%','5%','12%','9%','15%','17%','9%'],
+      payTitles:['款项性质','会计科目','付款ID','付款账号','付款方式','付款金额','请款人','付款时间','所属项目','款项用途','发票号码','备注'],
+      payWidths:['7%','12%','6%','7%','5%','8%','5%','12%','9%','11%','9%','9%'],
       payNatures:[
         {id:0,name:'款项性质'},
         {id:1,name:'费用报销'},
@@ -305,6 +301,7 @@ export default {
         '复核人':'id_reviewer',
         '款项用途':'r_use_for',//请款表中
         '款项性质':'r_nature',//请款表中
+        '会计科目编码':'id_detailed_accounting',
         '付款备注':'remark',
         '请款备注':'r_remark',//请款表中
       },
@@ -346,6 +343,7 @@ export default {
         '申请发票备注':'r_other',
       },
       countOfInvoices:0,
+      dtldAcntgs:this.$store.state.detailedAccountings,
     }
   },
   components: {
@@ -370,6 +368,7 @@ export default {
             url: 'getCashiers.php',
             data: qs.stringify(_this.rcptQC)
         }).then(function (response) {
+          console.log(response.data);
           if(response.data.length<1) {
             _this.$toast({
               text: '没有符合条件的记录',
@@ -380,16 +379,18 @@ export default {
           }
           _this.rcptnData=response.data;
           _this.rcptnData.forEach(function(item,index,array){
-            var ar=_this.projects.find((ele) => ele['id'] == item.id_project);
-            item.id_project=typeof(ar)=='undefined'?'未知项目':ar['name'];
             var ar=_this.employees.find((ele) => ele['id'] == item.id_cashier);
-            item.id_cashier=typeof(ar)=='undefined'?'未知出纳':ar['name'];
+            item.id_cashier=typeof(ar)=='undefined'?'':ar['name'];
             var ar=_this.payments.find((ele) => ele['id'] == item.id_way_pay);
-            item.id_way_pay=typeof(ar)=='undefined'?'未知方式':ar['name'];
+            item.id_way_pay=typeof(ar)=='undefined'?'':ar['name'];
             var ar=_this.ourAccounts.find((ele) => ele['id'] == item.id_account);
-            item.id_account=typeof(ar)=='undefined'?'未知账户':ar['short_name'];
+            item.id_account=typeof(ar)=='undefined'?'':ar['short_name'];
             var ar=_this.employees.find((ele) => ele['id'] == item.id_confirmer);
             item.id_confirmer=typeof(ar)=='undefined'?'':ar['name'];
+            var ar=_this.dtldAcntgs.find((ele) => ele['id'] == item.id_detailed_accounting);
+            item.id_detailed_accounting=typeof(ar)=='undefined'?'':ar['code_num']+ar['name'];
+            var ar=_this.business_types.find((ele) => ele['id'] == item.business_type);
+            item.business_type=typeof(ar)=='undefined'?'':ar['name'];
             _this.rcptnTotalAmount+= Number(item['amount']);
 
           });
@@ -426,6 +427,7 @@ export default {
             url: 'getPaymentData.php',
             data: qs.stringify(_this.payQC)
         }).then(function (response) {
+          console.log(response.data);
           if(response.data.length<1) {
             _this.$toast({
               text: '没有符合条件的记录',
@@ -437,17 +439,19 @@ export default {
           _this.payData=response.data;
           _this.payData.forEach(function(item,index,array){
             var ar=_this.ourAccounts.find((ele) => ele['id'] == item.id_account);
-            item.id_account=typeof(ar)=='undefined'?'未知账户':ar['short_name'];
+            item.id_account=typeof(ar)=='undefined'?'':ar['short_name'];
             var ar=_this.employees.find((ele) => ele['id'] == item.id_cashier);
-            item.id_cashier=typeof(ar)=='undefined'?'未知出纳':ar['name'];
+            item.id_cashier=typeof(ar)=='undefined'?'':ar['name'];
             var ar=_this.payments.find((ele) => ele['id'] == item.id_way_pay);
-            item.id_way_pay=typeof(ar)=='undefined'?'未知方式':ar['name'];
+            item.id_way_pay=typeof(ar)=='undefined'?'':ar['name'];
             var ar=_this.employees.find((ele) => ele['id'] == item.r_id_applyer);
             item.r_id_applyer=typeof(ar)=='undefined'?'':ar['name'];
             var ar=_this.projects.find((ele) => ele['id'] == item.r_id_project);
-            item.r_id_project=typeof(ar)=='undefined'?'未知项目':ar['name'];
+            item.r_id_project=typeof(ar)=='undefined'?'':ar['name'];
             var ar=_this.payNatures.find((ele) => ele['id'] == item.r_nature);
-            item.r_nature=typeof(ar)=='undefined'?'未知性质':ar['name'];
+            item.r_nature=typeof(ar)=='undefined'?'':ar['name'];
+            var ar=_this.dtldAcntgs.find((ele) => ele['id'] == item.id_detailed_accounting);
+            item.id_detailed_accounting=typeof(ar)=='undefined'?'':ar['code_num']+ar['name'];
             _this.payTotalAmount+= Number(item['amount']);
 
           });
@@ -496,17 +500,17 @@ export default {
           var listOfIdOfFilledInvoices=[];
           _this.invoiceData.forEach(function(item,index,array){
             var ar=_this.projects.find((ele) => ele['id'] == item.id_project);
-            item.id_project=typeof(ar)=='undefined'?'未知项目':ar['name'];
+            item.id_project=typeof(ar)=='undefined'?'':ar['name'];
             var ar=_this.employees.find((ele) => ele['id'] == item.r_id_applyer);
-            item.r_id_applyer=typeof(ar)=='undefined'?'未知申请人':ar['name'];
+            item.r_id_applyer=typeof(ar)=='undefined'?'':ar['name'];
             var ar=_this.ourCompanys.find((ele) => ele['id'] == item.r_id_of_our_cmpny);
-            item.r_id_of_our_cmpny=typeof(ar)=='undefined'?'未知公司':ar['name'];
+            item.r_id_of_our_cmpny=typeof(ar)=='undefined'?'':ar['name'];
             var ar=_this.typeOfInvoices.find((ele) => ele['id'] == item.r_id_type_invoice);
-            item.r_id_type_invoice=typeof(ar)=='undefined'?'未知方式':ar['name'];
+            item.r_id_type_invoice=typeof(ar)=='undefined'?'':ar['name'];
             var ar=_this.employees.find((ele) => ele['id'] == item.id_filler);
-            item.id_filler=typeof(ar)=='undefined'?'未知开票人':ar['name'];
+            item.id_filler=typeof(ar)=='undefined'?'':ar['name'];
             var ar=_this.clntParentOgnztns.find((ele) => ele['id'] == item.r_id_clt_prnt_ognztn);
-            item.r_id_clt_prnt_ognztn=typeof(ar)=='undefined'?'未知抬头':ar['full_name'];
+            item.r_id_clt_prnt_ognztn=typeof(ar)=='undefined'?'':ar['full_name'];
 
             if(!listOfIdOfFilledInvoices.includes(item['id'])) {
               listOfIdOfFilledInvoices.push(item['id']);
@@ -561,109 +565,6 @@ export default {
     }
   },
   beforeCreate () {
-    var _this = this;
-    var queryContent={};
-    this.projects=[];
-    this.$axios({
-      method: 'post',
-      url: 'getProject.php'
-    }).then(function (response) {
-      _this.projects=response.data;
-    }).catch(function (error) {
-      _this.$toast({
-        text: '异步通信错误!'+error,
-        type: 'danger',
-        duration: 4000
-      });
-    });
-    this.employees=[];
-    queryContent.conditions="All";
-    this.$axios({
-          method: 'post',
-          url: 'getEmployees.php',
-          data: qs.stringify(queryContent)
-      }).then(function (response) {
-        _this.employees=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-           text: '异步通信错误!'+error,
-           type: 'danger',
-            duration: 4000
-        });
-      });
-    this.payments=[];
-    queryContent.conditions="All";
-    this.$axios({
-          method: 'post',
-          url: 'getListOfPayWay.php',
-          data: qs.stringify(queryContent)
-      }).then(function (response) {
-        _this.payments=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-           text: '异步通信错误!'+error,
-           type: 'danger',
-            duration: 4000
-        });
-      });                   
-    this.ourAccounts=[];
-    queryContent.conditions="All";
-    this.$axios({
-          method: 'post',
-          url: 'getListOfOurAccount.php',
-          data: qs.stringify(queryContent)
-      }).then(function (response) {
-        _this.ourAccounts=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-           text: '异步通信错误!'+error,
-           type: 'danger',
-           duration: 4000
-        });
-      }); 
-    this.ourCompanys=[];
-    this.$axios({
-          method: 'post',
-          url: 'getListOfOurCompanys.php'
-          // data: qs.stringify(queryContent)
-      }).then(function (response) {
-        _this.ourCompanys=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-           text: '异步通信错误!'+error,
-           type: 'danger',
-           duration: 4000
-        });
-      }); 
-    this.typeOfInvoices=[];
-    this.$axios({
-          method: 'post',
-          url: 'getListOfTypeOfInvoice.php'
-          // data: qs.stringify(queryContent)
-      }).then(function (response) {
-        _this.typeOfInvoices=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-           text: '异步通信错误!'+error,
-           type: 'danger',
-           duration: 4000
-        });
-      }); 
-    this.clntParentOgnztns=[];
-    queryContent.conditions="All";
-    this.$axios({
-          method: 'post',
-          url: 'getClntPrntOgnztn.php',
-          data: qs.stringify(queryContent)
-      }).then(function (response) {
-        _this.clntParentOgnztns=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-           text: '异步通信错误!'+error,
-           type: 'danger',
-           duration: 4000
-        });
-      }); 
   }   
 }
 

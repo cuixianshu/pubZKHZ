@@ -109,6 +109,12 @@ const router =  new Router({
       //component: ticketCahier
     },
     {
+      path: '/personal-needtoreturn',
+      name: 'personal_needtoreturn',
+      component:resolve => require(['@/components/personal-needtoreturn.vue'], resolve)
+      //component: ticketCahier
+    },
+    {
       path: '/materialsDistribute',
       name: 'materials_distribute',
       component:resolve => require(['@/components/materials-distribute.vue'], resolve)

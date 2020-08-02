@@ -30,7 +30,7 @@ import qs from 'qs';
   export default {
     data () {
       return {
-        employees:[],
+        employees:this.$store.state.employees,
         allEMPAuth:[],//全体员工的权限
         employee:{
           name:'',
@@ -92,8 +92,7 @@ import qs from 'qs';
             duration: 1000
           });
           return;
-        } else {
-          //设置根菜单权限
+        } else {//设置根菜单权限
           for(var prop in this.menuTree) {
             var hasSubAuth=false;
             for(var k in this.slctdUsersAuth) {
@@ -104,8 +103,6 @@ import qs from 'qs';
             }
             this.slctdUsersAuth[prop]=hasSubAuth?1:0;
           }
-// console.log(this.slctdUsersAuth);
-// return;          
           var _this=this;
           var url='';
           if(this.isNew) {
@@ -113,14 +110,11 @@ import qs from 'qs';
           } else {
             url='updateUserAuthorizations.php';
           }
-
           this.$axios({
                 method: 'post',
                 url: url,
                 data: qs.stringify(_this.slctdUsersAuth)
-
             }).then(function (response) {
-// console.log(response.data);
               if(response.data===true) {
                 _this.$toast({
                   text: "操作成功",
@@ -131,8 +125,10 @@ import qs from 'qs';
               _this.employee.id='';
               _this.employee.name='';
               _this.slctdUsersAuth={};
-              _this.originalUA={};              
+              _this.originalUA={};
+              _this.getAllEmpAuth();
               } else {
+                console.log(response.data);
                 _this.$toast({
                   text: '操作失败,请稍后再试!',
                   type: 'danger',
@@ -147,32 +143,14 @@ import qs from 'qs';
                   duration: 4000
               });
             });            
-          
         }
-        // this.$store.dispatch('updateUserAuthorations',this.slctdUsersAuth);
-      }
-    },
-    beforeCreate () {
-      var _this=this;
-
-      this.employees=[];
-      this.$axios({
-            method: 'post',
-            url: 'getEmployees.php'
-        }).then(function (response) {
-// console.log(response.data);
-          _this.employees=response.data;
-        }).catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });
-      this.allEMPAuth=[];
-      this.$axios({
-            method: 'post',
-            url: 'getAuthorizations.php'
+      },
+      getAllEmpAuth() {
+        var _this=this;
+        this.allEMPAuth=[];
+        this.$axios({
+          method: 'post',
+          url: 'getAuthorizations.php'
         }).then(function (response) {
           _this.allEMPAuth=response.data;
           for(var i=0;i<_this.allEMPAuth.length;i++) {
@@ -182,46 +160,49 @@ import qs from 'qs';
           }
         }).catch(function (error) {
           _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
+            text: '异步通信错误!'+error,
+            type: 'danger',
+            duration: 4000
           });
-        });
+        });        
+      },
+    },
+    created () {
+      this.getAllEmpAuth();
+      var _this=this;
       this.vueCmpnt=[];
       this.$axios({
-            method: 'post',
-            url: 'getComponents.php'
-        }).then(function (response) {
-          _this.vueCmpnt=response.data;
-          //根菜单
-          for(var i=0;i<_this.vueCmpnt.length;i++) {
-            if(!_this.superiorMenu_en.includes(_this.vueCmpnt[i]['superior']) && _this.vueCmpnt[i]['superior']!=='none') {
-              _this.superiorMenu_en.push(_this.vueCmpnt[i]['superior']);
-              _this.menuTree[_this.vueCmpnt[i]['superior']]=[];
+        method: 'post',
+        url: 'getComponents.php'
+      }).then(function (response) {
+        _this.vueCmpnt=response.data;
+        //根菜单
+        for(var i=0;i<_this.vueCmpnt.length;i++) {
+          if(!_this.superiorMenu_en.includes(_this.vueCmpnt[i]['superior']) && _this.vueCmpnt[i]['superior']!=='none') {
+            _this.superiorMenu_en.push(_this.vueCmpnt[i]['superior']);
+            _this.menuTree[_this.vueCmpnt[i]['superior']]=[];
+          }
+        }
+        for(var i=0;i<_this.vueCmpnt.length;i++) {
+          for(var prop in _this.menuTree) {
+            if(_this.vueCmpnt[i]['superior']===prop) {
+              var obj={};
+              obj['name_router']=_this.vueCmpnt[i]['name_router'];
+              obj['text_in_menu']=_this.vueCmpnt[i]['text_in_menu'];
+            //根菜单下的二级菜单
+              _this.menuTree[prop].push(obj);
             }
           }
-
-          for(var i=0;i<_this.vueCmpnt.length;i++) {
-            for(var prop in _this.menuTree) {
-              if(_this.vueCmpnt[i]['superior']===prop) {
-                var obj={};
-                obj['name_router']=_this.vueCmpnt[i]['name_router'];
-                obj['text_in_menu']=_this.vueCmpnt[i]['text_in_menu'];
-              //根菜单下的二级菜单
-                _this.menuTree[prop].push(obj);
-              }
-            }
-            //菜单字典
-            _this.auth_dict[_this.vueCmpnt[i]['name_router']]=_this.vueCmpnt[i]['text_in_menu'];
-          }
-// console.log(_this.auth_dict);
-        }).catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });              
+          //菜单字典
+          _this.auth_dict[_this.vueCmpnt[i]['name_router']]=_this.vueCmpnt[i]['text_in_menu'];
+        }
+      }).catch(function (error) {
+        _this.$toast({
+           text: '异步通信错误!'+error,
+           type: 'danger',
+           duration: 4000
+        });
+      });              
     }
   } 
 </script>

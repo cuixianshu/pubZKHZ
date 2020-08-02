@@ -1,70 +1,107 @@
 <template>
   <div class="father">
     <h5>当前位置:收款付款/销售回款</h5>
-    <div id="queryOfCashier" class="container-fluid">
-      <div class="row">
-        <div class="col-lg form-inline searchcontent">
-          <label for="queryConditions">关键词:</label> 
-          <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位等搜索关键词">
-          <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="填开发票的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="填开发票的时间范围"></datepicker> 
-          <button class="btn btn-primary" @click="getListOfFilledInvoice">🔍获取数据</button>
-          <button class="btn btn-secondary" @click="clearList" v-if="listOfFilledInvoice.length>0">清除</button>            
-          <button id="byhand" @click="collectByHand" class="btn btn-primary" type="button">手工填表</button>
-        </div>          
+    <div class="container-fluid query">
+      <div class="form-inline queryOfCashier">
+        <datepicker id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="业务发生的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="业务发生的时间范围"></datepicker>
+        <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="搜索关键词" title="客户、客户手机、客户单位、开始或举办地点、订单备注、销售金额、发票号等">
+        <select class="form-control" v-model="queryContent.id_project" title="所属项目">
+          <option :value="0">所有项目</option>
+          <option v-for="item in projects" :value="item.id">{{item.name}}</option>
+        </select>
+        <select class="form-control" v-model="queryContent.id_saler" title="执行人">
+          <option :value="0">所有执行人</option> 
+          <option v-for="item in employees" :value="item.id">{{item.name}}</option>
+        </select>
+        <button class="btn btn-primary" @click="getUncollectedOrders">🔍获取数据</button>
       </div>
-    </div>
-    <div class="showerOfFilledInvoice" v-if="listOfFilledInvoice.length>0">
+    </div><!--  pre-scrollable -->
+    <div class="divfortable" v-if="uncollectedOrders.length>0">
       <table class="table table-hover">
         <thead>
-          <th v-for="title,index in titlesOfList" :width="widthOfTH[index]">{{title}}</th>
+          <th v-for="(title,index) in titlesOfList" :width="widthOfTH[index]">{{title}}</th>
+          <th title="选择"><input class="checkbox" type="checkbox" @change="selectAllClicked" v-model="allChecked" value=true></th>
         </thead>
         <tbody>
-          <tr v-for="row,index in listOfFilledInvoice" @click="clickedARowInShower(row)">
-            <td v-for="vlu in row" :title="vlu">{{vlu}}</td>
+          <tr v-for="row,index in uncollectedOrders">
+            <td :title="row.name_prjct">{{row.name_prjct}}</td>
+            <td :title="row.id_operater">{{getEmployeeName(row)}}</td><!-- row.id_operater -->
+            <td :title="row.start_time">{{row.start_time}}</td>
+            <td :title="row.start_point">{{row.start_point}}</td>
+            <td :title="row.c_name">{{row.c_name}}</td>
+            <td :title="row.c_mobile">{{row.c_mobile}}</td>
+            <td :title="row.cstmr_ognz">{{row.cstmr_ognz}}</td>
+            <td :title="row.p_name">{{row.p_name}}</td>
+            <td :title="row.actual_price">{{row.actual_price}}</td>
+            <td title="垫付">{{Number(row.surcharge)+Number(row.park_fee)}}</td>
+            <td title="订单总金额">{{Number(row.surcharge)+Number(row.park_fee)+Number(row.actual_price)}}</td>
+            <td :title="row.amount_received">{{row.amount_received}}</td>
+            <td :title="row.f_invoice_num">{{row.f_invoice_num}}</td>
+            <td :title="row.mem">{{row.mem}}</td>
+            <td :title="row.msg_for_driver">{{row.msg_for_driver}}</td>
+            <td title="选择"><input class="checkbox" type="checkbox" v-model="selectedOrders" :value="row"></td>
           </tr>
         </tbody>
       </table>
+
     </div>
+    <div v-if="uncollectedOrders.length>0" style="margin-top: 10px;">
+      <span class="collectiontip">已选中：{{selectedOrders.length}}条，应收总额：{{totalAmountNeeddToClct}}元。</span>
+      <button type="button" class="btn btn-primary" @click="openMdlCashier">去收款</button>
+      <button type="button" class="btn btn-secondary" @click="uncollectedOrders=[];">清空</button>
+    </div>
+
     <div class="modal fade" id="mdlCashier" role="dialog" aria-labelledby="mdlCashier" data-backdrop="static" data-keyboard: false>
       <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">  
           <div class="modal-header">
-            <span v-if="idOfFilledInvoice===''?false:true">
-              <h5>收款入账---开票ID:{{idOfFilledInvoice}},发票号:{{numberOfInvoice}},发票金额:￥{{amountInInvoice}}
+            <span>
+              <h5>收款---应收总额:￥{{totalAmountNeeddToClct}}
               </h5>
             </span>
-            <span v-else>
-              <h5>收款入账---手工收款</h5>
-            </span>  
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>  
-              </button>  
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>  
+            </button>  
           </div>
           <div class="modal-body">
-            <div id="detailsForCashier" class="container-fluid">
+            <div class="container-fluid">
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="slctCashierProject">项目</label>
-                  <select id="slctCashierProject" type="text" name="cashierProject" class="form-control" placeholder="所属项目" v-model="cashier.id_project" title="所属项目">
-                    <option v-for="item in projects" :value="item.id">{{item.prjct}}</option>}
+                  <label for="iptType">类型</label>
+                  <input id="iptType" type="text" class="form-control" value="销售回款" title="销售回款" readonly>
+                </div>
+                <div class="col-lg  form-inline">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg  form-inline">
+                  <label for="slctAS">一级</label>
+                  <select id="slctAS" type="text" class="form-control" name="ture" v-model="cashier.id_accounting_sub" title="一级会计科目" @change="acc_subChanged()">
+                    <option  value=0>一级科目</option>
+                    <option v-for="item in accountingSubjects" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="inputDateOfCashier">时间</label>
-                  <input id="inputDateOfCashier" type="text" class="form-control" :value="(new Date()).format('yyyy-MM-dd hh:mm:ss')" readonly>
+                  <label for="slctNature">二级</label>
+                  <select id="slctNature" type="text" class="form-control" name="ture" v-model="cashier.id_detailed_accounting" title="二级会计科目">
+                    <option  value=0>二级科目</option>
+                    <option v-for="item in DAsAtTheAccSub" :value="item.id">{{item.code_num+item.name}}</option>
+                  </select>
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctCashierAccount">账号</label>
                   <select id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" placeholder="收款账号" v-model="cashier.id_account" title="收款账号">
-                  	<option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>}
+                    <option  value=0>收款账号</option>
+                  	<option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfCashier">方式</label>
                   <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="cashier.id_way_pay" placeholder="收款方式" title="收款方式">
-                    <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>}
+                    <option  value=0>收款方式</option>
+                    <option v-for="item in waysOfPayments" :value="item.id">{{item.name}}</option>
                   </select>
                 </div>
               </div>
@@ -82,11 +119,29 @@
           </div>
           <div class="modal-footer">  
             <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-            <button type="button" id="btnSaveTheCollectedData" @click="saveTheCollectedData" class="btn btn-primary">确定</button>
+            <button type="button" @click="checkCollectedData" class="btn btn-primary">保存</button>
           </div>           
         </div>
       </div>
-    </div>    
+    </div>
+    <div class="modal fade" id="warningbox" role="dialog" aria-labelledby="warningbox" data-backdrop="static" data-keyboard: false>
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5>收款金额少于应收金额</h5>
+          </div>
+          <div class="modal-body">
+            <h5 class="warningbox">应收金额:{{totalAmountNeeddToClct}}</h5>
+            <h5 class="warningbox">实收金额:{{cashier.amount}}</h5>
+            <h5 class="warningbox">实收金额少于应收金额,您确定吗?</h5>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            <button class="btn btn-primary" type="button" @click="confirmCollection">确定</button> 
+          </div>  
+        </div>
+      </div>
+    </div> 
   </div>
 </template>
 
@@ -120,28 +175,34 @@ Date.prototype.format = function(fmt) {
         queryContent:{
           keyWord:'',
           dateRange:[],
-          conditions:''
+          conditions:'',
+          id_project:0,
+          id_saler:0,
         },
-        titlesOfList:[],
-        widthOfTH:['5%','11%','8%','6%','8%','10%','7%','12%','6%','7%','5%','11%','4%'],
-        listOfFilledInvoice:[],
-        idOfFilledInvoice:'',
-        numberOfInvoice:'',
-        amountInInvoice:0,
+        titlesOfList:['项目','执行人','时间','地点','客户','客户手机号','客户单位','产品','售价','垫付','订单额','已收额','发票号','订单备注','操作指引'],
+        widthOfTH:['5%','5%','12%','8%','5%','8%','8%','6%','6%','6%','5%','5%','6%','8%','6%'],
+        uncollectedOrders:[],
+        selectedOrders:[],
+        allChecked:false,
+        totalAmountNeeddToClct:0,
         currentUserId:this.$store.state.user.id_user,
         cashier:{
           account:'中科平安',
-          id_account:1,
+          id_account:0,
           way:'电汇',
-          id_way_pay:1,
+          id_way_pay:0,
           amount:0,
           other:'',
-          project:'',
-          id_project:''
+          id_accounting_sub:0,
+          id_detailed_accounting:0,
         },
-        ourAccounts:[],
-        wayOfPayment:[],
-        projects:[]
+        ourAccounts:this.$store.state.ourAccounts,
+        waysOfPayments:this.$store.state.waysOfPayment,
+        projects:this.$store.state.projects,
+        employees:this.$store.state.myEmplys,
+        accountingSubjects:this.$store.state.accountingSubjects,
+        detailedAccountings:this.$store.state.detailedAccountings,
+        DAsAtTheAccSub:[],
 
       }
     },
@@ -149,7 +210,10 @@ Date.prototype.format = function(fmt) {
       datepicker
     },    
     methods: {
-      getListOfFilledInvoice() {
+      getUncollectedOrders() {
+        this.allChecked=false;
+        this.uncollectedOrders=[];
+        this.selectedOrders=[];
         if(this.queryContent.dateRange.length<2 || !this.queryContent.dateRange[0] || !this.queryContent.dateRange[1]){//如果日期填写不全,默认是过去1周
           var day1=new Date();
           day1.setDate(day1.getDate() - 7);
@@ -159,12 +223,10 @@ Date.prototype.format = function(fmt) {
           this.queryContent.dateRange[1] = day2.format("yyyy-MM-dd")+" 23:59:59";
         }      	
         var _this = this;
-        this.listOfFilledInvoice=[];
-        this.titlesOfList=[];
-        this.queryContent.conditions="GetToCollect";
+        this.queryContent.conditions="CheckedAndNotCollected";
         this.$axios({
           method: 'post',
-          url: 'getInvoices.php',
+          url: 'getOrders.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
             if(response.data.length<1) {
@@ -174,12 +236,8 @@ Date.prototype.format = function(fmt) {
                 duration: 1000
               });              
             } else {
-              _this.listOfFilledInvoice=response.data;
-              for(var title in response.data[0]) {
-                _this.titlesOfList.push(title);
-              }            	
+              _this.uncollectedOrders=response.data;
             }
-
           }).catch(function (error) {
             console.log(error);
             _this.$toast({
@@ -189,26 +247,26 @@ Date.prototype.format = function(fmt) {
             });
           });
       },
-      clickedARowInShower(dataRow) {
-        this.idOfFilledInvoice=dataRow.id;
-        this.numberOfInvoice=dataRow.num_of_invoice;
-        this.amountInInvoice=dataRow.amount;
-        this.cashier.amount=this.amountInInvoice;
-        this.cashier.id_project=dataRow.id_project;
-        $('#mdlCashier').modal('toggle');
-      },
-      saveTheCollectedData() {
-        if(!this.cashier.id_project) {
+      checkCollectedData() {
+        if(!this.cashier.id_accounting_sub) {
           this.$toast({
-            text: '请选择项目!',
+            text: '请选择一级会计科目!',
             type: 'info',
             duration: 2000
           });
           return false;          
-        }        
+        }
+        if(!this.cashier.id_detailed_accounting) {
+          this.$toast({
+            text: '请选择二级会计科目!!',
+            type: 'info',
+            duration: 2000
+          });
+          return false;          
+        }
         if(!this.cashier.id_way_pay) {
           this.$toast({
-            text: '请选择付款方式!',
+            text: '请选择收款方式!',
             type: 'info',
             duration: 2000
           });
@@ -221,78 +279,104 @@ Date.prototype.format = function(fmt) {
             duration: 2000
           });
           return false;          
-        }        
+        }
+        if(this.cashier.amount<this.totalAmountNeeddToClct) {//需要弹出警告盒
+          if(this.selectedOrders.length>1) {
+            this.$toast({
+              text: '多个订单收款时,收款金额不允许少于应收金额!',
+              type: 'danger',
+              duration: 4000
+            });
+            return false;
+          } else {//弹出警告窗
+            $('#warningbox').modal('toggle');//打开
+          }
+        } else {
+          this.saveCollectionData();
+        }                
+      },
+      selectAllClicked() {
+        if(this.allChecked) {
+          this.selectedOrders=this.uncollectedOrders;
+        } else {
+          this.selectedOrders=[];
+        }
+      },
+      openMdlCashier () {
+        if(this.selectedOrders.length<1) {
+          this.$toast({
+            text: '请至少勾选一条记录!',
+            type: 'info',
+            duration: 2000
+          });
+          return false;
+        }
+        if(this.cashier.id_detailed_accounting) {
+          var o=this.detailedAccountings.find((ele) => ele['id'] == this.cashier.id_detailed_accounting);
+          this.cashier.id_accounting_sub=typeof(o)=='undefined'?0:o['id_patent'];
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.cashier.id_accounting_sub);
+        } else {
+          this.cashier.id_accounting_sub=0;
+          this.cashier.id_detailed_accounting=0;
+          this.DAsAtTheAccSub=[];
+        }
+        this.cashier.amount=0;
+        this.cashier.id_account=0;
+        this.cashier.id_way_pay=0
+        $('#mdlCashier').modal('toggle');
+      },
+      confirmCollection() {
+        $('#warningbox').modal('toggle');//关闭
+        this.saveCollectionData();
+      },
+      acc_subChanged() {
+        if(this.cashier.id_accounting_sub) {
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.cashier.id_accounting_sub);
+        } else {
+          this.DAsAtTheAccSub=[];
+        }
+        this.cashier.id_detailed_accounting=0;
+        // console.log(this.DAsAtTheAccSub);
+      },
+      saveCollectionData() {
         var queryContent={
-          id:this.idOfFilledInvoice,
           id_account:this.cashier.id_account,
           id_way_pay:this.cashier.id_way_pay,
+          id_detailed_accounting:this.cashier.id_detailed_accounting,
           other:this.cashier.other,
           amount:this.cashier.amount,
           id_cashier:this.currentUserId,
-          conditions:'',
-          id_project:this.cashier.id_project
+          conditions:'withCollectionData',
+          orders:this.selectedOrders,
+          business_type:1,
         };
-
-        if(this.idOfFilledInvoice!=='') {
-          var _this = this;
-          if(this.cashier.amount<this.amountInInvoice) {
-            this.$toast({
-              text: '收款金额不对!',
-              type: 'info',
-              duration: 2000
-            });
-            return false;
-          }
-          queryContent.conditions='ByInvoice';
-        } else {
-          this.listOfFilledInvoice=[];
-          this.titlesOfList=[];
-          if(this.cashier.amount<=0) {
-            this.$toast({
-              text: '收款金额不对!',
-              type: 'info',
-              duration: 2000
-            });
-            return false;
-          }
-          if(this.cashier.other.length<4) {
-            this.$toast({
-              text: '请填写备注信息,不少于4个字',
-              type: 'info',
-              duration: 2000
-            });
-            return;
-          }
-          queryContent.conditions='WithManualData';
-        }
         var _this=this;
         this.$axios({
           method: 'post',
           url: 'updateCashier.php',
           data: qs.stringify(queryContent)
           }).then(function (response) {
-//console.log(response.data);
             if(response.data===true) {
-              $('#mdlCashier').modal('toggle'); 
+              $('#mdlCashier').modal('toggle');//关闭
               _this.$toast({
                 text: "操作成功",
                 type: 'success',
                 duration: 1000
               });
             //更新数据
-              for(var i=0;i<_this.listOfFilledInvoice.length;i++) {
-              	if(_this.listOfFilledInvoice[i]['id']==_this.idOfFilledInvoice) {
-              	  _this.listOfFilledInvoice.splice(i,1);
-              	  i--;	
-              	}
+              for(var i=0;i<_this.selectedOrders.length;i++) {
+                var ui=_this.uncollectedOrders.findIndex((ele) => ele['id'] == _this.selectedOrders[i]['id']);
+                _this.uncollectedOrders.splice(ui,1);
               }
+              _this.selectedOrders=[];
             } else {
+              console.log(response.data);
+              $('#mdlCashier').modal('toggle');//关闭
               _this.$toast({
                 text: '操作失败,请稍后再试!',
                 type: 'danger',
                 duration: 4000
               });
-              $('#mdlCashier').modal('toggle');           	
             }
           }).catch(function (error) {
             console.log(error);
@@ -301,70 +385,43 @@ Date.prototype.format = function(fmt) {
               type: 'danger',
               duration: 4000
             });
-            $('#mdlCashier').modal('toggle');
-          });        
+            $('#mdlCashier').modal('toggle');//关闭
+          }); 
       },
-      clearList () {
-        this.listOfFilledInvoice=[];
-        this.titlesOfList=[];
-      },
-      collectByHand() {
-        this.idOfFilledInvoice='';
-        $('#mdlCashier').modal('toggle');
-        this.cashier.account='中科平安';
-        this.cashier.id_account=1;
-        this.cashier.way='现金';
-        this.cashier.id_way_pay=1;
-        this.cashier.amount=0;
-        this.cashier.other='';        
-      }
     },
     watch:{
+      'selectedOrders': {
+        handler() {//handler的括号可以添加形参
+          if(this.selectedOrders.length===this.uncollectedOrders.length && this.selectedOrders.length>0) {
+            this.allChecked=true;
+          } else {
+            this.allChecked=false;
+          }
+          var totalAmount=0;
+          if(this.selectedOrders.length>0) {
+            this.selectedOrders.forEach( function(item, index, arr) {
+              totalAmount+=Number(item.actual_price);
+              totalAmount+=Number(item.surcharge);
+              totalAmount+=Number(item.park_fee)-Number(item.amount_received);
+            });
+          } else {
+            totalAmount=0;
+          }
+          this.totalAmountNeeddToClct=totalAmount;            
+        },
+        // deep: true,
+        immediate: true
+      }
+    },
+    computed:{
+      getEmployeeName () {
+        return function (r) {
+          var ar=this.employees.find((ele) => ele['id'] == r.id_operater);
+          return typeof(ar)=='undefined'?'':ar['name'];
+        }
+      }
     },
     beforeCreate:function() {
-      var _this=this;
-      this.ourAccounts=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfOurAccount.php',
-      }).then(function (response) {
-        _this.ourAccounts=response.data;
-      }).catch(function (error) {
-        console.log(error);
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-      this.wayOfPayment=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfPayWay.php',
-      }).then(function (response) {
-        _this.wayOfPayment=response.data;
-      }).catch(function (error) {
-        console.log(error);
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-
-      this.projects=[];
-      this.$axios({
-        method: 'post',
-        url: 'getProject.php'
-      }).then(function (response) {
-        _this.projects=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger!',
-          duration: 4000
-        });
-      });            
     }    
   }	
 </script>
@@ -373,14 +430,14 @@ Date.prototype.format = function(fmt) {
 .father {
   width: 100%;
 }
-#searchConditions >*{
-  margin:5px;
+.collectiontip {
+  font-size: 18px;
 }		
 h5 {
   color: #007bff;
 }
 datepicker {
-  margin-left: 10px;	
+  margin-right: 5px;	
 }
 td {
     overflow:hidden; 
@@ -395,20 +452,19 @@ table {
 .modal-body input,.modal-body select {
   width: 80%;
 }
-.row {
-  margin-top: 10px;
+.query,.row {
+  margin-bottom: 5px;
 }
-.searchcontent input {
+.queryOfCashier button,.queryOfCashier input,.queryOfCashier select {
   margin-right: 5px;
 }
-.searchcontent button {
+.queryOfCashier input {
   margin-left: 5px;
 }
-#byhand {
-  /*margin-left: 100px;*/
-  position: absolute;
-  /*bottom: 0;*/
-  right: 0;
-} 
+.divfortable {
+  width: 100%;
+  overflow: scroll;
+  max-height: 620px;
+}
 </style>
 

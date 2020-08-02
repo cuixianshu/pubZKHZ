@@ -18,15 +18,15 @@
           <datepicker class="datepicker" id="dateRange" v-model="veclQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="业务发生的时间,默认上个月" :shortcuts="shortcuts" placeholder="发生业务的时间范围">
           </datepicker>
           <select class="form-control" v-model="veclQC.id_project" title="选择所属项目">
-            <option :value="0">所有项目</option>
+            <option value="0">所有项目</option>
             <option v-for="item in projects" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="veclQC.id_car" title="选择所用车辆" :disabled="canSelectCar">
-            <option :value="0">所有车辆</option>
+            <option value="0">所有车辆</option>
             <option v-for="item in cars" :value="item.id">{{item.alias}}</option>
           </select>
           <select class="form-control" v-model="veclQC.id_driver" title="选择出车司机" :disabled="canNotSelectDriver">
-            <option :value="0">所有司机</option>
+            <option value="0">所有司机</option>
             <option v-for="item in employees" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="veclQC.clntDptmt_short_name" title="客户所在单位">
@@ -34,18 +34,18 @@
             <option v-for="item in clientDepartments">{{item.short_name}}</option>
           </select>
           <select class="form-control" v-model="veclQC.id_client" title="选择订车人">
-            <option :value="0">所有客户</option>
+            <option value="0">所有客户</option>
             <option v-for="item in clients" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="veclQC.isFilledInvoice"  title="是否已开票">
-            <option :value="0">未开票</option>
-            <option :value="1">已开票</option>
-            <option :value="2">所有状态</option>
+            <option value="0">未开票</option>
+            <option value="1">已开票</option>
+            <option value="2">开票状态</option>
           </select>
           <select class="form-control" v-model="veclQC.isReceivedFee" title="是否已回款">
-            <option :value="0">未回款</option>
-            <option :value="1">已回款</option>
-            <option :value="2">所有状态</option>
+            <option value="0">未回款</option>
+            <option value="1">已回款</option>
+            <option value="2">回款状态</option>
           </select>                    
           <button id="btnSearch" class="btn btn-primary" type="button" @click="getFleetSaleData">搜索数据</button>
         </div>
@@ -105,17 +105,17 @@
           <select class="form-control" v-model="tktQC.isRefounded" title="选择退票状态">
             <option value="0">未退票</option>
             <option value="1">已退票</option>
-            <option value="2">不限</option>
+            <option value="2">退票状态</option>
           </select> 
           <select class="form-control" v-model="tktQC.isOutbounded"  title="是否已出库">
             <option value="0">未出库</option>
             <option value="1">已出库</option>
-            <option value="2">不限</option>
+            <option value="2">出库状态</option>
           </select>
           <select class="form-control" v-model="tktQC.isReceivedFee" title="是否已回款">
             <option value="0">未回款</option>
             <option value="1">已回款</option>
-            <option value="2">不限</option>
+            <option value="2">回款状态</option>
           </select>                    
           <button id="btnSearch" class="btn btn-primary" type="button" @click="getTktSaleData">搜索数据</button>
         </div>
@@ -163,7 +163,7 @@
           <datepicker class="datepicker" id="dateRange" v-model="otherQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="业务发生的时间,默认上个月" :shortcuts="shortcuts" placeholder="发生业务的时间范围">
           </datepicker>
           <select class="form-control" v-model="otherQC.id_project" title="选择所属项目">
-            <option :value="0">所有项目</option>
+            <option value="0">所有项目</option>
             <option v-for="item in projects" :value="item.id">{{item.name}}</option>
           </select>
 <!--           <select class="form-control" v-model="otherQC.id_car" title="选择所用车辆" :disabled="canSelectCar">
@@ -171,7 +171,7 @@
             <option v-for="item in cars" :value="item.id">{{item.alias}}</option>
           </select> -->
           <select class="form-control" v-model="otherQC.id_operater" title="选择执行人">
-            <option :value="0">所有员工</option>
+            <option value="0">所有员工</option>
             <option v-for="item in employees" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="otherQC.clntDptmt_short_name" title="客户所在单位">
@@ -179,18 +179,18 @@
             <option v-for="item in clientDepartments">{{item.short_name}}</option>
           </select>
           <select class="form-control" v-model="otherQC.id_client" title="业务对接人">
-            <option :value="0">所有客户</option>
+            <option value="0">所有客户</option>
             <option v-for="item in clients" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="otherQC.isFilledInvoice"  title="是否已开票">
-            <option :value="0">未开票</option>
-            <option :value="1">已开票</option>
-            <option :value="2">所有状态</option>
+            <option value="0">未开票</option>
+            <option value="1">已开票</option>
+            <option value="2">开票状态</option>
           </select>
           <select class="form-control" v-model="otherQC.isReceivedFee" title="是否已回款">
-            <option :value="0">未回款</option>
-            <option :value="1">已回款</option>
-            <option :value="2">所有状态</option>
+            <option value="0">未回款</option>
+            <option value="1">已回款</option>
+            <option value="2">回款状态</option>
           </select>                    
           <button id="btnSearch" class="btn btn-primary" type="button" @click="getOtherSaleData">搜索数据</button>
         </div>
@@ -274,14 +274,14 @@ Date.prototype.format = function(fmt) {
           id_driver:0,
           clntDptmt_short_name:0,
           id_client:0,
-          isFilledInvoice:0,
-          isReceivedFee:0,
+          isFilledInvoice:2,
+          isReceivedFee:2,
         },
         shortcuts:false,
-        projects:[],
-        cars:[],
-        products:[],
-        employees:[],
+        projects:this.$store.state.projects,
+        cars:this.$store.state.equipments,
+        products:this.$store.state.products,
+        employees:this.$store.state.employees,
         clientDepartments:[],
         clients:[],
         filtedClients:[],
@@ -334,9 +334,9 @@ Date.prototype.format = function(fmt) {
           id_project:0,
           clntDptmt_short_name:0,
           psgrName:'',
-          isOutbounded:0,
-          isReceivedFee:0,
-          isRefounded:0,
+          isOutbounded:2,
+          isReceivedFee:2,
+          isRefounded:2,
         },        
         tktSaleData:[],
         totalTktPriceAmount:0,
@@ -380,8 +380,8 @@ Date.prototype.format = function(fmt) {
           id_operater:0,
           clntDptmt_short_name:0,
           id_client:0,
-          isFilledInvoice:0,
-          isReceivedFee:0,
+          isFilledInvoice:2,
+          isReceivedFee:2,
         },
         other_json_data:[],
         other_json_fields:{},
@@ -417,7 +417,7 @@ Date.prototype.format = function(fmt) {
     },
     components: {
      datepicker,
-     jsonexcel
+     jsonexcel,
     },
     methods:{
       getFleetSaleData () {
@@ -450,15 +450,15 @@ Date.prototype.format = function(fmt) {
             _this.fleetSaleData=response.data;
             _this.fleetSaleData.forEach(function(item,index,array){
               var ar=_this.clients.find((ele) => ele['id'] == item.id_contacter);
-              item.id_contacter=typeof(ar)=='undefined'?'未知客户':ar['name'];
+              item.id_contacter=typeof(ar)=='undefined'?'':ar['name'];
               var ar=_this.projects.find((ele) => ele['id'] == item.id_prjct_belongto);
-              item.id_prjct_belongto=typeof(ar)=='undefined'?'未知项目':ar['name'];
+              item.id_prjct_belongto=typeof(ar)=='undefined'?'':ar['name'];
               var ar=_this.products.find((ele) => ele['id'] == item.id_product);
-              item.id_product=typeof(ar)=='undefined'?'未知产品':ar['name'];
+              item.id_product=typeof(ar)=='undefined'?'':ar['name'];
               var ar=_this.employees.find((ele) => ele['id'] == item.id_operater);
-              item.id_operater=typeof(ar)=='undefined'?'未知司机':ar['name'];
+              item.id_operater=typeof(ar)=='undefined'?'':ar['name'];
               var ar=_this.cars.find((ele) => ele['id'] == item.id_equipment);
-              item.id_equipment=typeof(ar)=='undefined'?'未知车辆':ar['alias'];
+              item.id_equipment=typeof(ar)=='undefined'?'':ar['alias'];
             });
             _this.vecl_json_data=[];
             _this.vecl_json_fields={};
@@ -577,13 +577,13 @@ Date.prototype.format = function(fmt) {
             _this.otherSaleData=response.data;
             _this.otherSaleData.forEach(function(item,index,array){
               var ar=_this.clients.find((ele) => ele['id'] == item.id_contacter);
-              item.id_contacter=typeof(ar)=='undefined'?'未知客户':ar['name'];
+              item.id_contacter=typeof(ar)=='undefined'?'':ar['name'];
               var ar=_this.projects.find((ele) => ele['id'] == item.id_prjct_belongto);
-              item.id_prjct_belongto=typeof(ar)=='undefined'?'未知项目':ar['name'];
+              item.id_prjct_belongto=typeof(ar)=='undefined'?'':ar['name'];
               var ar=_this.products.find((ele) => ele['id'] == item.id_product);
-              item.id_product=typeof(ar)=='undefined'?'未知产品':ar['name'];
+              item.id_product=typeof(ar)=='undefined'?'':ar['name'];
               var ar=_this.employees.find((ele) => ele['id'] == item.id_operater);
-              item.id_operater=typeof(ar)=='undefined'?'未知负责人':ar['name'];
+              item.id_operater=typeof(ar)=='undefined'?'':ar['name'];
               // var ar=_this.cars.find((ele) => ele['id'] == item.id_equipment);
               // item.id_equipment=typeof(ar)=='undefined'?'未知车辆':ar['alias'];
             });
@@ -651,63 +651,6 @@ Date.prototype.format = function(fmt) {
       var _this = this;
       var queryContent={};
 
-      //初始化项目的option id_product 
-      this.projects=[];
-      this.$axios({
-        method: 'post',
-        url: 'getProject.php'
-      }).then(function (response) {
-        _this.projects=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-      this.products=[];
-      this.$axios({
-        method: 'post',
-        url: 'getProduct.php'
-      }).then(function (response) {
-        _this.products=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-      this.cars=[];
-      queryContent.conditions="All";
-      this.$axios({
-            method: 'post',
-            url: 'getEquipments.php',
-            data: qs.stringify(queryContent)
-        }).then(function (response) {
-          _this.cars=response.data;
-        }).catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });
-      this.employees=[];
-      queryContent.conditions="All";
-      this.$axios({
-            method: 'post',
-            url: 'getEmployees.php',
-            data: qs.stringify(queryContent)
-        }).then(function (response) {
-          _this.employees=response.data;
-        }).catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });
       this.clients=[];
       this.$axios({
             method: 'post',
@@ -718,7 +661,7 @@ Date.prototype.format = function(fmt) {
           _this.$toast({
              text: '异步通信错误!'+error,
              type: 'danger',
-              duration: 4000
+             duration: 4000
           });
         });                    
       this.clientDepartments=[];

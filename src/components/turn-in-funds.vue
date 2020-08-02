@@ -2,10 +2,10 @@
   <div class="father">
     <ul class="nav nav-pills" role="tablist">
       <li class="nav-item">
-        <a class="nav-link active" data-toggle="pill" href="#turn-in">收款上缴</a>
+        <a class="nav-link active" data-toggle="pill" href="#turn-in">款项上缴</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" data-toggle="pill" href="#returnMoneyBack">归还欠款</a>
+        <a class="nav-link" data-toggle="pill" href="#returnMoneyBack">归还借款</a>
       </li>
     </ul>
     <div class="tab-content">
@@ -67,13 +67,13 @@
                   <td title="请款时间">{{row.time_applied}}</td>
                   <td title="请款人">{{getEmplyName(row)}}</td>
                   <td title="所属项目">{{getProject(row)}}</td>
-                  <td title="款项用途">{{row.use_for}}</td>
+                  <td :title="row.use_for">{{row.use_for}}</td>
                   <td title="请款金额">{{row.amount}}</td>
-                  <td title="请款时填写的收款账号">{{row.account}}</td>
+                  <td :title="row.account">{{row.account}}</td>
                   <td title="实收金额">{{row.p_amount}}</td>
                   <td title="收款时间">{{row.p_time_paid}}</td>
                   <td title="已还金额">{{row.amount_returned}}</td>
-                  <td title="请款时的备注信息">{{row.remark}}</td>
+                  <td :title="row.remark">{{row.remark}}</td>
                 </tr>
               </tbody>
           </table>
@@ -123,12 +123,12 @@
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="inputRemark">收ID</label>
-                  <input id="inputRemark" type="text" class="form-control" v-model="turnInFundsNotice.id_tbl_cashier" title="收款ID" placeholder="收款ID" :readonly="isCashed">
-                </div>
-                <div class="col-lg  form-inline">
                   <label for="inputRemark">备注</label>
                   <input id="inputRemark" type="text" class="form-control" v-model="turnInFundsNotice.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字" :readonly="isCashed">
+                </div>
+                <div class="col-lg  form-inline">
+                  <label for="CID" v-if="isCashed">收ID</label>
+                  <input id="CID" type="text" class="form-control" v-model="turnInFundsNotice.id_tbl_cashier" title="收款ID" placeholder="收款ID" :readonly="isCashed" v-if="isCashed">
                 </div>
               </div>
             </div>
@@ -145,7 +145,7 @@
         <div class="modal-content">  
           <div class="modal-header">
             <span>
-              <h5>归还欠款</h5>
+              <h5>归还借款</h5>
             </span>  
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>  
@@ -161,8 +161,8 @@
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="ndRTNamt">欠款余额</label>
-                  <input id="ndRTNamt" type="text" class="form-control" title="您的欠款余额" v-model="needRTNAmt" readonly>
+                  <label for="ndRTNamt">借款余额</label>
+                  <input id="ndRTNamt" type="text" class="form-control" title="您的借款余额" v-model="needRTNAmt" readonly>
                 </div>
               </div>
               <div class="row">
@@ -224,11 +224,11 @@ Date.prototype.format = function(fmt) {
     data() {
       return {
         shortcuts:false,
-        ourAccounts:[],
-        wayOfPayment:[],
-        projects:[],
-        employees:[],
-        natures:[{id:1,name:'上缴款项'},{id:2,name:'归还借款'}],
+        ourAccounts:this.$store.state.ourAccounts,
+        wayOfPayment:this.$store.state.waysOfPayment,
+        projects:this.$store.state.projects,
+        employees:this.$store.state.employees,
+        natures:[{id:1,name:'收银上缴'},{id:2,name:'归还借款'}],
         isCashed:false,
         queryContent:{
           keyWord:'',
@@ -403,7 +403,10 @@ Date.prototype.format = function(fmt) {
           });        
       },
       newTurnInFunds() {
+        this.isCashed=false;
+        this.listOfTurnInFunds=[];
         this.turnInFundsNotice.id='';
+        this.turnInFundsNotice.id_tbl_cashier='';
         $('#mdlTurnInFunds').modal('toggle');
         this.turnInFundsNotice.id_project=1;
         this.turnInFundsNotice.id_way_pay=1;
@@ -497,7 +500,7 @@ Date.prototype.format = function(fmt) {
           url: 'updateTurnInFunds.php',
           data: qs.stringify(_this.toRTN)
           }).then(function (response) {
-console.log(response.data);
+// console.log(response.data);
 // return;
             if(response.data===true) {
               $('#mdlToRTN').modal('toggle'); 
@@ -531,8 +534,8 @@ console.log(response.data);
             });
             $('#mdlToRTN').modal('toggle');
           });         
-console.log(this.toRTN);        
-console.log('Data Saved!');
+// console.log(this.toRTN);        
+// console.log('Data Saved!');
       },
     },
     watch:{
@@ -580,66 +583,6 @@ console.log('Data Saved!');
       },    
     },
     beforeCreate:function() {
-      var _this=this;
-      this.ourAccounts=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfOurAccount.php',
-      }).then(function (response) {
-        _this.ourAccounts=response.data;
-      }).catch(function (error) {
-        console.log(error);
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-      this.employees=[];
-      var queryContent={};
-      queryContent.conditions="All";
-      this.$axios({
-            method: 'post',
-            url: 'getEmployees.php',
-            data: qs.stringify(queryContent)
-        }).then(function (response) {
-          _this.employees=response.data;
-        }).catch(function (error) {
-          _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
-          });
-        });
-
-      this.wayOfPayment=[];
-      this.$axios({
-        method: 'post',
-        url: 'getListOfPayWay.php',
-      }).then(function (response) {
-        _this.wayOfPayment=response.data;
-      }).catch(function (error) {
-        console.log(error);
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger',
-          duration: 4000
-        });
-      });
-
-      this.projects=[];
-      this.$axios({
-        method: 'post',
-        url: 'getProject.php'
-      }).then(function (response) {
-        _this.projects=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-          text: '异步通信错误!'+error,
-          type: 'danger!',
-          duration: 4000
-        });
-      });            
     }    
   } 
 </script>

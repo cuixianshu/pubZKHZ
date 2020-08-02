@@ -160,9 +160,9 @@ export default {
   data() {
     return {
       shortcuts:false,
-      projects:[],
-      employees:[],
-      materials:[],
+      projects:this.$store.state.projects,
+      employees:this.$store.state.employees,
+      materials:this.$store.state.materials,
 
       MIOQC:{
         keyWord:'',
@@ -308,52 +308,6 @@ export default {
 
   },  
   beforeCreate () {
-    var _this = this;
-    var queryContent={};
-
-    this.projects=[];
-    this.$axios({
-      method: 'post',
-      url: 'getProject.php'
-    }).then(function (response) {
-      _this.projects=response.data;
-    }).catch(function (error) {
-      _this.$toast({
-        text: '异步通信错误!'+error,
-        type: 'danger',
-        duration: 4000
-      });
-    });
-    this.employees=[];
-    queryContent.conditions="All";
-    this.$axios({
-          method: 'post',
-          url: 'getEmployees.php',
-          data: qs.stringify(queryContent)
-      }).then(function (response) {
-        _this.employees=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-           text: '异步通信错误!'+error,
-           type: 'danger',
-            duration: 4000
-        });
-      });
-    this.materials=[];
-    queryContent.keyWord='';
-    this.$axios({
-          method: 'post',
-          url: 'getMaterials.php',
-          data: qs.stringify(queryContent)
-      }).then(function (response) {
-        _this.materials=response.data;
-      }).catch(function (error) {
-        _this.$toast({
-           text: '异步通信错误!'+error,
-           type: 'danger',
-           duration: 4000
-        });
-      }); 
   }   
 }
 

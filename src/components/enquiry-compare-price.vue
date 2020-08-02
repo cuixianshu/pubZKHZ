@@ -9,19 +9,19 @@
           <span for="schKeyWds">关键词:</span>
           <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="项目名称\物品名称\规格型号\厂家品牌等">
           <button @click="getApprovedApplyingPurchasings" class="btn btn-primary" type="button">搜索数据</button>
-          <button @click="clearApprovedPurchasingList"class="btn btn-secondary" type="button" v-if="listOfApprovedPurchasing.length>0">清空</button>
+          <button @click="clearApprovedPurchasingList"class="btn btn-secondary" type="button" v-if="listOfAprvedPcsg.length>0">清空</button>
         </div>        
       </div>
 
     </div>
-    <div class="listShower" v-if="listOfApprovedPurchasing.length>0">
+    <div class="listShower" v-if="listOfAprvedPcsg.length>0">
       <table class="table table-hover">
         <thead>
           <th v-for="title,index in titleOfListStatic">{{title}}</th>
           <!-- <th>询价比价单</th> -->
         </thead>
         <tbody>
-          <tr v-for="row in listOfApprovedPurchasing" :style="unPassed(row)" @click="clickedARow(row)">
+          <tr v-for="row in listOfAprvedPcsg" :style="unPassed(row)" @click="clickedARow(row)">
             <!-- <td v-for="prop in row" :title='prop'>{{prop}}</td> -->
             <td>{{row.id_project}}</td>
             <td>{{row.name}}</td>
@@ -89,7 +89,7 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5>新建询价单---保存后不可修改,请认真填写!--请购ID:{{id_applyedPurchasing}}</h5>
+          <h5>新建询价单---保存后不可修改,请认真填写!--请购ID:{{id_apldPcsg}}</h5>
         </div>
         <div class="modal-body">
           <div class="container-fluid">
@@ -146,7 +146,7 @@
     <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5>比价单--请购ID:{{id_applyedPurchasing}}</h5><!-- (<span style="color:red;">红色为以前选定的商家</span>) -->
+          <h5>比价单--请购ID:{{id_apldPcsg}}</h5><!-- (<span style="color:red;">红色为以前选定的商家</span>) -->
         </div>
         <div class="modal-body">
           <div class="container-fluid">
@@ -170,7 +170,7 @@
                   <td :title='row.way_payment'>{{row.way_payment}}</td>
                   <td :title='row.remark'>{{row.remark}}</td>
                   <td title='点击选择'>
-                    <input class="form-control" type="radio" :value="row.id" v-model="resultOfComparePrice.selectedID"><!-- resultOfComparePrice.selectedID -->
+                    <input class="form-control" type="radio" :value="row.id" v-model="rsltOfCP.selectedID"><!-- rsltOfCP.selectedID -->
                   </td>
 
 <!--    :checked="row.is_made_deal==1?true:false"                <td>
@@ -182,10 +182,10 @@
           </div>
         </div>
         <div class="modal-footer">
-          <label><b>选定理由</b></label><input id="reasonOfChoose" class="form-control" type="text" v-model="resultOfComparePrice.reason">
+          <label><b>选定理由</b></label><input id="reasonOfChoose" class="form-control" type="text" v-model="rsltOfCP.reason">
           
           <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-          <button type="button" class="btn btn-primary" @click="saveDataToApprove">提交审核</button>
+          <button type="button" class="btn btn-primary" @click="saveDataForApproving">提交审核</button>
         </div>
       </div>
     </div>
@@ -221,7 +221,7 @@ Date.prototype.format = function(fmt) {
       return {
         queryContent:{
           keyWord:'',
-          id_applyedPurchasing:'',
+          id_apldPcsg:'',
           conditions:''
 
         },
@@ -252,21 +252,21 @@ Date.prototype.format = function(fmt) {
           actualAmount:0,
           idApplyed:''
         },
-        listOfApprovedPurchasing:[],
+        listOfAprvedPcsg:[],
         titleOfList:[],
         titleOfListStatic:['项目','物品','数量','单位','品牌','型号','细节','期望日期','备注','比价审核结果','询价比价'],
-        projects:[],
-        employees:[],
-        id_applyedPurchasing:'',
+        projects:this.$store.state.projects,
+        employees:this.$store.state.employees,
+        id_apldPcsg:'',
         enquiries:[],
         // titleOfEnquiries:[],
         titleOfEnquiries:['询价ID','商家','含税价','总金额','到货日期','付款方式','备注信息','选定'],
         selectedID:'',//选定的询价单ID
         // showReasonBox:false
-        resultOfComparePrice:{
+        rsltOfCP:{
           selectedID:'11',
           reason:'',
-          idOfApplyedPurchasing:''
+          idOfApldPcsg:''
         },
         style:{
           color:'red'
@@ -298,7 +298,7 @@ Date.prototype.format = function(fmt) {
         }
         //获取对应此applyedID的询价比价单
         this.queryContent.conditions='EnquiryingNotPassedApproving';
-        this.queryContent.id_applyedPurchasing=this.appliedPurchasingDetails.id;
+        this.queryContent.id_apldPcsg=this.appliedPurchasingDetails.id;
         this.enquiries=[]; 
         var _this = this;
         this.$axios({
@@ -309,10 +309,10 @@ Date.prototype.format = function(fmt) {
           if(response.data.length>0) {
             _this.enquiries = response.data;
 
-            //为resultOfComparePrice.selectedID设置初始值
+            //为rsltOfCP.selectedID设置初始值
             for(var i=0;i<_this.enquiries.length;i++) {
               if(_this.enquiries[i].is_made_deal) {
-                _this.resultOfComparePrice.selectedID=_this.enquiries[i].id;               
+                _this.rsltOfCP.selectedID=_this.enquiries[i].id;               
               }
             }
         $('#showerOfDetails').modal('toggle');
@@ -329,7 +329,7 @@ Date.prototype.format = function(fmt) {
         });        
       },
       getApprovedApplyingPurchasings () {
-        this.listOfApprovedPurchasing=[];
+        this.listOfAprvedPcsg=[];
         this.titleOfList=[];
         this.queryContent.conditions='NotComparedOrEnquiryNotCommitedOrNotPassedApproving';//enquiry未提交审核或审核未通过的
         var _this = this;
@@ -339,9 +339,9 @@ Date.prototype.format = function(fmt) {
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
             if(response.data.length>0) {
-              _this.listOfApprovedPurchasing = response.data;
+              _this.listOfAprvedPcsg = response.data;
               var ttl='';
-              for(ttl in _this.listOfApprovedPurchasing[0]) {
+              for(ttl in _this.listOfAprvedPcsg[0]) {
                 _this.titleOfList.push(ttl);
               }              
             } else {
@@ -357,12 +357,12 @@ Date.prototype.format = function(fmt) {
           });
       },
       clearApprovedPurchasingList() {
-        this.listOfApprovedPurchasing=[];
+        this.listOfAprvedPcsg=[];
         this.titleOfList=[];
       },
       newEnquiryCompare(dataRow) {
         //获取申请ID
-        this.id_applyedPurchasing=dataRow.id;
+        this.id_apldPcsg=dataRow.id;
         $('#addEnquiryCompare').modal('toggle');
       },
       saveEnquiry() {
@@ -422,7 +422,8 @@ Date.prototype.format = function(fmt) {
           });
           return;          
         }
-        this.enquiry.idApplyed=this.id_applyedPurchasing;
+        this.enquiry.idApplyed=this.id_apldPcsg;
+        this.enquiry.conditions='NewEnquiry';
         var _this = this;
         this.$axios({
             method: 'post',
@@ -430,11 +431,6 @@ Date.prototype.format = function(fmt) {
             data: qs.stringify(_this.enquiry)
           }).then(function (response) {
             if(response.data===true) {
-                _this.$toast({
-                   text: '成功保存数据!',
-                   type: 'success',
-                   duration: 800
-                });
               $('#addEnquiryCompare').modal('toggle');
               _this.enquiry.seller='';              
               _this.enquiry.contacter='';
@@ -446,6 +442,11 @@ Date.prototype.format = function(fmt) {
               _this.enquiry.actualAmount=0;
               _this.enquiry.idApplyed='';
               _this.enquiry.remark='';
+              _this.$toast({
+                 text: '成功保存数据!',
+                 type: 'success',
+                 duration: 800
+              });
            } else {
               _this.$toast({
                  text: '通信错误!'+response.data,
@@ -465,11 +466,11 @@ Date.prototype.format = function(fmt) {
       },
       modifyEnquiryCompare (dataRow) {
         //设置查询条件
-        this.queryContent.id_applyedPurchasing=dataRow.id;
+        this.queryContent.id_apldPcsg=dataRow.id;
         this.queryContent.conditions="NotSelectedSellerOrNotPassedApproving";
 
         //获取请购ID
-        this.id_applyedPurchasing=dataRow.id;
+        this.id_apldPcsg=dataRow.id;
         //获取对应清单
         var _this = this;
         this.enquiries=[];
@@ -479,6 +480,7 @@ Date.prototype.format = function(fmt) {
               url: 'getEnquiries.php',
               data: qs.stringify(_this.queryContent)
           }).then(function (response) {
+            console.log(response.data);
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到询价单!',
@@ -489,7 +491,7 @@ Date.prototype.format = function(fmt) {
             }
             _this.enquiries=response.data;
             $('#modifyEnquiry').modal('toggle');
-            _this.queryContent.id_applyedPurchasing='';
+            _this.queryContent.id_apldPcsg='';
             _this.queryContent.keyWord='';
           }).catch(function (error) {
             _this.$toast({
@@ -500,7 +502,7 @@ Date.prototype.format = function(fmt) {
           });        
       },
       addEnquiry () {
-        this.id_applyedPurchasing=this.appliedPurchasingDetails.id;
+        this.id_apldPcsg=this.appliedPurchasingDetails.id;
         $('#showerOfDetails').modal('toggle');
         $('#addEnquiryCompare').modal('toggle');
 
@@ -508,8 +510,8 @@ Date.prototype.format = function(fmt) {
         //   $('#addEnquiryCompare').modal('toggle');
         // })        
       },
-      saveDataToApprove() {
-        if(this.resultOfComparePrice.reason.length<4){
+      saveDataForApproving() {
+        if(this.rsltOfCP.reason.length<4){
           this.$toast({
             text: '选定理由最少4个字!',
             type: 'danger',
@@ -517,7 +519,7 @@ Date.prototype.format = function(fmt) {
           });
           return;
         }
-        if(!this.resultOfComparePrice.selectedID) {
+        if(!this.rsltOfCP.selectedID) {
           this.$toast({
             text: '请选择一项',
             type: 'danger',
@@ -525,37 +527,39 @@ Date.prototype.format = function(fmt) {
           });
           return;
         }
-        this.resultOfComparePrice.idOfApplyedPurchasing=this.id_applyedPurchasing;
+        this.rsltOfCP.idOfApldPcsg=this.id_apldPcsg;
         var _this=this;
         var url='updateEnquiriesWithComparedPrice.php';
         this.$axios({
           method: 'post',
           url: url,
-          data: qs.stringify(_this.resultOfComparePrice)
+          data: qs.stringify(_this.rsltOfCP)
         }).then(function (response) {
+          console.log(response.data);
           if(response.data===true) {
-              _this.$toast({
-                 text: '已成功提交审核!',
-                 type: 'success',
-                  duration: 1000
-              });
             $('#modifyEnquiry').modal('toggle');
-            _this.resultOfComparePrice.selectedID='';              
-            _this.resultOfComparePrice.reason='';
-          } else {
-        console.log(response.data);
+            var idx=_this.listOfAprvedPcsg.findIndex((item)=>item.id==_this.rsltOfCP.idOfApldPcsg);
+            _this.listOfAprvedPcsg.splice(idx,1);
+            _this.rsltOfCP.selectedID='';              
+            _this.rsltOfCP.reason='';
             _this.$toast({
-               text: '通信错误!'+response.data,
-               type: 'danger',
-               duration: 4000
+              text: '已成功提交审核!',
+              type: 'success',
+              duration: 1000
+            });
+          } else {
+            _this.$toast({
+              text: '通信错误!'+response.data,
+              type: 'danger',
+              duration: 4000
             });
             $('#modifyEnquiry').modal('toggle');
           } 
         }).catch(function (error) {
           _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-             duration: 4000
+            text: '异步通信错误!'+error,
+            type: 'danger',
+            duration: 4000
           });
           $('#modifyEnquiry').modal('toggle');
         });
@@ -566,11 +570,8 @@ Date.prototype.format = function(fmt) {
     },
     filters:{
       getNameByProjectID(id,projects) {
-        // console.log(id);
-        // console.log(projects);
         projects.forEach(function(item,index,array){
           if(item.id==id) {
-            // console.log(item.name);
             return id.replace(item.name);
           }
         })        
@@ -578,47 +579,20 @@ Date.prototype.format = function(fmt) {
     },
     computed:{
       resultTextOfApprovedComparing() {
-          return function(intResult){
-            if(!intResult && typeof(intResult)!="undefined" && intResult!=0) {
-              return '未提交比价单';
-            }
-            if(intResult==0) {
-              return '已提交,但未审核';
-            }
-            if(intResult==1) {
-              return '已审核,但未通过';
-            }       
-          }           
+        return function(intResult){
+          if(!intResult && typeof(intResult)!="undefined" && intResult!=0) {
+            return '未提交比价单';
+          }
+          if(intResult==0) {
+            return '已提交,未审核';
+          }
+          if(intResult==1) {
+            return '已审核,但未通过';
+          }       
+        }           
       }
     },
     beforeCreate() {
-     var _this = this;
-     this.projects=[];
-     this.$axios({
-           method: 'post',
-           url: 'getProject.php'
-       }).then(function (response) {
-         _this.projects=response.data;
-       }).catch(function (error) {
-         _this.$toast({
-            text: '异步通信错误!'+error,
-            type: 'danger',
-             duration: 4000
-         });
-       });
-     this.employees=[];
-     this.$axios({
-           method: 'post',
-           url: 'getEmployees.php'
-       }).then(function (response) {
-         _this.employees=response.data;
-       }).catch(function (error) {
-         _this.$toast({
-            text: '异步通信错误!'+error,
-            type: 'danger',
-             duration: 4000
-         });
-       });        
     },
     watch:{
 

@@ -105,7 +105,7 @@ import qs from 'qs';
           keyWord:'',
           conditions:''
         },
-        materials:[],
+        materials:this.$store.state.materials,
         titleOfList:['名称','品牌','型号','单位','包装单位','库存数','保存位置','上次盘点'],
         width:['12.5%','12.5%','12.5%','12.5%','12.5%','12.5%','12.5%','12.5%'],
         qty:0,

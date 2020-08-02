@@ -85,7 +85,7 @@
         <li class="dropdown">
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">请款报销</span>
           <div class="dropdown-menu">
-            <li v-if="user.rqstfunds_borrow_reimburse"><span class="dropdown-item menu-item" @click="loadPage('/request-funds')">报销借款</span></li>
+            <li v-if="user.rqstfunds_borrow_reimburse"><span class="dropdown-item menu-item" @click="loadPage('/request-funds')">请款借款</span></li>
             <li v-if="user.rqstfunds_purchasing_funds"><span class="dropdown-item menu-item" @click="loadPage('/rqst-pcsg-funds')">采购请款</span></li>
             <li v-if="user.rqstfunds_rfdtkt_paying"><span class="dropdown-item menu-item" @click="loadPage('/rqst-rfdtkt-paying')">机票退款</span></li>            
             <li v-if="user.rqstfunds_primary_audits"><span class="dropdown-item menu-item" @click="loadPage('/prmry-audits-rqst-funds')">请款初审</span></li>
@@ -205,7 +205,7 @@
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">个人中心</span>
           <div class="dropdown-menu">
             <li v-if="user.personal_turn_in"><span class="dropdown-item menu-item" @click="loadPage('/turn-in-funds')">缴款还款</span></li>
-            <li v-if="user.personal_apply"><span class="dropdown-item menu-item">我的申请</span></li>
+            <li v-if="user.personal_needtoreturn"><span class="dropdown-item menu-item" @click="loadPage('/personal-needtoreturn')">需还款物</span></li>
             <li v-if="user.personal_audits"><span class="dropdown-item menu-item">我的审批</span></li>
             <li v-if="user.personal_modify_info"><span class="dropdown-item menu-item" @click="loadPage('/change-pswd')">更改密码</span></li>
             <li v-if="user.personal_logout"><span class="dropdown-item menu-item" @click="beingQuit">退出登录</span></li>

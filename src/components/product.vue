@@ -97,7 +97,7 @@ import qs from 'qs';
         queryContent:{
           keyWord:''
         },
-        typeListOfPrdct:[],
+        typeListOfPrdct:this.$store.state.typesOfProducts,
 /*
 details: (...)
 id: (...)
@@ -123,7 +123,7 @@ unit: (...)
         },
         listOfProduct:[],
         productTitle:[],
-        employees:[],
+        employees:this.$store.state.employees,
       }
     },
     methods: {
@@ -132,16 +132,10 @@ unit: (...)
           this.listOfProduct=[];
           this.productTitle=[];
         }
-        var _this = this;
-        this.$axios.get('getProduct.php').then(function (response) {
-            _this.listOfProduct = response.data;
-            var ttl='';
-            for(ttl in response.data[0]) {
-              _this.productTitle.push(ttl);
-            }
-          }).catch(function (error) {
-            console.log(error);
-          });
+        this.listOfProduct=this.$store.state.products;
+        for(var ttl in this.listOfProduct[0]) {
+          this.productTitle.push(ttl);
+        }
       },
       saveData () {
         if(!this.product.id_type) {
@@ -209,6 +203,7 @@ unit: (...)
             _this.product.model='';
             _this.product.details='';
             _this.product.other='';
+            _this.$store.dispatch('getProducts',_this);
           } else {
         console.log(response.data);
             _this.$toast({
@@ -253,6 +248,7 @@ unit: (...)
         this.productTitle=[];
       },
       newCreateProduct () {
+        this.listOfProduct=[];
         this.product.id='';
         this.product.name='';
         this.product.id_type=1;
@@ -265,33 +261,6 @@ unit: (...)
       }
     },
     beforeCreate:function() {
-      //初始化员工option
-      this.employees=[];
-      var _this = this;
-      this.$axios({
-            method: 'post',
-            url: 'getEmployees.php'
-        })
-        .then(function (response) {
-          _this.employees=response.data;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      //初始化产品类别option
-      this.typeListOfPrdct=[];
-
-      var _this = this;
-      this.$axios({
-            method: 'post',
-            url: 'getTypeProduct.php'
-        })
-        .then(function (response) {
-          _this.typeListOfPrdct=response.data;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
     }    
 
   } 
