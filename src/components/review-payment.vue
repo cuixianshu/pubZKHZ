@@ -4,8 +4,7 @@
     <div id="queryOfCashier" class="container-fluid">
       <div class="row">
         <div class="col-lg form-inline searchcontent">
-          <label for="queryConditions">关键词:</label> 
-          <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位,请款人 收款账号 用途等关键词">
+          <input id="queryConditions" type="text" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位,请款人 收款账号 用途等关键词">
           <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="付款的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="付款的时间范围"></datepicker> 
           <button class="btn btn-primary" @click="getListOfPaidRqstedFunds">🔍获取数据</button>
           <button class="btn btn-secondary" @click="clearList" v-if="listOfPaidRqstedFunds.length>0">清除</button>            
@@ -13,11 +12,10 @@
       </div>
 
     </div>
-    <div class="showerOfRqstedFunds" v-if="listOfPaidRqstedFunds.length>0">
+    <div class="divfortable" v-if="listOfPaidRqstedFunds.length>0">
       <table class="table table-hover">
         <thead>
           <th v-for="(title,index) in titlesOfList" :width="widthOfTH[index]">{{title}}</th>
-          <!-- <th><input class="checkbox" type="checkbox" @click=""></th> -->
         </thead>
         <tbody>
           <tr v-for="row,index in listOfPaidRqstedFunds" @click="clickedARowInShower(row)">
@@ -45,7 +43,7 @@
               <h5>付款复核---项目:{{payment.project}}
               </h5>
             </span>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>  
             </button>  
           </div>
@@ -64,14 +62,14 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctAS">一级</label>
-                  <select id="slctAS" type="text" class="form-control" name="ture" v-model="payment.id_accounting_sub" title="一级会计科目" @change="acc_subChanged()">
+                  <select id="slctAS" type="text" class="form-control" v-model="payment.id_accounting_sub" title="一级会计科目" @change="acc_subChanged()">
                     <option  value=0>一级科目</option>
                     <option v-for="item in accountingSubjects" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctNature">二级</label>
-                  <select id="slctNature" type="text" class="form-control" name="ture" v-model="payment.id_detailed_accounting" title="二级会计科目">
+                  <select id="slctNature" type="text" class="form-control" v-model="payment.id_detailed_accounting" title="二级会计科目">
                     <option  value=0>二级科目</option>
                     <option v-for="item in DAsAtTheAccSub" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
@@ -80,13 +78,13 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctpaymentAccount">付款</label>
-                  <select id="slctpaymentAccount" type="text" name="paymentAccount" class="form-control" placeholder="付款账户" v-model="payment.id_account" title="付款账户">
+                  <select id="slctpaymentAccount" type="text" class="form-control" placeholder="付款账户" v-model="payment.id_account" title="付款账户">
                     <option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfpayment">方式</label>
-                  <select id="slctWayOfpayment" type="text" class="form-control" name="wayOfpayment" v-model="payment.id_way_pay" placeholder="付款方式" title="付款方式">
+                  <select id="slctWayOfpayment" type="text" class="form-control" v-model="payment.id_way_pay" placeholder="付款方式" title="付款方式">
                     <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>
                   </select>
                 </div>
@@ -94,21 +92,21 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputCashiedAmount">金额</label>
-                  <input id="inputCashiedAmount" type="number" class="form-control" name="cashiedAmount" v-model="payment.amount" placeholder="实付金额" title="实付金额">
+                  <input id="inputCashiedAmount" type="number" class="form-control" v-model="payment.amount" placeholder="实付金额" title="实付金额">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputSerial">流水</label>
-                  <input id="inputSerial" type="text" class="form-control" name="serialnumber" v-model="payment.serial_paid" placeholder="银行流水号" title="银行流水号">
+                  <input id="inputSerial" type="text" class="form-control" v-model="payment.serial_paid" placeholder="银行流水号" title="银行流水号">
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputSerialOfBills">票据</label>
-                  <input id="inputSerialOfBills" type="text" class="form-control" name="numbers_bills" v-model="payment.numbers_bills" title="相关票据号码,不超过256个字" placeholder="相关票据号码">
+                  <input id="inputSerialOfBills" type="text" class="form-control" v-model="payment.numbers_bills" title="相关票据号码,不超过256个字" placeholder="相关票据号码">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputRemark">备注</label>
-                  <input id="inputRemark" type="text" class="form-control" name="remark" v-model="payment.remark" title="付款时的备注内容" placeholder="备注信息,不超过64个字">
+                  <input id="inputRemark" type="text" class="form-control" v-model="payment.remark" title="付款时的备注内容" placeholder="备注信息,不超过64个字">
                 </div>
               </div>
               <hr class="split-line">              
@@ -126,8 +124,8 @@
             </div>
           </div>
           <div class="modal-footer">  
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-            <button type="button" @click="saveReviewing" class="btn btn-primary">保存</button>
+            <button class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button @click="saveReviewing" class="btn btn-primary">保存</button>
           </div>           
         </div>
       </div>
@@ -428,9 +426,6 @@ Date.prototype.format = function(fmt) {
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
 #searchConditions >*{
   margin:5px;
 }   
@@ -439,16 +434,6 @@ h5 {
 }
 datepicker {
   margin-left: 10px;  
-}
-td {
-  overflow:hidden; 
-  white-space:nowrap; 
-  text-overflow:ellipsis;
-  max-width: 50px;
-}
-table {
-  overflow: auto;
-  font-size: 14px;
 }
 .modal-body input,.modal-body select {
   width: 80%;
@@ -461,12 +446,6 @@ table {
 }
 .searchcontent button {
   margin-left: 5px;
-}
-#byhand {
-  /*margin-left: 100px;*/
-  position: absolute;
-  /*bottom: 0;*/
-  right: 0;
 }
 .request-funds {
   color:red;

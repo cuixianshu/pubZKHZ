@@ -2,20 +2,19 @@
 <div class="father">
   <h5>当前位置:物料管理/申请领用</h5><!-- form-group  -->
   <div class="container-fluid">
-    <div class="form-inline searchbox">
-      <span for="schKeyWds">关键词:</span>
+    <div class="row form-inline searchbox">
       <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="物品名称,规格型号,品牌,库位等关键词">
-      <button @click="getListOfMaterials" class="btn btn-primary " type="button">
+      <button @click="getListOfMaterials" class="btn btn-primary ">
           搜索物料
       </button>
-      <button @click="clearlistOfMaterials"class="btn btn-secondary" type="button" v-if="materials.length>0">清空物料明细</button>
-      <button @click="getListOfAppliedMaterials" class="btn btn-primary mahistory" type="button">查看申领记录</button>
+      <button @click="clearlistOfMaterials"class="btn btn-secondary" v-if="materials.length>0">清空物料明细</button>
+      <button @click="getListOfAppliedMaterials" class="btn btn-primary mahistory">查看申领记录</button>
     </div>
   </div>
-  <div v-if="materials.length>0">
+  <div v-if="materials.length>0" class="divfortable">
     <table class="table table-hover">
       <thead>
-        <th v-for="title,index in titleOfMaterials" :width="width[index]">{{title}}</th>
+        <th v-for="(title,index) in titleOfMaterials" :width="width[index]">{{title}}</th>
       </thead>
       <tbody>
         <tr v-for="row in materials" @click="clkdToRqst(row)">
@@ -31,10 +30,10 @@
       </tbody>
     </table>
   </div>
-  <div v-if="listOfAppliedMts.length>0">
+  <div v-if="listOfAppliedMts.length>0" class="divfortable">
     <table class="table table-hover">
       <thead>
-        <th v-for="title,index in titleOfAML" :width="widthOfAML[index]">{{title}}
+        <th v-for="(title,index) in titleOfAML" :width="widthOfAML[index]">{{title}}
         </th>
       </thead>
       <tbody>
@@ -53,7 +52,7 @@
     </table>
   </div> 
   <div class="modal fade" id="editerOfMaterial" role="dialog" aria-labelledby="editer" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <span>物料申领单</span><span id="tip" v-if="rqsting_Material.is_need_return==1">注意:{{rqsting_Material.name}},用后须归还!</span>
@@ -63,66 +62,66 @@
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputNameOfMAT">名称:</label>
-                <input id="inputNameOfMAT" type="text" name="name" class="form-control" v-model="rqsting_Material.name" placeholder="物料名称" title="物料名称" readonly>
+                <input id="inputNameOfMAT" type="text" class="form-control" v-model="rqsting_Material.name" placeholder="物料名称" title="物料名称" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputUnit">单位:</label>
-                <input id="inputUnit" type="text" name="unit" class="form-control" v-model="rqsting_Material.unit" placeholder="物料计量单位" title="物料计量单位" readonly>
+                <input id="inputUnit" type="text" class="form-control" v-model="rqsting_Material.unit" placeholder="物料计量单位" title="物料计量单位" readonly>
               </div> 
             </div>
             <div class="row"> 
               <div class="col-lg form-inline">
                 <label for="inputBrand">品牌:</label>
-                <input id="inputBrand" type="text" name="brand" class="form-control" v-model="rqsting_Material.brand" placeholder="厂家品牌" title="厂家品牌" readonly>
+                <input id="inputBrand" type="text" class="form-control" v-model="rqsting_Material.brand" placeholder="厂家品牌" title="厂家品牌" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputModel">型号:</label>
-                <input id="inputModel" type="text" name="model" class="form-control" v-model="rqsting_Material.model" placeholder="规格型号" title="规格型号" readonly>
+                <input id="inputModel" type="text" class="form-control" v-model="rqsting_Material.model" placeholder="规格型号" title="规格型号" readonly>
               </div>
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputMin_unit_packing">包装:</label>
-                <input id="inputMin_unit_packing" type="text" name="min_unit_packing" class="form-control" v-model="rqsting_Material.min_unit_packing" placeholder="如:300ml/瓶,12瓶/箱等" title="包装单位" readonly>
+                <input id="inputMin_unit_packing" type="text" class="form-control" v-model="rqsting_Material.min_unit_packing" placeholder="如:300ml/瓶,12瓶/箱等" title="包装单位" readonly>
               </div> 
               <div class="col-lg form-inline">
                 <label for="inputStorePlace">库位:</label>
-                <input id="inputStorePlace" type="text" name="store_place" class="form-control" v-model="rqsting_Material.store_place" placeholder="如:A库/B区/C架/6层/1位" title="库名区位架号层号位号" readonly>
+                <input id="inputStorePlace" type="text" class="form-control" v-model="rqsting_Material.store_place" placeholder="如:A库/B区/C架/6层/1位" title="库名区位架号层号位号" readonly>
               </div>                                        
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputProject">项目:</label>
-                <select id="inputProject" type="text" name="id_project" class="form-control" v-model="rqsting_Material.id_project" placeholder="所属项目" title="所属项目">
+                <select id="inputProject" type="text" class="form-control" v-model="rqsting_Material.id_project" placeholder="所属项目" title="所属项目">
                   <option :value="item.id" v-for="item in projects">{{item.name}}</option>
                 </select>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputUseFor">用途:</label>
-                <input id="inputUseFor" type="text" name="use_for" class="form-control" v-model="rqsting_Material.use_for" placeholder="物料用途" title="请输入物料用途,不少于2个字">
+                <input id="inputUseFor" type="text" class="form-control" v-model="rqsting_Material.use_for" placeholder="物料用途" title="请输入物料用途,不少于2个字">
               </div>
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputQty">数量:</label>
-                <input id="inputQty" type="number" name="qty" class="form-control" v-model="rqsting_Material.qty" placeholder="申请领用数量" title="申请领用数量">
+                <input id="inputQty" type="number" class="form-control" v-model="rqsting_Material.qty" placeholder="申请领用数量" title="申请领用数量">
               </div>
               <div class="col-lg form-inline">
                 <label for="inputRemark">备注:</label>
-                <input id="inputRemark" type="text" name="remark" class="form-control" v-model="rqsting_Material.remark" placeholder="申领备注信息" title="申领备注信息">
+                <input id="inputRemark" type="text" class="form-control" v-model="rqsting_Material.remark" placeholder="申领备注信息" title="申领备注信息">
               </div>              
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button class="btn btn-primary" type="button" @click="showRemindReturning">提交申请</button> 
+          <button class="btn btn-default" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary" @click="showRemindReturning">提交申请</button> 
         </div>  
       </div>
     </div>
   </div>
   <div class="modal fade" id="remindreturning" role="dialog" aria-labelledby="remindreturning" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5>归还提醒</h5>
@@ -131,8 +130,8 @@
           <h5 class="warningForReturn">物品:{{rqsting_Material.name}}</h5><h5 class="warningForReturn">用后须归还!确定要领用吗?</h5>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button class="btn btn-primary" type="button" @click="commitApply">确定</button> 
+          <button class="btn btn-default" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary" @click="commitApply">确定</button> 
         </div>  
       </div>
     </div>
@@ -363,12 +362,6 @@ console.log(response.data);
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
 #editerOfMaterial input,#editerOfMaterial select {
   width: 70%;
 }
@@ -386,6 +379,6 @@ h5 {
 }
 .mahistory {
   position: absolute;
-  right: 10px;
+  right: 20px;
 }
 </style>

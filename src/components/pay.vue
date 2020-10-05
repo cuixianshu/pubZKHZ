@@ -1,26 +1,24 @@
 <template>
   <div class="father">
-    <ul class="nav nav-pills" role="tablist">
+    <ul class="nav nav-tabs" role="tablist">
       <li class="nav-item">
-        <a class="nav-link active" data-toggle="pill" href="#query-emp-debt">员工欠款查询</a>
+        <a class="nav-link active" data-toggle="tab" href="#query-emp-debt">员工欠款查询</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" data-toggle="pill" href="#pay-pane">支付款项</a>
+        <a class="nav-link" data-toggle="tab" href="#pay-pane">支付款项</a>
       </li>
     </ul>
-<!--     <h5>当前位置:收款付款/支付款项</h5> -->
     <div class="tab-content">
       <div id="pay-pane" class="container-fluid tab-pane">
         <div class="row">
           <div class="col-lg form-inline searchcontent">
-            <label for="queryConditions">关键词:</label> 
-            <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位,请款人 收款账号 用途等关键词">
+            <input id="queryConditions" type="text" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位,请款人 收款账号 用途等关键词">
             <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请款的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="请款的时间范围"></datepicker> 
             <button class="btn btn-primary" @click="getListOfRqstedFunds">🔍获取请款数据</button>
             <button class="btn btn-secondary" @click="clearList" v-if="listOfRqstedFunds.length>0">清除</button>            
           </div>          
         </div>
-        <div class="showerOfRqstedFunds" v-if="listOfRqstedFunds.length>0">
+        <div class="divfortable" v-if="listOfRqstedFunds.length>0">
           <table class="table table-hover">
             <thead>
               <th v-for="(title,index) in titlesOfList" :width="widthOfTH[index]">{{title}}</th>
@@ -57,7 +55,7 @@
             <button class="btn btn-secondary" @click="empDebters=[];" v-if="empDebters.length>0">清除</button>            
           </div>          
         </div>
-        <div class="showerOfRqstedFunds" v-if="empDebters.length>0">
+        <div class="divfortable" v-if="empDebters.length>0">
           <table class="table table-hover">
             <thead>
               <th v-for="(title,index) in titlesOfDebts" :width="widthOfDebts[index]">{{title}}</th>
@@ -79,14 +77,14 @@
       </div>
     </div>
     <div class="modal fade" id="mdlPay" role="dialog" aria-labelledby="mdlPay" data-backdrop="static" data-keyboard: false>
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">  
           <div class="modal-header">
             <span>
-              <h5>支付款项---请款人:{{requestFunds.name_applyer}}--请款金额:{{requestFunds.amount}}
+              <h5>支付款项---请款金额:{{requestFunds.amount}}
               </h5>
             </span>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>  
             </button>  
           </div>
@@ -116,14 +114,14 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctAS">一级</label>
-                  <select id="slctAS" type="text" class="form-control" name="ture" v-model="payment.id_accounting_sub" title="一级科目" @change="acc_subChanged()">
+                  <select id="slctAS" type="text" class="form-control" v-model="payment.id_accounting_sub" title="一级科目" @change="acc_subChanged()">
                     <option  value=0>一级科目</option>
                     <option v-for="item in accountingSubjects" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctNature">二级</label>
-                  <select id="slctNature" type="text" class="form-control" name="ture" v-model="payment.id_detailed_acc" title="二级科目">
+                  <select id="slctNature" type="text" class="form-control" v-model="payment.id_detailed_acc" title="二级科目">
                     <option  value=0>二级科目</option>
                     <option v-for="item in DAsAtTheAccSub" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
@@ -132,14 +130,14 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctpaymentAccount">账户</label>
-                  <select id="slctpaymentAccount" type="text" name="paymentAccount" class="form-control" placeholder="付款账户" v-model="payment.id_account" title="付款账户">
+                  <select id="slctpaymentAccount" type="text" class="form-control" placeholder="付款账户" v-model="payment.id_account" title="付款账户">
                     <option value=0>付款账户</option>
                     <option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfpayment">方式</label>
-                  <select id="slctWayOfpayment" type="text" class="form-control" name="wayOfpayment" v-model="payment.id_way_pay" placeholder="付款方式" title="付款方式">
+                  <select id="slctWayOfpayment" type="text" class="form-control" v-model="payment.id_way_pay" placeholder="付款方式" title="付款方式">
                     <option value=0>付款方式</option>
                     <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>
                   </select>
@@ -148,28 +146,28 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputCashiedAmount">金额</label>
-                  <input id="inputCashiedAmount" type="number" class="form-control" name="cashiedAmount" v-model="payment.amount" placeholder="实付金额" title="实付金额">
+                  <input id="inputCashiedAmount" type="number" class="form-control" v-model="payment.amount" placeholder="实付金额" title="实付金额">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputSerial">流水</label>
-                  <input id="inputSerial" type="text" class="form-control" name="serialnumber" v-model="payment.serial_paid" placeholder="银行流水号" title="银行流水号">
+                  <input id="inputSerial" type="text" class="form-control" v-model="payment.serial_paid" placeholder="银行流水号" title="银行流水号">
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputSerialOfBills">票据</label>
-                  <input id="inputSerialOfBills" type="text" class="form-control" name="numbers_bills" v-model="payment.numbers_bills" title="相关票据号码,不超过256个字" placeholder="相关票据号码">
+                  <input id="inputSerialOfBills" type="text" class="form-control" v-model="payment.numbers_bills" title="发票号码,多个号码用 * 分隔,不超过256个字" placeholder="发票号码,多个号码用 * 分隔">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputRemark">备注</label>
-                  <input id="inputRemark" type="text" class="form-control" name="remark" v-model="payment.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
+                  <input id="inputRemark" type="text" class="form-control" v-model="payment.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
                 </div>
               </div>
             </div>
           </div>
           <div class="modal-footer">  
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-            <button type="button" @click="savePayment" class="btn btn-primary">确定</button>
+            <button class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button @click="savePayment" class="btn btn-primary">确定</button>
           </div>           
         </div>
       </div>
@@ -540,9 +538,6 @@ console.log(response.data);
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
 #searchConditions >*{
   margin:5px;
 }   
@@ -551,16 +546,6 @@ h5 {
 }
 datepicker {
   margin-left: 10px;  
-}
-td {
-    overflow:hidden; 
-    white-space:nowrap; 
-    text-overflow:ellipsis;
-    max-width: 50px;
-}
-table {
-  overflow: auto;
-  font-size: 14px;
 }
 .modal-body input,.modal-body select {
   width: 80%;

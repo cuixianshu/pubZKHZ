@@ -2,26 +2,26 @@
 <div class="father">
   <h5>当前位置:物料管理/发放物料</h5>
   <div class="container-fluid">
-    <div class="form-group form-inline searchbox">
+    <div class="form-inline searchbox">
 <!--       <div class="col-lg">
         <span for="schKeyWds">关键词:</span>
         <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="物品名称,规格型号,品牌,库位等关键词">
-        <button @click="getListOfMaterials" class="btn btn-primary " type="button">
+        <button @click="getListOfMaterials" class="btn btn-primary ">
           搜索物料
         </button>
-        <button @click="clearlistOfMaterials"class="btn btn-secondary" type="button" v-if="materials.length>0">清空物料明细</button>
+        <button @click="clearlistOfMaterials"class="btn btn-secondary" v-if="materials.length>0">清空物料明细</button>
       </div> -->
       <!-- <div class="col-lg appliedBtn"> -->
-        <button @click="getListOfAppliedMaterials" class="btn btn-primary " type="button">
+        <button @click="getListOfAppliedMaterials" class="btn btn-primary ">
           获取领用清单
         </button>
-        <button @click="listOfAppliedMts=[]"class="btn btn-secondary" type="button" v-if="listOfAppliedMts.length>0">清空领用清单</button>
+        <button @click="listOfAppliedMts=[]"class="btn btn-secondary" v-if="listOfAppliedMts.length>0">清空领用清单</button>
       <!-- </div> -->
     </div>
-    <div v-if="listOfAppliedMts.length>0">
+    <div v-if="listOfAppliedMts.length>0" class="divfortable">
       <table class="table table-hover">
         <thead>
-          <th v-for="title,index in titleOfAppliedMaterialsList" :width="widthA[index]">{{title}}</th>
+          <th v-for="(title,index) in titleOfAppliedMaterialsList" :width="widthA[index]">{{title}}</th>
         </thead>
         <tbody>
           <tr v-for="row in listOfAppliedMts" @click="clickedARecorderToModify(row)">
@@ -39,7 +39,7 @@
     </div> 
   </div>
   <div class="modal fade" id="editerOfMaterial" role="dialog" aria-labelledby="editer" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <span>物料发放单</span>
@@ -49,48 +49,48 @@
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputNameOfMAT">名称:</label>
-                <input id="inputNameOfMAT" type="text" name="mtname" class="form-control" v-model="rqstdMaterial.mtname" placeholder="物料名称" title="物料名称" readonly>
+                <input id="inputNameOfMAT" type="text" class="form-control" v-model="rqstdMaterial.mtname" placeholder="物料名称" title="物料名称" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputUnit">单位:</label>
-                <input id="inputUnit" type="text" name="unit" class="form-control" v-model="rqstdMaterial.unit" placeholder="物料计量单位" title="物料计量单位" readonly>
+                <input id="inputUnit" type="text" class="form-control" v-model="rqstdMaterial.unit" placeholder="物料计量单位" title="物料计量单位" readonly>
               </div> 
             </div>
             <div class="row"> 
               <div class="col-lg form-inline">
                 <label for="inputBrand">品牌:</label>
-                <input id="inputBrand" type="text" name="brand" class="form-control" v-model="rqstdMaterial.brand" placeholder="厂家品牌" title="厂家品牌" readonly>
+                <input id="inputBrand" type="text" class="form-control" v-model="rqstdMaterial.brand" placeholder="厂家品牌" title="厂家品牌" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputModel">型号:</label>
-                <input id="inputModel" type="text" name="model" class="form-control" v-model="rqstdMaterial.model" placeholder="规格型号" title="规格型号" readonly>
+                <input id="inputModel" type="text" class="form-control" v-model="rqstdMaterial.model" placeholder="规格型号" title="规格型号" readonly>
               </div>
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputMin_unit_packing">包装:</label>
-                <input id="inputMin_unit_packing" type="text" name="min_unit_packing" class="form-control" v-model="rqstdMaterial.min_unit_packing" placeholder="如:300ml/瓶,12瓶/箱等" title="包装单位" readonly>
+                <input id="inputMin_unit_packing" type="text" class="form-control" v-model="rqstdMaterial.min_unit_packing" placeholder="如:300ml/瓶,12瓶/箱等" title="包装单位" readonly>
               </div> 
               <div class="col-lg form-inline">
                 <label for="inputStorePlace">库位:</label>
-                <input id="inputStorePlace" type="text" name="store_place" class="form-control" v-model="rqstdMaterial.store_place" placeholder="如:A库/B区/C架/6层/1位" title="库名区位架号层号位号" readonly>
+                <input id="inputStorePlace" type="text" class="form-control" v-model="rqstdMaterial.store_place" placeholder="如:A库/B区/C架/6层/1位" title="库名区位架号层号位号" readonly>
               </div>                                        
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputQty">申请:</label>
-                <input id="inputQty" type="number" name="qty_applied" class="form-control" v-model="rqstdMaterial.qty" placeholder="申请领用数量" title="申请领用数量" readonly>
+                <input id="inputQty" type="number" class="form-control" v-model="rqstdMaterial.qty" placeholder="申请领用数量" title="申请领用数量" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputRemark">发放:</label>
-                <input id="inputRemark" type="number" name="qty_distributed" class="form-control" v-model="distributer.qty" placeholder="实发数量" title="实际发放数量">
+                <input id="inputRemark" type="number" class="form-control" v-model="distributer.qty" placeholder="实发数量" title="实际发放数量">
               </div>              
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button class="btn btn-primary" type="button" @click="saveDistributedData">确认发放</button> 
+          <button class="btn btn-default" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary" @click="saveDistributedData">确认发放</button> 
         </div>  
       </div>
     </div>
@@ -259,12 +259,6 @@ import qs from 'qs';
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
 #editerOfMaterial input,#editerOfMaterial select {
   width: 70%;
 }

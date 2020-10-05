@@ -2,30 +2,23 @@
 <div class="father">
   <h5>当前位置:物料管理/查找新建</h5>
   <div class="container-fluid">
-    <div class="form-group form-inline">
-      <div class="col-lg">
-        <span for="schKeyWds">关键词:</span>
-        <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="物品名称,规格型号,品牌,库位等关键词">
-        <button @click="getListOfMaterials" class="btn btn-primary" type="button">
-          搜索物料
-        </button>
-        <button @click="clearlistOfMaterials"class="btn btn-secondary" type="button" v-if="materials.length>0">清空</button>
-      </div>
-      <div class="col-lg createnewmaterial">
-        <button @click="newCreateMaterial" class="btn btn-primary" type="button">
-          新建物料
-        </button>
-      </div>
+    <div class="row form-inline query">
+      <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="物品名称,规格型号,品牌,库位等关键词">
+      <button @click="getListOfMaterials" class="btn btn-primary">
+        搜索物料
+      </button>
+      <button @click="clearlistOfMaterials" class="btn btn-secondary" v-if="materials.length>0">清空</button>
+      <button @click="newCreateMaterial" class="btn btn-primary newitem">
+        新建物料
+      </button>
     </div>
-    <div class="listShower" v-if="materials.length>0">
+    <div class="divfortable" v-if="materials.length>0">
       <table class="table table-hover">
         <thead>
-          <th v-for="title,index in titleOfList" :width="width">{{title}}</th>
+          <th v-for="(title,index) in titleOfList" :width="titleWidth[index]">{{title}}</th>
         </thead>
         <tbody>
           <tr v-for="row in materials" @click="clickedARecorderToModify(row)">
-            <!-- <td v-for="vlu in row" :title='vlu'>{{vlu}}</td> -->
-            <!-- <td title="物料ID">{{row.id}}</td> -->
             <td :title="row.name">{{row.name}}</td>
             <td :title="row.brand">{{row.brand}}</td>
             <td :title="row.model">{{row.model}}</td>
@@ -41,7 +34,7 @@
     </div>      
   </div>
   <div class="modal fade" id="editerOfMaterial" role="dialog" aria-labelledby="editer" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <span>物料编辑器</span><span v-if="!isNew">ID:{{material.id}}</span>
@@ -51,31 +44,31 @@
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputNameOfMAT">名称:</label>
-                <input id="inputNameOfMAT" type="text" name="name" class="form-control" v-model="material.name" placeholder="物料名称" title="物料名称" :readonly="!isNew">
+                <input id="inputNameOfMAT" type="text" class="form-control" v-model="material.name" placeholder="物料名称" title="物料名称" :readonly="!isNew">
               </div>
               <div class="col-lg form-inline">
                 <label for="inputUnit">单位:</label>
-                <input id="inputUnit" type="text" name="unit" class="form-control" v-model="material.unit" placeholder="物料计量单位" title="物料计量单位" :readonly="!isNew">
+                <input id="inputUnit" type="text" class="form-control" v-model="material.unit" placeholder="物料计量单位" title="物料计量单位" :readonly="!isNew">
               </div> 
             </div>
             <div class="row"> 
               <div class="col-lg form-inline">
                 <label for="inputBrand">品牌:</label>
-                <input id="inputBrand" type="text" name="brand" class="form-control" v-model="material.brand" placeholder="厂家品牌" title="厂家品牌" :readonly="!isNew">
+                <input id="inputBrand" type="text" class="form-control" v-model="material.brand" placeholder="厂家品牌" title="厂家品牌" :readonly="!isNew">
               </div>
               <div class="col-lg form-inline">
                 <label for="inputModel">型号:</label>
-                <input id="inputModel" type="text" name="model" class="form-control" v-model="material.model" placeholder="规格型号" title="规格型号" :readonly="!isNew">
+                <input id="inputModel" type="text" class="form-control" v-model="material.model" placeholder="规格型号" title="规格型号" :readonly="!isNew">
               </div>
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputMin_unit_packing">包装:</label>
-                <input id="inputMin_unit_packing" type="text" name="min_unit_packing" class="form-control" v-model="material.min_unit_packing" placeholder="如:300ml/瓶,12瓶/箱等" title="包装单位" :readonly="!isNew">
+                <input id="inputMin_unit_packing" type="text" class="form-control" v-model="material.min_unit_packing" placeholder="如:300ml/瓶,12瓶/箱等" title="包装单位" :readonly="!isNew">
               </div> 
               <div class="col-lg form-inline">
                 <label for="inputStorePlace">库位:</label>
-                <input id="inputStorePlace" type="text" name="store_place" class="form-control" v-model="material.store_place" placeholder="如:A库/B区/C架/6层/1位" title="库名区位架号层号位号">
+                <input id="inputStorePlace" type="text" class="form-control" v-model="material.store_place" placeholder="如:A库/B区/C架/6层/1位" title="库名区位架号层号位号">
               </div>                                        
             </div>
             <div class="row">
@@ -95,7 +88,7 @@
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputRemark">备注:</label>
-                <input id="inputRemark" type="text" name="remark" class="form-control" v-model="material.remark" placeholder="备注信息" title="备注信息">
+                <input id="inputRemark" type="text" class="form-control" v-model="material.remark" placeholder="备注信息" title="备注信息">
               </div>
               <div class="col-lg form-inline">
               </div>
@@ -103,8 +96,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button class="btn btn-primary" type="button" @click="saveInputedData">保存</button> 
+          <button class="btn btn-default" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary" @click="saveInputedData">保存</button> 
         </div>  
       </div>
     </div>
@@ -125,9 +118,9 @@ import qs from 'qs';
         },
         isNew:false,
         materials:[],
-        titleOfList:['名称','品牌','型号','单位','包装单位','库存数','保存位置','是否可领用','备注'],
-        width:['12%','11%','11%','11%','11%','11%','11%','11%','11%'],
-        activeStatus:[{id:0,name:'不能领用'},{id:1,name:'可以领用'}],
+        titleOfList:['名称','品牌','型号','单位','包装单位','库存数','保存位置','可领用','备注'],
+        titleWidth:['17%','11%','11%','6%','14%','6%','11%','6%','17%'],
+        activeStatus:[{id:0,name:'否'},{id:1,name:'是'}],
         whetherReturns:[{id:0,name:'使用后,不需归还'},{id:1,name:'使用后,必须归还'}],
         material:{
           id:'',
@@ -272,19 +265,17 @@ import qs from 'qs';
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
 #editerOfMaterial input,#editerOfMaterial select {
   width: 70%;
 }
-.createnewmaterial {
-  text-align: right;
-}
 .row {
   margin-top: 10px;
-}  
+}
+.query input,.query button {
+  margin-right: 5px;
+}
+.newitem {
+  position: absolute;
+  right: 20px;
+}
 </style>

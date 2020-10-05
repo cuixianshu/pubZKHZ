@@ -1,21 +1,19 @@
 <template>
 <div class="father">
-  <ul class="nav nav-pills" role="tablist">
+  <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" data-toggle="pill" href="#mNeedToReturn">待还物料</a>
+      <a class="nav-link active" data-toggle="tab" href="#mNeedToReturn">待还物料</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" data-toggle="pill" href="#fNeedToReturn">待还借款</a>
+      <a class="nav-link" data-toggle="tab" href="#fNeedToReturn">待还借款</a>
     </li>
   </ul>
   <div class="tab-content">
     <div id="mNeedToReturn" class="container-fluid tab-pane active">
-      <div class="row">
-        <div class="form-inline" v-if="mNTRList.length<1">
-          <datepicker class="datepicker" id="dateRange" v-model="mNTRQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="申领物料的时间,默认上个月" :shortcuts="shortcuts" placeholder="申领物料的时间范围">
-          </datepicker>
-          <button id="btnSearch" class="btn btn-primary" type="button" @click="getmNTR">搜索数据</button>
-        </div>
+      <div class="row form-inline" v-if="mNTRList.length<1">
+        <datepicker class="datepicker" id="dateRange" v-model="mNTRQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="申领物料的时间,默认上个月" :shortcuts="shortcuts" placeholder="申领物料的时间范围">
+        </datepicker>
+        <button id="btnSearch" class="btn btn-primary" type="button" @click="getmNTR">搜索数据</button>
       </div>
       <hr style="height:1px;border:none;border-top:2px solid #007bff;" />
       <div v-if="mNTRList.length>0">
@@ -24,7 +22,7 @@
         </span>
         <button class="btn btn-secondary" type="button" @click="mNTRList=[]">清空</button>
       </div>
-      <div class="form pre-scrollable" v-if="mNTRList.length>0">
+      <div class="divfortable" v-if="mNTRList.length>0">
         <table class="table table-hover">
           <thead>
             <th v-for="(title,index) in mNTRTitles" :width="mNTRWidths[index]">{{title}}</th>
@@ -47,12 +45,10 @@
       </div>
     </div>
     <div id="fNeedToReturn" class="container-fluid tab-pane">
-      <div class="row">
-        <div class="form-inline" v-if="fListNTR.length<1">
-          <datepicker class="datepicker" id="dateRange" v-model="fNTRQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请款的时间,默认上个月" :shortcuts="shortcuts" placeholder="请款的时间范围">
-          </datepicker>
-          <button id="btnSearch" class="btn btn-primary" type="button" @click="getFundsNTR">搜索数据</button>
-        </div>
+      <div class="row form-inline" v-if="fListNTR.length<1">
+        <datepicker class="datepicker" id="dateRange" v-model="fNTRQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请款的时间,默认上个月" :shortcuts="shortcuts" placeholder="请款的时间范围">
+        </datepicker>
+        <button id="btnSearch" class="btn btn-primary" type="button" @click="getFundsNTR">搜索数据</button>
       </div>
       <hr style="height:1px;border:none;border-top:2px solid #007bff;" />
       <div v-if="fListNTR.length>0">
@@ -61,7 +57,7 @@
         </span>
         <button class="btn btn-secondary" type="button" @click="fListNTR=[]">清空</button>
       </div>
-      <div class="form pre-scrollable" v-if="fListNTR.length>0">
+      <div class="divfortable" v-if="fListNTR.length>0">
         <table class="table table-hover">
           <thead>
             <th v-for="(title,index) in fListTitles" :width="fListWidths[index]">{{title}}</th>
@@ -255,12 +251,6 @@ console.log(response.data);
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
 .tab-content {
   margin: 5px auto;
 }
@@ -269,16 +259,6 @@ h5 {
 }
 .row {
   margin-bottom: 2px;
-}
-table {
-  overflow: auto;
-  font-size: 12px;
-}
-td {
-  overflow:hidden; 
-  white-space:nowrap; 
-  text-overflow:ellipsis;
-  max-width: 50px;
 }
 .tip {
   font-size: 18px;

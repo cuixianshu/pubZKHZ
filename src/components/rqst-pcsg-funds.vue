@@ -2,18 +2,15 @@
   <div class="father">
     <h5>当前位置:请款报销/采购请款</h5>
     <div id="queryOfCashier" class="container-fluid">
-      <div class="row">
-        <div class="col-lg form-inline searchcontent">
-          <label for="queryConditions">关键词:</label> 
-          <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="请款人,用途,采购物品等搜索关键词">
-          <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请购的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="请购的时间范围"></datepicker> 
-          <button class="btn btn-primary" @click="getListOfAppliedPcsings">🔍获取采购数据</button>
-          <button class="btn btn-secondary" @click="clearList" v-if="listOfAP.length>0 || listOfRequestedFunds.length>0">清除</button>
-          <button class="btn btn-primary history" @click="getHistory" title="请款的时间范围,默认最近7天">请款历史</button>
-        </div>          
+      <div class="row form-inline searchcontent">
+        <input id="queryConditions" type="text" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="请款人,用途,采购物品等搜索关键词">
+        <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请购的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="请购的时间范围"></datepicker>
+        <button class="btn btn-primary" @click="getListOfAppliedPcsings">🔍获取采购数据</button>
+        <button class="btn btn-secondary" @click="clearList" v-if="listOfAP.length>0 || listOfRequestedFunds.length>0">清除</button>
+        <button class="btn btn-primary history" @click="getHistory" title="请款的时间范围,默认最近7天">请款历史记录</button>
       </div>
     </div>
-    <div class="" v-if="listOfAP.length>0">
+    <div class="divfortable" v-if="listOfAP.length>0">
       <table class="table table-hover">
         <thead>
           <th v-for="title,index in titlesOfAPs" :width="widthOfAPs[index]">{{title}}</th>
@@ -35,7 +32,7 @@
         </tbody>
       </table>
     </div>
-    <div class="showerOfRequestFunds" v-if="listOfRequestedFunds.length>0">
+    <div class="divfortable" v-if="listOfRequestedFunds.length>0">
       <table class="table table-hover">
         <thead>
           <th v-for="(title,index) in titlesOfRFs" :width="widthOfTH[index]">{{title}}</th>
@@ -56,11 +53,11 @@
       </table>
     </div>
     <div class="modal fade" id="mdlRqstPcsgFunds" role="dialog" aria-labelledby="mdlRqstPcsgFunds" data-backdrop="static" data-keyboard: false>
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">  
           <div class="modal-header">
             <span><h5>新建采购请款---采购总金额：{{rqstPcsFds.actual_amount}}</h5></span>  
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>  
             </button>  
           </div>
@@ -69,26 +66,23 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctNature">性质</label>
-                  <select id="slctNature" type="text" class="form-control" name="nature" v-model="rqstPcsFds.nature" title="请款性质" :disabled="isACed">
+                  <select id="slctNature" type="text" class="form-control" v-model="rqstPcsFds.nature" title="请款性质" :disabled="isACed">
                     <option v-for="item in natures" :value="item.id">{{item.name}}</option>
-<!--                     <option title="验收后付款" value=3>验收后付款</option>
-                    <option title="预付采购款" value=5>预付采购款</option>
-                    <option title="按进度付款" value=6>按进度付款</option> -->
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputCashiedAmount">金额</label>
-                  <input id="inputCashiedAmount" type="number" class="form-control" name="cashiedAmount" v-model="rqstPcsFds.amount" placeholder="请款金额" title="请款金额">
+                  <input id="inputCashiedAmount" type="number" class="form-control" v-model="rqstPcsFds.amount" placeholder="请款金额" title="请款金额">
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputAccount">账号</label>
-                  <input id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" placeholder="接收款项的账号" v-model="rqstPcsFds.account" title="账号名和账号">
+                  <input id="slctCashierAccount" type="text" class="form-control" placeholder="接收款项的账号" v-model="rqstPcsFds.account" title="账号名和账号">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="rqstPcsFds.id_way_pay" title="付款方式">
+                  <select id="slctWayOfCashier" type="text" class="form-control" v-model="rqstPcsFds.id_way_pay" title="付款方式">
                     <option value=0>付款方式</option>
                     <option v-for="item in waysOfPayment" :value="item.id">{{item.name}}</option>
                   </select>
@@ -97,18 +91,18 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputRemark">备注</label>
-                  <input id="inputRemark" type="text" class="form-control" name="otherInCashier" v-model="rqstPcsFds.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
+                  <input id="inputRemark" type="text" class="form-control" v-model="rqstPcsFds.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="maxAmt">上限</label>
-                  <input id="maxAmt" type="text" class="form-control" name="maxAmt" v-model="rqstPcsFds.maxAmtForRqsting" title="请款金额上限" disabled>
+                  <input id="maxAmt" type="text" class="form-control" v-model="rqstPcsFds.maxAmtForRqsting" title="请款金额上限" disabled>
                 </div>
               </div>
             </div>
           </div>
           <div class="modal-footer">  
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-            <button type="button" id="btnSaveTheRequestedData" @click="saveTheRequestedData" class="btn btn-primary">创建申请</button>
+            <button class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button id="btnSaveTheRequestedData" @click="saveTheRequestedData" class="btn btn-primary">创建申请</button>
           </div>           
         </div>
       </div>
@@ -270,11 +264,7 @@ Date.prototype.format = function(fmt) {
         
         var queryContent=this.rqstPcsFds;
         queryContent.id_rqstr=this.currentUserId;
-        if(this.rqstPcsFds.id_rqst_funds) {
-          queryContent.conditions='UpdateRequestPurchasingFunds';
-        } else {
-          queryContent.conditions='NewRequestPurchasingFunds';
-        }
+        queryContent.conditions='NewRequestPurchasingFunds';
         var _this = this;
         this.$axios({
           method: 'post',
@@ -325,31 +315,31 @@ Date.prototype.format = function(fmt) {
         } 
         var _this = this;
         this.listOfRequestedFunds=[];
-        this.queryContent.conditions="HistoryOfRequestedPurchasingFundsInLast60Days";
+        this.queryContent.conditions="HistoryOfRequestedPurchasingFunds";
         this.queryContent.id_requester=this.currentUserId;
         this.$axios({
           method: 'post',
           url: 'getRequestFunds.php',
           data: qs.stringify(_this.queryContent)
-          }).then(function (response) {
-            console.log(response.data);
-            if(response.data.length<1) {
-              _this.$toast({
-                text: '找不到符合条件的记录!',
-                type: 'info',
-                duration: 1000
-              });              
-            } else {
-              _this.listOfRequestedFunds=response.data;
-            }
-          }).catch(function (error) {
-            console.log(error);
+        }).then(function (response) {
+          console.log(response.data);
+          if(response.data.length<1) {
             _this.$toast({
-               text: '异步通信错误!'+error,
-               type: 'danger',
-               duration: 4000
-            });
+              text: '找不到符合条件的记录!',
+              type: 'info',
+              duration: 1000
+            });              
+          } else {
+            _this.listOfRequestedFunds=response.data;
+          }
+        }).catch(function (error) {
+          console.log(error);
+          _this.$toast({
+            text: '异步通信错误!'+error,
+            type: 'danger',
+            duration: 4000
           });
+        });
       },
       clearList () {
         this.listOfAP=[];
@@ -435,27 +425,11 @@ Date.prototype.format = function(fmt) {
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
 #searchConditions >*{
   margin:5px;
 }
 datepicker {
   margin-left: 10px;  
-}
-td {
-    overflow:hidden; 
-    white-space:nowrap; 
-    text-overflow:ellipsis;
-    max-width: 50px;
-}
-table {
-  overflow: auto;
-  font-size: 14px;
 }
 .modal-body input,.modal-body select {
   width: 80%;
@@ -468,16 +442,6 @@ table {
 }
 .searchcontent button {
   margin-left: 5px;
-}
-#byhand {
-  /*margin-left: 100px;*/
-  position: absolute;
-  /*bottom: 0;*/
-  right: 0;
-}
-.reason-reject {
-  color: red;
-  font-size: 1.2rem;
 }
 .history {
   position: absolute;

@@ -2,25 +2,15 @@
 <div class="father">
   <h5>当前位置:基础数据/设备管理</h5>
   <div id="clientDepartment" class="container-fluid">
-    <div class="form-group form-inline searchBar">
-      <div class="col-lg">
-<!--         <span for="schKeyWds">关键词:</span>
-        <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="名称、品牌、型号等"> -->
-        <button @click="getListOfEquipments" class="btn btn-primary" type="button">
-          获取数据
-        </button>
-        <button @click="clearlistOfEquipments"class="btn btn-secondary" type="button" v-if="equipments.length>0">清空</button>
-      </div>
-      <div class="col-lg createnewequipment">
-        <button @click="newCreateEquipment" class="btn btn-primary" type="button">
-          新建设备
-        </button>
-      </div>
+    <div class="row form-inline query">
+      <button @click="getListOfEquipments" class="btn btn-primary">获取数据</button>
+      <button @click="clearlistOfEquipments"class="btn btn-secondary" v-if="equipments.length>0">清空</button>
+      <button @click="newCreateEquipment" class="btn btn-primary newitem">新建设备</button>
     </div>
-    <div class="listShower" v-if="equipments.length>0">
+    <div class="divfortable" v-if="equipments.length>0">
       <table class="table table-hover">
         <thead>
-          <th v-for="title,index in titleOfList">{{title}}</th>
+          <th v-for="(title,index) in titleOfList">{{title}}</th>
         </thead>
         <tbody>
           <tr v-for="row in equipments" @click="clickedARecorderToModify(row)">
@@ -31,7 +21,7 @@
     </div>      
   </div>
   <div class="modal fade" id="showerOfEquipments" role="dialog" aria-labelledby="newCreateEquipment" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           设备编辑器--设备ID:{{equipment.id}}
@@ -41,49 +31,49 @@
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputNameOfEquipment">昵称:</label>
-                <input id="inputNameOfEquipment" type="text" name="name" class="form-control" v-model="equipment.name" placeholder="设备昵称" title="设备昵称">
+                <input id="inputNameOfEquipment" type="text" class="form-control" v-model="equipment.name" placeholder="设备昵称" title="设备昵称">
               </div>
               <div class="col-lg form-inline">
                 <label for="inputAlias">名称:</label>
-                <input id="inputAlias" type="text" name="alias" class="form-control" v-model="equipment.alias" placeholder="设备名称" title="设备名称">
+                <input id="inputAlias" type="text" class="form-control" v-model="equipment.alias" placeholder="设备名称" title="设备名称">
               </div> 
             </div>
             <div class="row"> 
               <div class="col-lg form-inline">
                 <label for="inputBrand">品牌:</label>
-                <input id="inputBrand" type="text" name="brand" class="form-control" v-model="equipment.brand" placeholder="品牌名称" title="品牌名称">
+                <input id="inputBrand" type="text" class="form-control" v-model="equipment.brand" placeholder="品牌名称" title="品牌名称">
               </div>
               <div class="col-lg form-inline">
                 <label for="inputModel">型号:</label>
-                <input id="inputModel" type="text" name="model" class="form-control" v-model="equipment.model" placeholder="设备型号" title="设备型号">
+                <input id="inputModel" type="text" class="form-control" v-model="equipment.model" placeholder="设备型号" title="设备型号">
               </div>
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputSerialNum">串码:</label>
-                <input id="inputSerialNum" type="text" name="serial_num" class="form-control" v-model="equipment.serial_num" placeholder="设备识别串码" title="设备识别串码">
+                <input id="inputSerialNum" type="text" class="form-control" v-model="equipment.serial_num" placeholder="设备识别串码" title="设备识别串码">
               </div> 
               <div class="col-lg form-inline">
                 <label for="inputAvailable">状态:</label>
-                <input id="inputAvailable" type="number" name="available" class="form-control" v-model="equipment.available" placeholder="可用状态" title="0:不可用;1:可用">
+                <input id="inputAvailable" type="number" class="form-control" v-model="equipment.available" placeholder="可用状态" title="0:不可用;1:可用">
               </div>                                        
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputNameOfRspnsrblPrsn">责任:</label>
-                <select id="inputNameOfRspnsrblPrsn" type="text" name="name_responsible_person" class="form-control" v-model="equipment.id_responsible_person" placeholder="设备责任人" title="设备责任人">
+                <select id="inputNameOfRspnsrblPrsn" type="text" class="form-control" v-model="equipment.id_responsible_person" placeholder="设备责任人" title="设备责任人">
                   <option v-for="item in employees" :value="item.id">{{item.name}}</option>
                 </select>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputRemark">备注:</label>
-                <input id="inputRemark" type="text" name="remark" class="form-control" v-model="equipment.remark" placeholder="备注信息" title="备注信息">
+                <input id="inputRemark" type="text" class="form-control" v-model="equipment.remark" placeholder="备注信息" title="备注信息">
               </div>              
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputIsOwn">自有:</label>
-                <input id="inputIsOwn" type="text" name="is_own" class="form-control" v-model="equipment.is_own" placeholder="1:自有设备;0:非自有设备" title="1:自有设备;0:非自有设备">
+                <input id="inputIsOwn" type="text" class="form-control" v-model="equipment.is_own" placeholder="1:自有设备;0:非自有设备" title="1:自有设备;0:非自有设备">
               </div> 
               <div class="col-lg form-inline">
               </div>                                        
@@ -91,8 +81,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button class="btn btn-primary saveBtn" type="button" @click="saveInputedData">保存</button> 
+          <button class="btn btn-default" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary saveBtn" @click="saveInputedData">保存</button> 
         </div>  
       </div>
     </div>
@@ -246,19 +236,17 @@ import qs from 'qs';
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
 #showerOfEquipments input,#showerOfEquipments select {
   width: 70%;
 }
-.createnewequipment {
-  text-align: right;
-}
 .row {
   margin-top: 10px;
-}  
+}
+.query input,.query button {
+  margin-right: 5px;
+}
+.newitem {
+  position: absolute;
+  right: 20px;
+}
 </style>

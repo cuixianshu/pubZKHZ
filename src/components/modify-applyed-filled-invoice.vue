@@ -2,16 +2,16 @@
 <div class="father"> 
 	<h5>当前位置:发票业务/开票、变更申请</h5>
     <div id="mdyApldFild" class="container-fluid">
-      <div id="searchConditions"  class="form-group form-inline">
+      <div id="searchConditions"  class="row form-inline">
         <label for="queryConditions">关键词:</label>
-        <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="用车人,单位,项目等搜索关键词">
+        <input id="queryConditions" type="text" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="用车人,单位,项目等搜索关键词">
         <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="申请开票时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="申请开票的时间范围"></datepicker>
         <button class="btn btn-primary" @click="getRequestedInvoices">🔍获取数据</button>          
         <button class="btn btn-secondary" @click="clearData" v-if="data.length>0">清空</button>
         <button class="btn btn-primary" v-if="data.length>0" @click="fillAnInvoice">填开发票</button>
       </div>
     </div>
-    <div v-if="data.length>0" class="pre-scrollable"><!--  pre-scrollable -->
+    <div v-if="data.length>0" class=""><!--  pre-scrollable -->
       <div id="toolbar">
         <button id="remove" class="btn btn-danger" disabled>
           <i class="glyphicon glyphicon-remove"></i> Delete
@@ -20,8 +20,8 @@
       <bootstraptable id="mainTable" :columns="columns" :data="data" :options="options" @on-expand-row="onExpandRow" @on-clickRow="onClickRow"></bootstraptable>
     </div>
 <!-- <i class="oi oi-account-login"></i> -->
-<font-awesome-icon :icon="['far', 'square']" />
-<font-awesome-icon :icon="['fab', 'accessible-icon']" />
+<!-- <font-awesome-icon :icon="['far', 'square']" />
+<font-awesome-icon :icon="['fab', 'accessible-icon']" /> -->
 <!-- <font-awesome-icon icon="clipboard-list" size="2x" pull="left"/> -->
     <div class="buttons">
 <!--       <button class="btn btn-secondary" @click="clearData" v-if="data.length>0">清空</button>
@@ -30,12 +30,12 @@
 
 
     <div class="modal fade" id="modalRqstInvoiceModifyer" role="dialog" aria-labelledby="invoiceModifyer" data-backdrop="static" data-keyboard: false>
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">  
           <div class="modal-header">
             <h5>修改《申请发票》信息,申请ID:{{infoInRequestInvoice.id}}</h5>  
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">×</span>  
+              <button class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>  
               </button>  
           </div>
           <div class="modal-body">  
@@ -43,19 +43,19 @@
               <div class="row">
               	<div class="col-lg  form-inline">
                   <label for="slctProject">项目</label>
-                  <select id="slctProject" type="text" class="form-control" name="project" v-model="infoInRequestInvoice.project" title="所属项目" placeholder="所属项目">
+                  <select id="slctProject" type="text" class="form-control" v-model="infoInRequestInvoice.project" title="所属项目" placeholder="所属项目">
                     <option v-for="proj in listOfProject">{{proj}}</option>
                   </select>
                 </div>                
                 <div class="col-lg  form-inline">
                   <label for="slctInvoiceType">类型</label>
-                  <select id="slctInvoiceType" type="text" class="form-control" name="typeOfInvoice" v-model="infoInRequestInvoice.type" placeholder="需要的发票类型" title="发票类型">
+                  <select id="slctInvoiceType" type="text" class="form-control" v-model="infoInRequestInvoice.type" placeholder="需要的发票类型" title="发票类型">
                     <option v-for="item in listOfInvoiceType">{{item.name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctCstmrOgnztnName">抬头</label>
-                  <select id="slctCstmrOgnztnName" type="text" class="form-control" name="cstmrOgnztnName" v-model="infoInRequestInvoice.cstmrOgnztnName" placeholder="发票中的单位名称" title="单位名称抬头">
+                  <select id="slctCstmrOgnztnName" type="text" class="form-control" v-model="infoInRequestInvoice.cstmrOgnztnName" placeholder="发票中的单位名称" title="单位名称抬头">
                     <option v-for="item in listOfCustomerOgnztn">{{item.name}}</option>
                   </select>
                 </div>
@@ -63,15 +63,15 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputInvoicePrjct">商品</label>
-                  <input id="inputInvoicePrjct" type="text" class="form-control" name="nameOfGoods" v-model="infoInRequestInvoice.nameOfGoods" title="商品或服务名称,不超过16个字" placeholder="发票中的商品或服务名称,不超过16个字">
+                  <input id="inputInvoicePrjct" type="text" class="form-control" v-model="infoInRequestInvoice.nameOfGoods" title="商品或服务名称,不超过16个字" placeholder="发票中的商品或服务名称,不超过16个字">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputInvoiceAmount">金额</label>
-                  <input id="inputInvoiceAmount" type="number" class="form-control" name="amount" v-model="infoInRequestInvoice.amount" title="开票金额" placeholder="开票金额">
+                  <input id="inputInvoiceAmount" type="number" class="form-control" v-model="infoInRequestInvoice.amount" title="开票金额" placeholder="开票金额">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctOurCmpnyName">出票</label>
-                  <select id="slctOurCmpnyName" type="text" name="nameOfOurCmpny" class="form-control" placeholder="出票公司名称" v-model="infoInRequestInvoice.nameOfOurCmpny" title="出具发票的公司名称">
+                  <select id="slctOurCmpnyName" type="text" class="form-control" placeholder="出票公司名称" v-model="infoInRequestInvoice.nameOfOurCmpny" title="出具发票的公司名称">
                     <option v-for="item in listOfOurCompanys">{{item.name}}</option>
                   </select>
                 </div>
@@ -79,28 +79,28 @@
               <div class="row">
               	<div class="col-lg  form-inline">
                   <label for="inputBooker">订车</label>
-                  <input id="inputBooker" type="text" class="form-control" name="booker" v-model="infoInRequestInvoice.booker" title="订车人" placeholder="订车人" readonly>
+                  <input id="inputBooker" type="text" class="form-control" v-model="infoInRequestInvoice.booker" title="订车人" placeholder="订车人" readonly>
                 </div>                
               	<div class="col-lg  form-inline">
                   <label for="inputApplyer">申请</label>
-                  <input id="inputApplyer" type="text" class="form-control" name="applyer" v-model="infoInRequestInvoice.applyer" title="申请人" placeholder="请选择申请人" readonly>
+                  <input id="inputApplyer" type="text" class="form-control" v-model="infoInRequestInvoice.applyer" title="申请人" placeholder="请选择申请人" readonly>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputMem">备注</label>
-                  <input id="inputMem" type="text" class="form-control" name="memInRqst" v-model="infoInRequestInvoice.memInRqst" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
+                  <input id="inputMem" type="text" class="form-control" v-model="infoInRequestInvoice.memInRqst" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
                 </div>
               </div>
             </div>
             </div>  
             <div class="modal-footer">  
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>  
-              <button type="button" id="btnSaveFilledData" @click="saveModifyedInfo" class="btn btn-primary">保存数据</button>
+              <button class="btn btn-secondary" data-dismiss="modal">取消</button>  
+              <button id="btnSaveFilledData" @click="saveModifyedInfo" class="btn btn-primary">保存数据</button>
             </div>  
         </div>  
       </div>  
     </div>
     <div class="modal fade" id="confirmDeleteARowInSubTable" role="dialog" aria-labelledby="deleteARowInSubTable" data-backdrop="static" data-keyboard: false>
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">  
           <div class="modal-header">
           	<h5>在发票申请单中删除订单</h5>
@@ -109,14 +109,14 @@
           	<h5>订单(ID:{{tmpBSTable.row.ID}})将从发票申请单中删除,您确定吗?</h5>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>  
-            <button type="button" id="btnDeleteARowInSubTable" @click="deleteARowInSubTable" class="btn btn-primary">确定</button>            
+            <button class="btn btn-secondary" data-dismiss="modal">取消</button>  
+            <button id="btnDeleteARowInSubTable" @click="deleteARowInSubTable" class="btn btn-primary">确定</button>            
           </div>
         </div>
       </div>
     </div>
     <div class="modal fade" id="confirmDeleteARowInMainTable" role="dialog" aria-labelledby="deleteARowInMainTable" data-backdrop="static" data-keyboard: false>
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">  
           <div class="modal-header">
           	<h5>删除发票申请单</h5>
@@ -125,18 +125,18 @@
           	<h5>发票申请单(ID:{{tmpBSTable.row.ID}})<br/>将在系统中被删除,您确定吗?</h5>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>  
-            <button type="button" id="btnDeleteARowInMainTable" @click="deleteARowInMainTable" class="btn btn-primary">确定</button>            
+            <button class="btn btn-secondary" data-dismiss="modal">取消</button>  
+            <button id="btnDeleteARowInMainTable" @click="deleteARowInMainTable" class="btn btn-primary">确定</button>            
           </div>
         </div>
       </div>
     </div>
     <div class="modal fade" id="invoiceFiller" role="dialog" aria-labelledby="invoiceFiller" data-backdrop="static" data-keyboard: false>
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">  
           <div class="modal-header">
             <span class="form-inline"><h5>发票填开</h5>-----已选中记录的合计金额：￥{{amountOfSelectedRcdrs}}</span>  
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">×</span>  
               </button>  
           </div>
@@ -158,51 +158,51 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputOurCmpnyName">出票</label>
-                  <input id="inputOurCmpnyName" type="text" name="nameOfOurCmpny" class="form-control" placeholder="出票公司名称" v-model="detailsOfFilling.nameOfOurCmpny" title="出具发票的公司名称" readonly>
+                  <input id="inputOurCmpnyName" type="text" class="form-control" placeholder="出票公司名称" v-model="detailsOfFilling.nameOfOurCmpny" title="出具发票的公司名称" readonly>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputInvoiceType">类型</label>
-                  <input id="inputInvoiceType" type="text" class="form-control" name="typeOfInvoice" v-model="detailsOfFilling.type" placeholder="需要的发票类型" title="发票类型" readonly>
+                  <input id="inputInvoiceType" type="text" class="form-control" v-model="detailsOfFilling.type" placeholder="需要的发票类型" title="发票类型" readonly>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputCstmrOgnztnName">抬头</label>
-                  <input id="inputCstmrOgnztnName" type="text" class="form-control" name="cstmrOgnztnName" v-model="detailsOfFilling.cstmrOgnztnName" placeholder="发票中的单位名称" title="单位名称抬头" readonly>
+                  <input id="inputCstmrOgnztnName" type="text" class="form-control" v-model="detailsOfFilling.cstmrOgnztnName" placeholder="发票中的单位名称" title="单位名称抬头" readonly>
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputInvoicePrjct">商品</label>
-                  <input id="inputInvoicePrjct" type="text" class="form-control" name="nameOfGoods" v-model="detailsOfFilling.nameOfGoods" title="商品或服务名称,不超过16个字" placeholder="发票中的商品或服务名称,不超过16个字" readonly>
+                  <input id="inputInvoicePrjct" type="text" class="form-control" v-model="detailsOfFilling.nameOfGoods" title="商品或服务名称,不超过16个字" placeholder="发票中的商品或服务名称,不超过16个字" readonly>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputInvoiceAmount">金额</label>
-                  <input id="inputInvoiceAmount" type="number" class="form-control" name="amount" v-model="detailsOfFilling.amount" title="开票金额" placeholder="开票金额" readonly>
+                  <input id="inputInvoiceAmount" type="number" class="form-control" v-model="detailsOfFilling.amount" title="开票金额" placeholder="开票金额" readonly>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputMem">备注</label>
-                  <input id="inputMem" type="text" class="form-control" name="memInRqst" v-model="detailsOfFilling.memInRqst" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字" readonly>
+                  <input id="inputMem" type="text" class="form-control" v-model="detailsOfFilling.memInRqst" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字" readonly>
                 </div>
               </div>
               <hr class="hr">
               <div class="row">
               	<div class="col-lg  form-inline">
                   <label for="inputNumberOfInvoice">号码</label>
-                  <input id="inputNumberOfInvoice" type="text" class="form-control" name="numberOfInvoice" v-model="detailsOfFilling.numberOfInvoice" title="发票号码,不少于8且不超过128个字" placeholder="发票号码,不少于8且不超过128个字">
+                  <input id="inputNumberOfInvoice" type="text" class="form-control" v-model="detailsOfFilling.numberOfInvoice" title="发票号码,不少于8且不超过128个字" placeholder="发票号码,不少于8且不超过128个字">
                 </div>
               	<div class="col-lg  form-inline">
                   <label for="inputImageOfInvoice">凭证</label>
-                  <input id="inputImageOfInvoice" type="text" class="form-control" name="imageOfInvoice" v-model="detailsOfFilling.imageOfInvoice" title="凭证图片,2M" placeholder="凭证图片,2M">
+                  <input id="inputImageOfInvoice" type="text" class="form-control" v-model="detailsOfFilling.imageOfInvoice" title="凭证图片,2M" placeholder="凭证图片,2M">
                 </div>                
               	<div class="col-lg  form-inline">
                   <label for="inputMemForFilling">备注</label>
-                  <input id="inputMemForFilling" type="text" class="form-control" name="memForFilling" v-model="detailsOfFilling.memForFilling" title="开票备注,不超过64个字" placeholder="开票备注,不超过64个字">
+                  <input id="inputMemForFilling" type="text" class="form-control" v-model="detailsOfFilling.memForFilling" title="开票备注,不超过64个字" placeholder="开票备注,不超过64个字">
                 </div>                
               </div>
             </div>
             </div>  
             <div class="modal-footer">  
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>  
-              <button type="button" id="btnSaveFilledData" @click="saveFilledInvoiceData" class="btn btn-primary">保存数据</button>
+              <button class="btn btn-secondary" data-dismiss="modal">取消</button>  
+              <button id="btnSaveFilledData" @click="saveFilledInvoiceData" class="btn btn-primary">保存数据</button>
             </div>  
         </div>  
       </div>  
@@ -252,7 +252,7 @@ Date.prototype.format = function(fmt) {
           shortcuts:false,
           // rspData:[],
           headerOfList:[],
-          widthOfTH:['3%','6%','7%','9%','11%','8%','13%','7%','6%','6%','12%','8%','4'],
+          widthOfTH:['3%','6%','7%','9%','7%','8%','13%','7%','6%','6%','12%','8%','8%'],
           infoInRequestInvoice:{
           	id:'',
           	nameOfOurCmpny:'',
@@ -365,9 +365,11 @@ Date.prototype.format = function(fmt) {
 　　　　　      field:'opreation',
             aligin:'center',
             formatter:function(value,row,index,field){
-              return[ 
-                '<button id="btn_edit" class="btn btn-info"  title="修改"><i class="oi oi-pencil"></i></button>',
-                '<button id="btn_delete" class="btn btn-danger" title="删除"><i class="oi oi-trash"></i></button>'
+              return[
+              //  class="btn btn-info"  class="btn btn-danger<span id="btn_edit" title="修改"></span><i class="oi oi-pencil">"<i class="oi oi-pencil"><i class="oi oi-trash">
+                '<button id="btn_edit" title="修改" style="border:2px solid #007bff ;color:#FFF;width:25px;background-color:#007bff;margin-right:5px;border-radius:3px;">改</button><button id="btn_delete" title="删除" style="border:2px solid #dc3545 ;color:#FFF;width:25px;background-color:#dc3545;border-radius:3px;">删</button>'
+                // '<button id="btn_edit" class="btn btn-info"  title="修改"><i class="oi oi-pencil"></i></button>',
+                // '<button id="btn_delete" class="btn btn-danger" title="删除"><i class="oi oi-trash"></i></button>'
               ];
             },
             events:{
@@ -897,27 +899,22 @@ Date.prototype.format = function(fmt) {
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
 #modalRqstInvoiceModifyer input,#modalRqstInvoiceModifyer select {
   width: 85%;
 }	
-table {
-  overflow: auto;
+#mainTable {
+/*  overflow: auto;*/
   font-size: 14px;
 }
-.table table-hover {
+/*.table table-hover {
   font-size: 12px;
-}
+}*/
 td {
-  overflow:hidden; 
-  white-space:nowrap; 
-  text-overflow:ellipsis;
-  max-width: 50px;
+  overflow:auto; /*hidden scroll*/
+  white-space:nowrap; /*nowrap*/
+  text-overflow:clip;/*ellipsis*/
+  max-width: 60px;
+  font-size: 12px;
 }
 .datepicker {
   margin-left: 10px;
@@ -939,7 +936,7 @@ td {
   color:blue;
 }
 #btn_edit,#btn_delete {
-  font-size: 12px;
+  font-size: 6px;
 }
 .row {
   margin-top: 10px;

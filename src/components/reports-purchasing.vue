@@ -19,9 +19,9 @@
             <option value="0">所有采购人</option> 
             <option v-for="item in employees" :value="item.id">{{item.name}}</option>
           </select>
-          <select class="form-control" v-model="pcsQC.isFinished"  title="是否已完成">
-            <option value="0">未完成</option>
-            <option value="1">已完成</option>
+          <select class="form-control" v-model="pcsQC.isFinished"  title="是否已验收">
+            <option value="0">未验收</option>
+            <option value="1">已验收</option>
             <option value="2">所有状态</option>
           </select>
           <button id="btnSearch" class="btn btn-primary" type="button" @click="getPurchaseData">搜索数据</button>
@@ -36,14 +36,13 @@
         <jsonexcel class="btn btn-primary" :data="pcs_json_data" :fields="pcs_json_fields" :name="pcs_filename" worksheet="采购报表">存为Excel</jsonexcel>
         <button class="btn btn-secondary" type="button" @click="purchasingData=[]">清空</button>
     </div>
-    <div class="form pre-scrollable" v-if="purchasingData.length>0">
+    <div class="divfortable" v-if="purchasingData.length>0">
         <table class="table table-hover">
           <thead>
             <th v-for="(title,index) in pcsTitles" :width="pcsWidths[index]">{{title}}</th>
           </thead>
           <tbody>
             <tr v-for="row in purchasingData">
-              <td title='请购ID'>{{row.id}}</td>
               <td :title='row.id_applier'>{{row.id_applier}}</td>
               <td :title='row.name'>{{row.name}}</td>
               <td :title='row.brand'>{{row.brand}}</td>
@@ -55,7 +54,8 @@
               <td :title='row.e_seller'>{{row.e_seller}}</td>
               <td :title='row.e_amount'>{{row.e_amount}}</td>
               <td :title='row.e_id_enquiryer'>{{row.e_id_enquiryer}}</td>
-              <td :title='row.date_finished'>{{row.date_finished}}</td>
+              <td :title='row.id_pio'>{{row.id_pio}}</td>
+              <td :title='row.p_nums_invoice'>{{row.p_nums_invoice}}</td>
             </tr>
           </tbody>
         </table>
@@ -103,8 +103,8 @@ export default {
         isFinished:2,
       },
       purchasingData:[],
-      pcsTitles:['请购ID','请购人','物品名称','品牌','型号','用途','请购时间','请购备注','所属项目','供应商','金额','采购人','完成日期'],
-      pcsWidths:['6%','6%','8%','8%','8%','8%','8%','8%','8%','8%','8%','8%','8%'],
+      pcsTitles:['请购人','物品名称','品牌','型号','用途','请购时间','请购备注','所属项目','供应商','金额','采购人','验收ID','发票号'],
+      pcsWidths:['6%','8%','8%','8%','8%','8%','8%','8%','8%','6%','8%','8%','8%'],
       pcsTotalAmount:0,
       pcs_json_fields:{},
       pcs_json_data:[],
@@ -117,12 +117,42 @@ export default {
         '用途':'detail',
         '请购时间':'date_applied',
         '请购人':'id_applier',
+        '请购备注':'remark',
         '金额':'e_amount',
         '采购人':'e_id_enquiryer',
         '供应商':'e_seller',
-        '完成日期':'date_finished',
-        '请购备注':'remark',
+        '已付金额':'total_amount_paid',
+        '已请未付额':'arbnp',
+        '验收ID':'id_pio',
+        '发票号':'p_nums_invoice',
       },
+/*
+arbnp: null
+brand: (...)
+date_applied: (...)
+date_approved: (...)
+date_needed: (...)
+detail: (...)
+e_amount: (...)
+e_id_enquiryer: (...)
+e_seller: (...)
+id: (...)
+id_applier: (...)
+id_approver: (...)
+id_pio: (...)
+id_project: (...)
+is_finished: (...)
+model: (...)
+name: (...)
+p_nums_invoice: (...)
+quantity: (...)
+r_id_rstr: (...)
+remark: (...)
+result_approved: (...)
+total_amount_paid: (...)
+unit: (...)
+why_disagree: (...)
+ */
     }
   },
   components: {
@@ -143,44 +173,48 @@ export default {
       var _this=this;
       this.pcsQC.conditions='ForReport';
       this.$axios({
-            method: 'post',
-            url: 'getPurchasings.php',
-            data: qs.stringify(_this.pcsQC)
-        }).then(function (response) {
-          if(response.data.length<1) {
-            _this.$toast({
-              text: '没有符合条件的记录',
-              type: 'info',
-              duration: 2000
-            });
-            return;
-          }
-          _this.purchasingData=response.data;
-          _this.purchasingData.forEach(function(item,index,array){
-            var ar=_this.projects.find((ele) => ele['id'] == item.id_project);
-            item.id_project=typeof(ar)=='undefined'?'未知项目':ar['name'];
-            var ar=_this.employees.find((ele) => ele['id'] == item.id_applier);
-            item.id_applier=typeof(ar)=='undefined'?'未知请购人':ar['name'];
-            var ar=_this.employees.find((ele) => ele['id'] == item.e_id_enquiryer);
-            item.e_id_enquiryer=typeof(ar)=='undefined'?'未知采购人':ar['name'];
-            _this.pcsTotalAmount+= Number(item['e_amount']);
-
-          });
-          _this.pcs_json_data=[];
-          _this.pcs_json_fields={};
-          _this.pcs_json_data=_this.purchasingData;
-          _this.pcs_filename='采购报表';
-          for(var prop in _this.pcs_volName) {
-            _this.pcs_json_fields[prop]=_this.pcs_volName[prop];
-          }
-          _this.pcs_filename+=((new Date()).format("yyyyMMddhhmmss")).toString();
-        }).catch(function (error) {
+        method: 'post',
+        url: 'getPurchasings.php',
+        data: qs.stringify(_this.pcsQC)
+      }).then(function (response) {
+        console.log(response.data);
+        if(response.data.length<1) {
           _this.$toast({
-             text: '异步通信错误!'+error,
-             type: 'danger',
-              duration: 4000
+            text: '没有符合条件的记录',
+            type: 'info',
+            duration: 2000
           });
-        }); 
+          return;
+        }
+        _this.purchasingData=response.data;
+        _this.purchasingData.forEach(function(item,index,array){
+          var ar=_this.projects.find((ele) => ele["id"] == item.id_project);
+          item.id_project=typeof(ar)=="undefined"?"":ar["name"];
+          var ar=_this.employees.find((ele) => ele["id"] == item.id_applier);
+          item.id_applier=typeof(ar)=="undefined"?"":ar["name"];
+          var ar=_this.employees.find((ele) => ele["id"] == item.e_id_enquiryer);
+          item.e_id_enquiryer=typeof(ar)=="undefined"?"":ar["name"];
+          item.id_pio=item.id_pio?item.id_pio:"";
+          item.total_amount_paid=item.total_amount_paid?item.total_amount_paid:0;
+          item.arbnp=item.arbnp?item.arbnp:0;
+          item.p_nums_invoice=item.p_nums_invoice?"'"+item.p_nums_invoice:"";
+          _this.pcsTotalAmount+= Number(item["e_amount"]);
+        });
+        _this.pcs_json_data=[];
+        _this.pcs_json_fields={};
+        _this.pcs_json_data=_this.purchasingData;
+        _this.pcs_filename='采购报表';
+        for(var prop in _this.pcs_volName) {
+          _this.pcs_json_fields[prop]=_this.pcs_volName[prop];
+        }
+        _this.pcs_filename+=((new Date()).format("yyyyMMddhhmmss")).toString();
+      }).catch(function (error) {
+        _this.$toast({
+           text: '异步通信错误!'+error,
+           type: 'danger',
+            duration: 4000
+        });
+      }); 
     },
     getPreMonth() {
       var n = new Date();
@@ -201,11 +235,11 @@ export default {
     },
   },
   computed: {
-    getReviewText() {
-      return function (row) {
-        return row.time_confirm?row.time_confirm:'未复核';
-      }
-    }
+    // getReviewText() {
+    //   return function (row) {
+    //     return row.time_confirm?row.time_confirm:'未复核';
+    //   }
+    // }
   },  
   beforeCreate () {
   }   
@@ -213,12 +247,6 @@ export default {
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
 .tab-content {
   margin: 5px auto;
 }
@@ -227,16 +255,6 @@ h5 {
 }
 .row {
   margin-bottom: 2px;
-}
-table {
-  overflow: auto;
-  font-size: 12px;
-}
-td {
-  overflow:hidden; 
-  white-space:nowrap; 
-  text-overflow:ellipsis;
-  max-width: 50px;
 }
 .tip {
   font-size: 18px;

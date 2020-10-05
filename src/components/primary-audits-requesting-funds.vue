@@ -2,16 +2,12 @@
   <div class="father">
     <h5>当前位置:请款报销/请款初审</h5>
     <div id="queryOfCashier" class="container-fluid">
-      <div class="row">
-        <div class="col-lg form-inline searchcontent">
-          <label for="queryConditions">关键词:</label> 
-          <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="请款人,用途,采购物品等搜索关键词">
-          <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请款的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="请款的时间范围"></datepicker> 
-          <button class="btn btn-primary" @click="getListOfRequestFunds">🔍获取数据</button>
-          <button class="btn btn-secondary" @click="clearList" v-if="listOfRequestFunds.length>0">清除</button>            
-        </div>          
+      <div class="row form-inline searchcontent">
+        <input id="queryConditions" type="text" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="请款人,用途,采购物品等搜索关键词">
+        <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请款的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="请款的时间范围"></datepicker>
+        <button class="btn btn-primary" @click="getListOfRequestFunds">🔍获取数据</button>
+        <button class="btn btn-secondary" @click="clearList" v-if="listOfRequestFunds.length>0">清除</button>            
       </div>
-
     </div>
     <div class="" v-if="listOfRequestFunds.length>0">
       <table class="table table-hover">
@@ -38,14 +34,14 @@
       </table>
     </div>
     <div class="modal fade" id="mdlPrmryAuditRqstingFunds" role="dialog" aria-labelledby="mdlPrmryAuditRqstingFunds" data-backdrop="static" data-keyboard: false>
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">  
           <div class="modal-header">
             <span>
               <h5>请款初审---请款人:{{requestFunds.name_applyer}}
               </h5>
             </span>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>  
               </button>  
           </div>
@@ -54,8 +50,8 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctProject">项目</label>
-                  <select id="slctProject" type="text" name="Project" class="form-control" placeholder="所属项目" v-model="requestFunds.project" :title="requestFunds.project" disabled>
-                    <option v-for="item in projects">{{item.name}}</option>}
+                  <select id="slctProject" type="text" class="form-control" placeholder="所属项目" v-model="requestFunds.project" :title="requestFunds.project" disabled>
+                    <option v-for="item in projects">{{item.name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
@@ -66,23 +62,23 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputCashiedAmount">金额</label>
-                  <input id="inputCashiedAmount" type="number" class="form-control" name="cashiedAmount" v-model="requestFunds.amount" title="请款金额" readonly>
+                  <input id="inputCashiedAmount" type="number" class="form-control" v-model="requestFunds.amount" title="请款金额" readonly>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="requestFunds.way_pay" title="收款方式" disabled>
-                    <option v-for="item in wayOfPayment">{{item.name}}</option>}
+                  <select id="slctWayOfCashier" type="text" class="form-control" v-model="requestFunds.way_pay" title="收款方式" disabled>
+                    <option v-for="item in wayOfPayment">{{item.name}}</option>
                   </select>
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputAccount">账号</label>
-                  <input id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" v-model="requestFunds.account" :title="requestFunds.account" readonly>
+                  <input id="slctCashierAccount" type="text" class="form-control" v-model="requestFunds.account" :title="requestFunds.account" readonly>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputRemark">备注</label>
-                  <input id="inputRemark" type="text" class="form-control" name="otherInCashier" v-model="requestFunds.remark" :title="requestFunds.remark" readonly>
+                  <input id="inputRemark" type="text" class="form-control" v-model="requestFunds.remark" :title="requestFunds.remark" readonly>
                 </div>
               </div>
               <br>
@@ -100,8 +96,8 @@
             </div>
           </div>
           <div class="modal-footer">  
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-            <button type="button" @click="saveAuditedData" class="btn btn-primary">确认审核</button>
+            <button class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button @click="saveAuditedData" class="btn btn-primary">确认审核</button>
           </div>           
         </div>
       </div>

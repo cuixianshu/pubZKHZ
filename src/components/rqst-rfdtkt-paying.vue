@@ -2,16 +2,12 @@
   <div class="father">
     <h5>当前位置:请款报销/机票退款</h5>
     <div id="queryOfCashier" class="container-fluid">
-      <div class="row">
-        <div class="col-lg-8 form-inline searchcontent">
-          <label for="queryConditions">关键词:</label> 
-          <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="乘机人,客户单位,票号,项目,等搜索关键词">
-          <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="出票的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="出票的时间范围"></datepicker> 
-          <button class="btn btn-primary" @click="getListOfRequestFunds">🔍获取数据</button>
-          <button class="btn btn-secondary" @click="clearList" v-if="listOfRequestFunds.length>0">清除</button> 
-        </div>
+      <div class="row form-inline query">
+        <input id="queryConditions" type="text" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="乘机人,客户单位,票号,项目,等搜索关键词">
+        <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="出票的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="出票的时间范围"></datepicker>
+        <button class="btn btn-primary" @click="getListOfRequestFunds">🔍获取数据</button>
+        <button class="btn btn-secondary" @click="clearList" v-if="listOfRequestFunds.length>0">清除</button> 
       </div>
-
     </div>
     <div class="showerOfRequestFunds" v-if="listOfRequestFunds.length>0">
       <table class="table table-hover">
@@ -42,14 +38,14 @@
       </table>
     </div>
     <div class="modal fade" id="mdlRequestFunds" role="dialog" aria-labelledby="mdlRequestFunds" data-backdrop="static" data-keyboard: false>
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">  
           <div class="modal-header">
             <span>
               <h5>退票请款单---票号:{{requestFunds.number_ticket}}
               </h5>
             </span>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>  
             </button>  
           </div>
@@ -58,7 +54,7 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctProject">项目</label>
-                  <select id="slctProject" type="text" name="Project" class="form-control" placeholder="所属项目" v-model="requestFunds.id_project" title="所属项目" :disabled="requestFunds.result_approved==1">
+                  <select id="slctProject" type="text" class="form-control" placeholder="所属项目" v-model="requestFunds.id_project" title="所属项目" :disabled="requestFunds.result_approved==1">
                     <option v-for="item in projects" :value="item.id">{{item.prjct}}</option>}
                   </select>
                 </div>
@@ -70,11 +66,11 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputCashiedAmount">金额</label>
-                  <input id="inputCashiedAmount" type="number" class="form-control" name="cashiedAmount" v-model="requestFunds.amount" placeholder="请款金额" title="请款金额" :disabled="requestFunds.result_approved==1">
+                  <input id="inputCashiedAmount" type="number" class="form-control" v-model="requestFunds.amount" placeholder="请款金额" title="请款金额" :disabled="requestFunds.result_approved==1">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="requestFunds.id_way_pay" placeholder="收款方式" title="收款方式" :disabled="requestFunds.result_approved==1">
+                  <select id="slctWayOfCashier" type="text" class="form-control" v-model="requestFunds.id_way_pay" placeholder="收款方式" title="收款方式" :disabled="requestFunds.result_approved==1">
                     <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>}
                   </select>
                 </div>
@@ -82,11 +78,11 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputAccount">账号</label>
-                  <input id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" placeholder="接收款项的账号" v-model="requestFunds.account" title="账号名和账号" :disabled="requestFunds.result_approved==1">
+                  <input id="slctCashierAccount" type="text" class="form-control" placeholder="接收款项的账号" v-model="requestFunds.account" title="账号名和账号" :disabled="requestFunds.result_approved==1">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputRemark">备注</label>
-                  <input id="inputRemark" type="text" class="form-control" name="otherInCashier" v-model="requestFunds.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字" :disabled="requestFunds.result_approved==1">
+                  <input id="inputRemark" type="text" class="form-control" v-model="requestFunds.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字" :disabled="requestFunds.result_approved==1">
                 </div>
               </div>
               <div class="row" v-if="requestFunds.result_approved==0 || requestFunds.result_approved2==0">
@@ -102,8 +98,8 @@
             </div>
           </div>
           <div class="modal-footer">  
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-            <button type="button" id="btnSaveTheRequestedData" @click="saveTheRequestedData" class="btn btn-primary" v-if="requestFunds.result_approved!==1 || requestFunds.result_approved2!==1">提交</button>
+            <button class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button id="btnSaveTheRequestedData" @click="saveTheRequestedData" class="btn btn-primary" v-if="requestFunds.result_approved!==1 || requestFunds.result_approved2!==1">提交</button>
           </div>           
         </div>
       </div>
@@ -310,47 +306,15 @@ Date.prototype.format = function(fmt) {
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-#searchConditions >*{
-  margin:5px;
-}   
-h5 {
-  color: #007bff;
-}
-datepicker {
-  margin-left: 10px;  
-}
-td {
-    overflow:hidden; 
-    white-space:nowrap; 
-    text-overflow:ellipsis;
-    max-width: 50px;
-}
-table {
-  overflow: auto;
-  font-size: 14px;
-}
-.modal-body input,.modal-body select {
-  width: 80%;
-}
 .row {
   margin-top: 10px;
 }
-.searchcontent input {
+.query input,.query button {
   margin-right: 5px;
-}
-.searchcontent button {
   margin-left: 5px;
 }
-#byhand-borrow {
-  position: absolute;
-  right: 0;
-}
-#byhand-fee {
-  position: absolute;
-  right: 100px;  
+.modal-body input,.modal-body select {
+  width: 80%;
 }
 .reason-reject {
   color: red;

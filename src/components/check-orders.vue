@@ -1,31 +1,29 @@
 <template>
   <div class="father">
-    <ul class="nav nav-pills" role="tablist">
+    <ul class="nav nav-tabs" role="tablist">
       <li class="nav-item">
-        <a class="nav-link active" data-toggle="pill" href="#co">订单核验</a>
+        <a class="nav-link active" data-toggle="tab" href="#co">订单核验</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" data-toggle="pill" href="#co-history">核单报表</a>
+        <a class="nav-link" data-toggle="tab" href="#co-history">核单报表</a>
       </li>
     </ul>
     <div class="tab-content">
       <div id="co" class="container-fluid tab-pane active query-body">
-        <div class="row">
-          <div class="form-inline">
-            <label for="schKeyWds">关键词:</label>
-            <input id="schKeyWds" type="text" class="form-control" v-model="coQC.keyWord"  placeholder="请输入要搜索的内容" title="订车人乘车人用车单位项目附加信息等">
-             <datepicker class="datepicker"id="dateRange" v-model="coQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="时间区间,默认最近7天" :shortcuts="shortcuts" placeholder="发生业务的时间范围"></datepicker> 
-            <button @click="getRcdrsForModifying"class="btn btn-primary" type="button">搜索数据</button>
-            <button @click="clearRcdrsInModifyer"class="btn btn-secondary" type="button" v-if="rcdrSetFromDBSForModifying.length>0">清空</button>
-          </div>      
+        <div class="row form-inline">
+          <label for="schKeyWds">关键词:</label>
+          <input id="schKeyWds" type="text" class="form-control" v-model="coQC.keyWord"  placeholder="请输入要搜索的内容" title="订车人乘车人用车单位项目附加信息等">
+          <datepicker class="datepicker"id="dateRange" v-model="coQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="时间区间,默认最近7天" :shortcuts="shortcuts" placeholder="发生业务的时间范围"></datepicker> 
+          <button @click="getRcdrsForModifying" class="btn btn-primary">搜索数据</button>
+          <button @click="clearRcdrsInModifyer" class="btn btn-secondary" v-if="rcdrSetForChecking.length>0">清空</button>
         </div>
-        <div class="divfortable" v-if="rcdrSetFromDBSForModifying.length>0"><!-- form --> 
+        <div class="divfortable" v-if="rcdrSetForChecking.length>0"><!-- form --> 
           <table class="table table-hover">
             <thead>
               <th v-for="(title,index) in titleOfTable" :width="widthOfTH[index]">{{title}}</th>
             </thead>
             <tbody>
-              <tr v-for="row in rcdrSetFromDBSForModifying" @click="clickedARow(row)">
+              <tr v-for="row in rcdrSetForChecking" @click="clickedARow(row)">
                 <td :title='row.id'>{{row.id}}</td>
                 <td :title='row.cstmr_ognz'>{{row.cstmr_ognz}}</td>
                 <td :title='row.id_contacter'>{{row.id_contacter}}</td>
@@ -47,16 +45,11 @@
         </div>        
       </div>
       <div id="co-history" class="container-fluid tab-pane">
-        <div class="row">
-          <div class="form-inline">
-             <datepicker class="datepicker"id="dateRange" v-model="COHQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="时间区间,默认今天" :shortcuts="shortcuts" placeholder="订单核验的时间范围"></datepicker> 
-            <button @click="getCOHistoryData" class="btn btn-primary" type="button">搜索数据</button>
-          </div>      
+        <div class="row form-inline">
+          <datepicker class="datepicker"id="dateRange" v-model="COHQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="时间区间,默认今天" :shortcuts="shortcuts" placeholder="订单核验的时间范围"></datepicker> 
+          <button @click="getCOHistoryData" class="btn btn-primary">搜索数据</button>
         </div>
-        <div class="pre-scrollable" v-if="coHstrData.length>0">
-          <span>共核单:{{coHstrData.length}}条.</span>
-          <jsonexcel class="btn btn-primary" :data="COH_json_data" :fields="COH_json_fields" :name="COH_filename" worksheet="核单报表">存为Excel</jsonexcel>
-          <button @click="coHstrData=[];"class="btn btn-secondary" type="button">清空</button>
+        <div class="divfortable" v-if="coHstrData.length>0">
           <table class="table table-hover">
             <thead>
               <th v-for="(title,index) in titleOfCOHTable" :width="widthOfTH[index]">{{title}}</th>
@@ -81,11 +74,17 @@
               </tr>
             </tbody>
           </table>
-        </div>   
+        </div>
+        <div  v-if="coHstrData.length>0">
+          <span>共核单:{{coHstrData.length}}条.</span>
+          <jsonexcel class="btn btn-primary" :data="COH_json_data" :fields="COH_json_fields" :name="COH_filename" worksheet="核单报表">存为Excel</jsonexcel>
+          <button @click="coHstrData=[];"class="btn btn-secondary">清空</button>
+          
+        </div>
       </div>
     </div>
     <div class="modal fade" id="mdfRecorder" role="dialog" aria-labelledby="selectUseageLabel" data-backdrop="static" data-keyboard: false ref="mdfRecorder">
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="tipFormdfRecorder">订单号:{{slctdOrderForChecking.id}}</h5>
@@ -94,106 +93,106 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col-lg form-inline">
-                  <label for="slctMdfProject">项目:</label>
-                  <select id="slctMdfProject" type="text" name="prjct" class="form-control" placeholder="所属项目" v-model="slctdOrderForChecking.id_prjct_belongto" title="项目名称" >
-                    <option v-for="proj in projects" :value="proj.id">{{proj.prjct}}</option>}
+                  <label for="slctPrjct">项目:</label>
+                  <select id="slctPrjct" type="text" class="form-control" placeholder="所属项目" v-model="slctdOrderForChecking.id_prjct_belongto" title="项目名称" >
+                    <option v-for="proj in projects" :value="proj.id">{{proj.prjct}}</option>
                   </select>
                 </div>
                 <div class="col-lg form-inline">
                   <label for="slctMdfBooker">用户:</label>
-                  <select id="slctMdfBooker" type="text" name="booker" class="form-control" placeholder="用户名称" v-model="slctdOrderForChecking.id_contacter" title="用户名称" disabled>
-                    <option v-for="bkr in customers" :value="bkr.id">{{bkr.mix_name}}</option>}
+                  <select id="slctMdfBooker" type="text" class="form-control" placeholder="用户名称" v-model="slctdOrderForChecking.id_contacter" title="用户名称" disabled>
+                    <option v-for="bkr in customers" :value="bkr.id">{{bkr.mix_name}}</option>
                   </select>
                 </div>
                 <div class="col-lg form-inline">
-                  <label for="slctMdfNameOfPrdct">产品:</label>
-                    <select id="slctMdfNameOfPrdct" type="text" name="product" class="form-control" placeholder="产品名称" v-model="slctdOrderForChecking.id_product" title="产品名称">
+                  <label for="slctPrdct">产品:</label>
+                    <select id="slctPrdct" type="text" class="form-control" placeholder="产品名称" v-model="slctdOrderForChecking.id_product" title="产品名称">
                       <option v-for="item in products" :value="item.id">{{item.name}}</option>
                     </select>            
                 </div>
               </div>
               <div class="row">                  
                 <div class="col-lg form-inline">
-                  <label for="dtpkrMdfstartTime">开始:</label>
-                  <input  class="form-control" id="dtpkrMdfStartTime" v-model="slctdOrderForChecking.start_time" type="datetime" title="开始时间" name="start_time" disabled>
+                  <label for="dtpkrstTm">开始:</label>
+                  <input  class="form-control" id="dtpkrStTm" v-model="slctdOrderForChecking.start_time" type="datetime" title="开始时间" disabled>
                 </div>
                 <div id="endTimeForMdf" class="col-lg form-inline">
                   <label for="dtpkrMdfendTime">结束:</label>
-                  <input  class="form-control" id="dtpkrMdfEndTime" v-model="slctdOrderForChecking.end_time" type="datetime" title="结束时间" name="endTime">
+                  <input  class="form-control" id="dtpkrMdfEndTime" v-model="slctdOrderForChecking.end_time" type="datetime" title="结束时间">
                 </div>
                 <div class="col-lg form-inline">
-                  <label for="inputMdfNumOfMileage">里程:</label>
-                  <input id="inputMdfNumOfMileage" type="number" name="mileage" class="form-control" placeholder="行驶里程" v-model="slctdOrderForChecking.mileage" title="实际行驶里程">
+                  <label for="iptMlg">里程:</label>
+                  <input id="iptMlg" type="number" class="form-control" placeholder="行驶里程" v-model="slctdOrderForChecking.mileage" title="实际行驶里程">
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg form-inline">
-                  <label for="inptMdfstartPoint">起点:</label>
-                  <input id="inptMdfstartPoint" type="text" name="startPoint" class="form-control" placeholder="出发地点" v-model="slctdOrderForChecking.start_point" title="预计出发地点">
+                  <label for="inptstPnt">起点:</label>
+                  <input id="inptstPnt" type="text" class="form-control" placeholder="出发地点" v-model="slctdOrderForChecking.start_point" title="预计出发地点">
                 </div>
                 <div class="col-lg form-inline">
-                  <label for="inptMdfendPoint">终点:</label>
-                  <input id="inptMdfendPoint" type="text" name="endPoint" class="form-control" placeholder="终到地点" v-model="slctdOrderForChecking.end_point" title="计划结束地点">
+                  <label for="inptEdPnt">终点:</label>
+                  <input id="inptEdPnt" type="text" class="form-control" placeholder="终到地点" v-model="slctdOrderForChecking.end_point" title="计划结束地点">
                 </div>
                 <div class="col-lg form-inline">
-                  <label for="inputMsgToDriver">发送:</label>
-                  <input id="inputMsgToDriver" type="text" name="msgForDriver" class="form-control" placeholder="通知信息" v-model="slctdOrderForChecking.msg_for_driver" title="发送给司机的信息">
+                  <label for="iptMsgToDrvr">发送:</label>
+                  <input id="iptMsgToDrvr" type="text" class="form-control" placeholder="通知信息" v-model="slctdOrderForChecking.msg_for_driver" title="发送给司机的信息">
                 </div>
               </div>
               <div class="row">                                                       
                 <div class="col-lg form-inline">
                   <label for="inputDriver">司机:</label>
-                  <select id="driver" type="text" name="driver" class="form-control" placeholder="选择司机" v-model="slctdOrderForChecking.id_operater" title="执行任务的司机" disabled>
-                    <option v-for="item in employees" :value="item.id">{{item.name}}</option>}
+                  <select id="inputDriver" type="text" class="form-control" placeholder="选择司机" v-model="slctdOrderForChecking.id_operater" title="执行任务的司机" disabled>
+                    <option v-for="item in employees" :value="item.id">{{item.name}}</option>
                   </select>                   
                 </div>                                                 
                 <div class="col-lg form-inline">
-                  <label for="inputEquipment">车辆:</label>
-                  <select id="slctPayerInMdf" type="text" name="equipment" class="form-control" placeholder="选择车辆" v-model="slctdOrderForChecking.id_equipment" title="执行任务的车辆" disabled>
-                    <option v-for="item in equipments" :value="item.id">{{item.alias}}</option>}
+                  <label for="iptEqpmt">车辆:</label>
+                  <select id="iptEqpmt" type="text" class="form-control" placeholder="选择车辆" v-model="slctdOrderForChecking.id_equipment" title="执行任务的车辆" disabled>
+                    <option v-for="item in equipments" :value="item.id">{{item.alias}}</option>
                   </select>                  
                 </div>
                 <div class="col-lg form-inline">
-                  <label for="slctPayerInMdf">结算:</label>
-                  <select id="slctPayerInMdf" type="text" name="payer" class="form-control" placeholder="结算人" v-model="slctdOrderForChecking.id_payer" title="实际结算人" >
-                    <option v-for="booker in customers" :value="booker.id">{{booker.mix_name}}</option>}
+                  <label for="slctPayer">结算:</label>
+                  <select id="slctPayer" type="text" class="form-control" placeholder="结算人" v-model="slctdOrderForChecking.id_payer" title="实际结算人" >
+                    <option v-for="booker in customers" :value="booker.id">{{booker.mix_name}}</option>
                   </select>
                 </div>
               </div>
               <div class="row">                                    
                 <div class="col-lg form-inline">
-                  <label for="inputMdfSalePrice">金额:</label>
-                  <input id="inputMdfSalePrice" type="number" name="SalePrice" class="form-control" placeholder="订单金额" v-model="slctdOrderForChecking.actual_price" title="订单金额">
+                  <label for="iptSlPrc">金额:</label>
+                  <input id="iptSlPrc" type="number" class="form-control" placeholder="订单金额" v-model="slctdOrderForChecking.actual_price" title="订单金额">
                 </div>
                 <div class="col-lg form-inline">
-                  <label for="inputMdfParkFee">停车:</label>
-                  <input id="inputMdfParkFee" type="number" name="parkFee" class="form-control" placeholder="停车费" v-model="slctdOrderForChecking.park_fee" title="停车费">
+                  <label for="iptPF">停车:</label>
+                  <input id="iptPF" type="number" class="form-control" placeholder="停车费" v-model="slctdOrderForChecking.park_fee" title="停车费">
                 </div>
                 <div class="col-lg form-inline">
-                  <label for="inputMdfSurcharge">垫付:</label>
-                  <input id="inputMdfSurcharge" type="number" name="surcharge" class="form-control" placeholder="垫付费用" v-model="slctdOrderForChecking.surcharge" title="代垫费用">
+                  <label for="iptScg">垫付:</label>
+                  <input id="iptScg" type="number" class="form-control" placeholder="垫付费用" v-model="slctdOrderForChecking.surcharge" title="代垫费用">
                 </div>
               </div>    
               <div class="row">                                    
                 <div class="col-lg form-inline">
-                  <label for="slctRulePriceInMdf">计价:</label>
-                  <select id="slctRulePriceInMdf" type="text" name="rulePrice" class="form-control" placeholder="计价器" v-model="slctdOrderForChecking.id_rule_price" title="选择此客户适用的计价器" >
-                    <option v-for="rule in rulesPriceForTheClient" :value="rule.id">{{rule.name}}</option>}
+                  <label for="slctRP">计价:</label>
+                  <select id="slctRP" type="text" class="form-control" placeholder="计价器" v-model="slctdOrderForChecking.id_rule_price" title="选择此客户适用的计价器" >
+                    <option v-for="rule in rulesPriceForTheClient" :value="rule.id">{{rule.name}}</option>
                   </select>
                 </div>                
                 <div class="col-lg form-inline">
-                  <label for="inputMdfMem">备注:</label>
-                  <input id="inputMdfMem" type="text" name="mem" class="form-control" placeholder="备注信息" v-model="slctdOrderForChecking.mem" title="备注信息">
+                  <label for="iptMem">备注:</label>
+                  <input id="iptMem" type="text" class="form-control" placeholder="备注信息" v-model="slctdOrderForChecking.mem" title="备注信息">
                 </div>
                 <div class="col-lg form-inline">
-                  <label for="inputMdfUseageOfSurcharge">说明:</label>
-                  <input id="inputMdfUseageOfSurcharge" type="text" name="useSurcharge" class="form-control" placeholder="垫付用途说明" v-model="slctdOrderForChecking.use_surcharge" title="垫付用途说明">
+                  <label for="iptUsgScg">说明:</label>
+                  <input id="iptUsgScg" type="text" class="form-control" placeholder="垫付用途说明" v-model="slctdOrderForChecking.use_surcharge" title="垫付用途说明">
                 </div>                                  
               </div>    
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button class="btn btn-secondary" data-dismiss="modal">取消</button>
             <button class="btn btn-primary saveBtn" @click="saveModifyedRcdr">保存</button>  
           </div>
         </div>
@@ -241,7 +240,7 @@ Date.prototype.format = function(fmt) {
         rulesPrices:[],
         rulesPriceForTheClient:[],
         shortcuts:false,
-        rcdrSetFromDBSForModifying:[],
+        rcdrSetForChecking:[],
         titleOfTable:['订单ID','单位','订车人','项目','产品','开始','结束','起点','终点','司机','车辆','里程','停车','垫付','垫付用途'],
         widthOfTH:['4','10','6','10','8','6','6','7','7','6','6','6','6','6','6'],
         equipments:this.$store.state.equipments,
@@ -285,8 +284,8 @@ Date.prototype.format = function(fmt) {
     },    
     methods: {
       getRcdrsForModifying() {
-        if(this.rcdrSetFromDBSForModifying.length>0) {
-          this.rcdrSetFromDBSForModifying=[];
+        if(this.rcdrSetForChecking.length>0) {
+          this.rcdrSetForChecking=[];
         }
         if(this.coQC.dateRange.length<2 || this.coQC.dateRange[0].length<10 || this.coQC.dateRange[1].length<10){//如果日期填写不全,默认是过去1周
           var day1=new Date();
@@ -303,6 +302,7 @@ Date.prototype.format = function(fmt) {
           url: 'getOrders.php',
           data: qs.stringify(_this.coQC)
         }).then(function (response) {
+          console.log(response.data);
           if(response.data.length<1) {
             _this.$toast({
               text: '没有符合条件的待核单记录',
@@ -311,7 +311,7 @@ Date.prototype.format = function(fmt) {
             });
             return;
           } 
-          _this.rcdrSetFromDBSForModifying = response.data;
+          _this.rcdrSetForChecking = response.data;
 
         }).catch(function (error) {
           _this.$toast({
@@ -322,7 +322,7 @@ Date.prototype.format = function(fmt) {
         });
       },
       clearRcdrsInModifyer() {
-        this.rcdrSetFromDBSForModifying=[];
+        this.rcdrSetForChecking=[];
       },
       clickedARow:function (dataRow) {
         this.slctdOrderForChecking=dataRow;
@@ -370,9 +370,12 @@ Date.prototype.format = function(fmt) {
         $('#mdfRecorder').modal('toggle');
       },      
       saveModifyedRcdr:function() {
+        console.log(this.slctdOrderForChecking);
+        // return;
         var allowSpaceProps=['msg_for_driver','park_fee','surcharge','use_surcharge','mem','cstmr_ognz','id_cashier','id_contract','id_creater','id_fill_invoice','id_request_invoice','id_verifyer','quantity','time_create','time_verify','id_rule_price','amount_received'];
         var en_zhTranslate={
-        actual_price:'售价',
+        actual_price:'金额',
+        amount_received:'已收金额',
         cstmr_ognz:'客户',
         end_point:'终点',
         end_time:'结束',
@@ -401,25 +404,30 @@ Date.prototype.format = function(fmt) {
         time_create:'创建时间',
         time_verify:'核单时间',
         use_surcharge:'说明',
-        amount_received:'已收金额',
 
         };
         for(var prop in this.slctdOrderForChecking){
-          if((this.slctdOrderForChecking[prop]=='' || this.slctdOrderForChecking[prop]==0) && !allowSpaceProps.includes(prop)){
-            console.log(prop);
+          if(!this.slctdOrderForChecking[prop] && !allowSpaceProps.includes(prop) && prop!='actual_price'){
             this.$toast({
               text: en_zhTranslate[prop]+' 是必填项,不允许为0或空格!',
               type: 'danger',
               duration: 2000
             });
           return;
-          } else if((this.slctdOrderForChecking.surcharge>0 && this.slctdOrderForChecking.use_surcharge.length<2) || (this.slctdOrderForChecking.surcharge<=0 && this.slctdOrderForChecking.use_surcharge.length>2)){
+          } else if((Number(this.slctdOrderForChecking.surcharge)>0 && (!this.slctdOrderForChecking.use_surcharge.length || this.slctdOrderForChecking.use_surcharge.length<2)) || (Number(this.slctdOrderForChecking.surcharge)<=0 && (this.slctdOrderForChecking.use_surcharge.length>2 || this.slctdOrderForChecking.use_surcharge.length))){
               this.$toast({
                 text: '垫付和说明不匹配!',
                 type: 'danger',
                 duration: 2000
               });
               return;
+          }
+          if(prop=='actual_price' && (this.slctdOrderForChecking[prop]<0 || !this.slctdOrderForChecking[prop])) {
+            this.$toast({
+              text: en_zhTranslate[prop]+' 不能为空格或小于0!',
+              type: 'danger',
+              duration: 2000
+            });
           }
         }
         this.slctdOrderForChecking.id_verifyer=this.$store.state.user.id_user;
@@ -440,7 +448,7 @@ Date.prototype.format = function(fmt) {
             });
             $('#mdfRecorder').modal('toggle');
             //从列表中移除
-            _this.rcdrSetFromDBSForModifying.forEach(function(item, index, arr) {
+            _this.rcdrSetForChecking.forEach(function(item, index, arr) {
               if(item.id == _this.slctdOrderForChecking.id) {
                 arr.splice(index, 1);
               }
@@ -463,7 +471,7 @@ Date.prototype.format = function(fmt) {
         });
       },
       deleteItem:function(e) {
-        this.rcdrSetFromDBSForModifying.forEach(function(item, index, arr) {
+        this.rcdrSetForChecking.forEach(function(item, index, arr) {
           if(item.ID === e.toElement.parentElement.parentElement.children[0].innerHTML) {
             arr.splice(index, 1);
           }
@@ -585,9 +593,12 @@ Date.prototype.format = function(fmt) {
         });
       });
       this.rulesPrices=[];
+      let queryContent={};
+      queryContent.keyWord="";
       this.$axios({
         method: 'post',
-        url: 'getRulesPrice.php'
+        url: 'getRulesPrice.php',
+        data:qs.stringify(queryContent)
       }).then(function (response) {
         _this.rulesPrices=response.data;
       }).catch(function (error) {
@@ -630,27 +641,12 @@ button {
   margin-left: 10px;
 }
 table {
-  overflow: auto;
-  font-size: 12px;
-}
-td {
-  overflow:hidden; 
-  white-space:nowrap; 
-  text-overflow:ellipsis;
-  max-width: 50px;
+  font-size: 14px;
 }
 .tipFormdfRecorder {
   color: red;
 }
-h5 {
-  color: #007bff;
-}
 .tab-content {
   margin-top: 5px;
-}
-.divfortable {
-  width: 100%;
-  overflow: scroll;
-  max-height: 620px;
 }
 </style>

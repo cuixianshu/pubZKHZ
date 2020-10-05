@@ -1,14 +1,14 @@
 <template>
-<div class="father">
-  <ul class="nav nav-pills" role="tablist">
+<div class="father"><!-- pills -->
+  <ul class="nav nav-tabs" role="tablist">
   	<li class="nav-item">
-  	  <a class="nav-link active" data-toggle="pill" href="#vecl">用车销售报表</a>
+  	  <a class="nav-link active" data-toggle="tab" role="tab" href="#vecl">用车销售报表</a>
   	</li>
   	<li class="nav-item">
-  	  <a class="nav-link" data-toggle="pill" href="#tkts">机票销售报表</a>
+  	  <a class="nav-link" data-toggle="tab" role="tab" href="#tkts">机票销售报表</a>
   	</li>
   	<li class="nav-item">
-  	  <a class="nav-link" data-toggle="pill" href="#othersale">其它销售报表</a>
+  	  <a class="nav-link" data-toggle="tab" role="tab" href="#othersale">其它销售报表</a>
   	</li>
   </ul>
   <div class="tab-content">
@@ -61,7 +61,7 @@
         <jsonexcel class="btn btn-primary" :data="vecl_json_data" :fields="vecl_json_fields" :name="vecl_filename" worksheet="用车报表">存为Excel</jsonexcel>
         <button class="btn btn-secondary" type="button" @click="fleetSaleData=[]">清空</button>
       </div>
-      <div class="form pre-scrollable" v-if="fleetSaleData.length>0">
+      <div class="divfortable" v-if="fleetSaleData.length>0">
         <table class="table table-hover">
           <thead>
             <th v-for="(title,index) in veclTitles" :width="veclWidths[index]">{{title}}</th>
@@ -124,14 +124,14 @@
       <div v-if="tktSaleData.length>0">
         <span class="tip">
           共{{tktSaleData.length}}次。
-          票价总额:{{totalTktPriceAmount}}元。
-          保险总额：{{totalTktInsurance}}元。
-          佣金总额：{{totalTktCommission}}元。
+          票价总额:{{totalTktPriceAmount.toFixed(2)}}元。
+          保险总额：{{totalTktInsurance.toFixed(2)}}元。
+          佣金总额：{{totalTktCommission.toFixed(2)}}元。
         </span>
         <jsonexcel class="btn btn-primary" :data="tkt_json_data" :fields="tkt_json_fields" :name="tkt_filename" worksheet="机票报表">存为Excel</jsonexcel>
         <button class="btn btn-secondary" type="button" @click="tktSaleData=[]">清空</button>
       </div>
-      <div class="form pre-scrollable" v-if="tktSaleData.length>0">
+      <div class="divfortable" v-if="tktSaleData.length>0">
         <table class="table table-hover">
           <thead>
             <th v-for="(title,index) in tktTitles" :width="tktWidths[index]">{{title}}</th>
@@ -166,10 +166,6 @@
             <option value="0">所有项目</option>
             <option v-for="item in projects" :value="item.id">{{item.name}}</option>
           </select>
-<!--           <select class="form-control" v-model="otherQC.id_car" title="选择所用车辆" :disabled="canSelectCar">
-            <option :value="0">所有车辆</option>
-            <option v-for="item in cars" :value="item.id">{{item.alias}}</option>
-          </select> -->
           <select class="form-control" v-model="otherQC.id_operater" title="选择执行人">
             <option value="0">所有员工</option>
             <option v-for="item in employees" :value="item.id">{{item.name}}</option>
@@ -199,19 +195,18 @@
       <div v-if="otherSaleData.length>0">
         <span class="tip">
           共{{otherSaleData.length}}次。
-          销售总额:{{totalOtherAmount}}元。
-          垫付总额：{{totalOtherSurcharge}}元。
+          销售总额:{{totalOtherAmount.toFixed(2)}}元。
+          垫付总额：{{totalOtherSurcharge.toFixed(2)}}元。
         </span>
         <jsonexcel class="btn btn-primary" :data="other_json_data" :fields="other_json_fields" :name="other_filename" worksheet="其它销售报表">存为Excel</jsonexcel>
         <button class="btn btn-secondary" type="button" @click="otherSaleData=[]">清空</button>
       </div>
-      <div class="form pre-scrollable" v-if="otherSaleData.length>0">
+      <div class="divfortable" v-if="otherSaleData.length>0">
         <table class="table table-hover">
           <thead>
             <th v-for="(title,index) in otherTitles" :width="otherWidths[index]">{{title}}</th>
           </thead>
           <tbody>
-            <!-- ['客户单位','客户','项目','产品','数量','售价','垫付','垫付用途','项目时间','项目地点','负责人','备注'] -->
             <tr v-for="row in otherSaleData">
               <td :title='row.cstmr_ognz'>{{row.cstmr_ognz}}</td>
               <td :title='row.id_contacter'>{{row.id_contacter}}</td>
@@ -225,10 +220,6 @@
               <td :title='row.start_point'>{{row.start_point}}</td>
               <td :title='row.id_operater'>{{row.id_operater}}</td>
               <td :title='row.mem'>{{row.mem}}</td>
-<!--               <td :title='row.end_time'>{{row.end_time}}</td>
-              <td :title='row.end_point'>{{row.end_point}}</td>
-              <td :title='row.actual_price'>{{row.actual_price}}</td>
-              <td :title='row.park_fee'>{{row.park_fee}}</td> -->
             </tr>
           </tbody>
         </table>
@@ -683,12 +674,6 @@ Date.prototype.format = function(fmt) {
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
 .tab-content {
   margin: 5px auto;
 }
@@ -697,16 +682,6 @@ h5 {
 }
 .row {
   margin-bottom: 2px;
-}
-table {
-  overflow: auto;
-  font-size: 12px;
-}
-td {
-  overflow:hidden; 
-  white-space:nowrap; 
-  text-overflow:ellipsis;
-  max-width: 50px;
 }
 .tip {
   font-size: 18px;

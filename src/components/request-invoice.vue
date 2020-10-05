@@ -2,18 +2,17 @@
   <div class="father">
     <h5>当前位置:发票业务/申请发票</h5>
     <div id="requestInvoice" class="container-fluid">
-      <div id="searchConditions"  class="form-group form-inline">
+      <div id="searchConditions"  class="row form-inline">
         <label for="queryConditions">关键词:</label>
-        <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="用车人,单位,项目等搜索关键词">
+        <input id="queryConditions" type="text" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="用车人,单位,项目等搜索关键词">
         <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="时间区间,默认最近7天" :shortcuts="shortcuts" placeholder="发生业务的时间范围"></datepicker> 
         <button class="btn btn-primary" @click="getOrders">🔍获取数据</button>
       </div>
-      <div class="listOfSelectedRecorders pre-scrollable" v-if="rcdrsSetFromDBSForRequesting.length>0">
+      <div class="divfortable" v-if="rcdrsSetFromDBSForRequesting.length>0">
         <table class="table table-hover">
           <thead>
             <th v-for="title,index in headerOfList" @click="allCheckboxClicked" :width="widthOfTH[index]">{{title}}</th>
             <th><input class="checkbox" type="checkbox" @click="allCheckboxClicked" v-model="allRequestCheckbox"></th>
-
           </thead>
           <tbody @click="aRowInListClicked">
             <tr v-for="row,index in rcdrsSetFromDBSForRequesting">
@@ -24,7 +23,7 @@
           </tbody>
         </table>
       </div>
-      <div class="buttons">
+      <div>
       	<button class="btn btn-secondary" @click="clearData" v-if="rcdrsSetFromDBSForRequesting.length>0">清空</button>
         <button class="btn btn-primary" v-if="rcdrsSetFromDBSForRequesting.length>0" @click="createRequestInvoice">创建申请</button>
       </div>        
@@ -34,18 +33,18 @@
         <div class="modal-content">  
           <div class="modal-header">
             <span>发票申请单-----已选中记录的合计费用：￥{{amountOfSelectedRcdrs}}</span>  
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">×</span>  
               </button>  
           </div>
           <div class="modal-body">  
-            <div class="showSelectedList">
+            <div class="divfortable">
               <table class="tblForSelectedList">
                 <thead>
                   <th v-for="title,index in headerOfList" @click="allCheckboxClicked" :width="widthOfTH[index]">{{title}}</th>
                 </thead>
                 <tbody>
-                  <tr v-for="row in listOfSelectedRecorders">
+                  <tr v-for="row in SlctdRcdrs">
                     <td v-for="vlu in row">{{vlu}}</td>
                   </tr>
                 </tbody>
@@ -56,19 +55,19 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputOurCmpnyName">出票</label>
-                  <select id="inputOurCmpnyName" type="text" name="nameOfOurCmpny" class="form-control" placeholder="出票公司名称" v-model="detailsOfRequest.nameOfOurCmpny" title="出具发票的公司名称" >
+                  <select id="inputOurCmpnyName" type="text" class="form-control" placeholder="出票公司名称" v-model="detailsOfRequest.nameOfOurCmpny" title="出具发票的公司名称" >
                     <option v-for="cmpny in listOfOurCompany">{{cmpny.name}}</option>
                   </select>                  
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputInvoiceType">类型</label>
-                  <select id="inputInvoiceType" type="text" class="form-control" name="typeOfInvoice" v-model="detailsOfRequest.type" placeholder="需要的发票类型" title="发票类型" >
+                  <select id="inputInvoiceType" type="text" class="form-control" v-model="detailsOfRequest.type" placeholder="需要的发票类型" title="发票类型" >
                     <option v-for="item in listOfInvoiceType">{{item.name}}</option>
                   </select> 
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputCstmrOgnztnName">抬头</label>
-                  <select id="inputCstmrOgnztnName" type="text" class="form-control" name="cstmrOgnztnName" v-model="detailsOfRequest.cstmrOgnztnName" placeholder="发票中的单位名称" title="单位名称抬头" >
+                  <select id="inputCstmrOgnztnName" type="text" class="form-control" v-model="detailsOfRequest.cstmrOgnztnName" placeholder="发票中的单位名称" title="单位名称抬头" >
                     <option v-for="item in listOfCustomerOgnztn">{{item.full_name}}</option>
                   </select>                  
                 </div>
@@ -76,22 +75,22 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputInvoicePrjct">商品</label>
-                  <input id="inputInvoicePrjct" type="text" class="form-control" name="nameOfGoods" v-model="detailsOfRequest.nameOfGoods" title="商品或服务名称,不超过16个字" placeholder="发票中的商品或服务名称,不超过16个字">
+                  <input id="inputInvoicePrjct" type="text" class="form-control" v-model="detailsOfRequest.nameOfGoods" title="商品或服务名称,不超过16个字" placeholder="发票中的商品或服务名称,不超过16个字">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputInvoiceAmount">金额</label>
-                  <input id="inputInvoiceAmount" type="number" class="form-control" name="amount" v-model="detailsOfRequest.amount" title="开票金额" placeholder="开票金额">
+                  <input id="inputInvoiceAmount" type="number" class="form-control" v-model="detailsOfRequest.amount" title="开票金额" placeholder="开票金额">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputMem">备注</label>
-                  <input id="inputMem" type="text" class="form-control" name="mem" v-model="detailsOfRequest.mem" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
+                  <input id="inputMem" type="text" class="form-control" v-model="detailsOfRequest.mem" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
                 </div>
               </div>
             </div>
             </div>  
             <div class="modal-footer">  
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>  
-              <button type="button" id="btnCreateRequest" @click="saveRequestedInvoiceData" class="btn btn-primary">提交申请</button>
+              <button class="btn btn-secondary" data-dismiss="modal">取消</button>  
+              <button id="btnCreateRequest" @click="saveRequestedInvoiceData" class="btn btn-primary">提交申请</button>
             </div>  
         </div>  
       </div>  
@@ -129,7 +128,7 @@ Date.prototype.format = function(fmt) {
         headerOfList:[],
         allRequestCheckbox:false,
         listOfCheckboxStatement:[],
-        listOfSelectedRecorders:[],
+        SlctdRcdrs:[],
         amountOfSelectedRcdrs:0,
         detailsOfRequest: {
           nameOfOurCmpny:'',
@@ -228,20 +227,20 @@ Date.prototype.format = function(fmt) {
         this.changeAllCheckboxStatus("requesting");
       },
       createRequestInvoice() {
-        if(this.listOfSelectedRecorders.length>0) {
-          this.listOfSelectedRecorders=[];
+        if(this.SlctdRcdrs.length>0) {
+          this.SlctdRcdrs=[];
           this.amountOfSelectedRcdrs=0;
         }
         for(var index=0;index<this.listOfCheckboxStatement.length;index++) {
           if(this.listOfCheckboxStatement[index]){
-            this.listOfSelectedRecorders.push(this.rcdrsSetFromDBSForRequesting[index]);
+            this.SlctdRcdrs.push(this.rcdrsSetFromDBSForRequesting[index]);
             var tmpAmount=(this.rcdrsSetFromDBSForRequesting[index]['金额'])?this.rcdrsSetFromDBSForRequesting[index]['金额']:0;
             var tmpParkFee=(this.rcdrsSetFromDBSForRequesting[index]['停车'])?this.rcdrsSetFromDBSForRequesting[index]['停车']:0;
             var tmpSurcharge=(this.rcdrsSetFromDBSForRequesting[index]['垫付'])?this.rcdrsSetFromDBSForRequesting[index]['垫付']:0;
             this.amountOfSelectedRcdrs=(parseFloat(this.amountOfSelectedRcdrs)+parseFloat(tmpAmount)+parseFloat(tmpParkFee)+parseFloat(tmpSurcharge)).toFixed(2);
           }
         }
-        if(this.listOfSelectedRecorders.length<1) {
+        if(this.SlctdRcdrs.length<1) {
           this.$toast({
             text: "请勾选至少一条记录!",
             type: 'info',
@@ -264,14 +263,14 @@ Date.prototype.format = function(fmt) {
 
 
         this.detailsOfRequest=JSON.parse(this.cloneddetailsOfRequest);
-        // var firstPosition=this.listOfSelectedRecorders[0]['订车人'].indexOf('@');
-        // var secondPosition=this.listOfSelectedRecorders[0]['订车人'].lastIndexOf('@');
-        // var tmpNameInInvoice=this.listOfSelectedRecorders[0]['订车人'].substring(firstPosition+1,secondPosition);
-        var tmpNameInInvoice=this.listOfSelectedRecorders[0]['订车人'];
-        for(var index=0;index<this.listOfSelectedRecorders.length;index++) {
-          // firstPosition=this.listOfSelectedRecorders[index]['订车人'].indexOf('@');
-          // secondPosition=this.listOfSelectedRecorders[index]['订车人'].lastIndexOf('@');
-          if(tmpNameInInvoice!==this.listOfSelectedRecorders[index]['订车人']){
+        // var firstPosition=this.SlctdRcdrs[0]['订车人'].indexOf('@');
+        // var secondPosition=this.SlctdRcdrs[0]['订车人'].lastIndexOf('@');
+        // var tmpNameInInvoice=this.SlctdRcdrs[0]['订车人'].substring(firstPosition+1,secondPosition);
+        var tmpNameInInvoice=this.SlctdRcdrs[0]['订车人'];
+        for(var index=0;index<this.SlctdRcdrs.length;index++) {
+          // firstPosition=this.SlctdRcdrs[index]['订车人'].indexOf('@');
+          // secondPosition=this.SlctdRcdrs[index]['订车人'].lastIndexOf('@');
+          if(tmpNameInInvoice!==this.SlctdRcdrs[index]['订车人']){
             this.$toast({
               text: "您所选记录中的订车人或部门不一致！",
               type: 'danger',
@@ -279,7 +278,7 @@ Date.prototype.format = function(fmt) {
             });
             return;            
           } else {//如果订车单位一致,则保存id
-            this.detailsOfRequest.listOfIDS.push(this.listOfSelectedRecorders[index]['ID']);
+            this.detailsOfRequest.listOfIDS.push(this.SlctdRcdrs[index]['ID']);
           }       	
         }
         //获取对应的客户单位全称,以便自动填表
@@ -405,7 +404,7 @@ Date.prototype.format = function(fmt) {
             }
             _this.detailsOfRequest=JSON.parse(_this.cloneddetailsOfRequest);
             _this.allRequestCheckbox=false;
-            _this.listOfSelectedRecorders=[];
+            _this.SlctdRcdrs=[];
             _this.amountOfSelectedRcdrs=0;
 
             _this.$toast({
@@ -425,7 +424,7 @@ Date.prototype.format = function(fmt) {
       clearData () {
       	this.rcdrsSetFromDBSForRequesting=[];
       	this.headerOfList=[];
-      	this.listOfSelectedRecorders=[];
+      	this.SlctdRcdrs=[];
       	this.listOfCheckboxStatement=[];
       	this.allRequestCheckbox=false;
       	this.detailsOfRequest=JSON.parse(this.cloneddetailsOfRequest);
@@ -437,16 +436,6 @@ Date.prototype.format = function(fmt) {
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}	
-.buttons {
-  text-align:right;
-  margin-right:50px;
-}
-.buttons button {
-  width: 120px;
-}
 #searchConditions >*{
   margin:5px 5px;
 }
@@ -460,16 +449,7 @@ datepicker {
   margin-left: 10px;	
 }
 table {
-  overflow: auto;
-  font-size: 15px;
   text-align: left;
-
-}
-td {
-  overflow:hidden; 
-  white-space:nowrap; 
-  text-overflow:ellipsis;
-  max-width: 50px;
 }
 #detailsForRequesting  input,#detailsForRequesting select {
   width: 80%;
@@ -492,9 +472,6 @@ input[type=checkbox] {
 }
 #searchConditions button {
   width: 120px;
-}
-h5 {
-  color: #007bff;
 }
 #requestInvoice {
   overflow:auto;

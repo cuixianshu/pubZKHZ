@@ -53,11 +53,19 @@ export default ({
       }
     },
     forgotPswd() {
-      this.$toast({
-        text: '请联系管理员处理!',
-        type: 'info',
-        duration: 3000
-      });
+      this.$axios({
+        method: 'post',
+        url: 'sendCheckCode.php'
+      }).then(function (response) {
+console.log(response);
+      }).catch(function (error) {
+        _this.$toast({
+          text: '异步通信错误!'+error,
+          type: 'danger',
+          duration: 4000
+        });
+      }); 
+      this.$toast({text: '请联系管理员处理!',type: 'info',duration: 3000});
     }
   }
 })

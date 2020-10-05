@@ -2,33 +2,31 @@
   <div class="father">
     <h5>当前位置:发票业务/作废重开</h5>
     <div id="queryOfFilledInvoice" class="container-fluid">
-      <div id="searchConditions"  class="form-group form-inline">
+      <div id="searchConditions"  class="row form-inline">
         <label for="queryConditions">关键词:</label>
-        <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="用车人,单位,项目等搜索关键词">
+        <input id="queryConditions" type="text" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="用车人,单位,项目等搜索关键词">
         <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="填开发票的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="填开发票的时间范围"></datepicker> 
         <button class="btn btn-primary" @click="getFilledInvoices">🔍获取数据</button>
       </div>
     </div>
-    <div class="showerOfFilledInvoice" v-if="filledInvoices.length>0">
+    <div class="divfortable" v-if="filledInvoices.length>0">
       <table class="table table-hover">
         <thead>
-          <th v-for="title,index in titlesOfData" :width="widthOfTH[index]">{{title}}</th>
-          <!-- <th><input class="checkbox" type="checkbox" @click=""></th> -->
+          <th v-for="(title,index) in titlesOfData" :width="widthOfTH[index]">{{title}}</th>
         </thead>
         <tbody @click="clickedARowInShower">
           <tr v-for="row,index in filledInvoices">
             <td v-for="vlu in row" :title="vlu">{{vlu}}</td>
-            <!-- <td><input class="checkbox" type="checkbox"  name="selecter" @click=""></td> -->
           </tr>
         </tbody>
       </table>
     </div>
     <div class="modal fade" id="invoiceModifyer" role="dialog" aria-labelledby="invoiceModifyer" data-backdrop="static" data-keyboard: false>
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">  
           <div class="modal-header">
             <span><h5>作废发票</h5></span>  
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>  
               </button>  
           </div>
@@ -37,12 +35,12 @@
           	<h6>此发票将被作废，但开票申请会被保留。</h6><h6>您确定要作废此发票吗？</h6>
             <div>
               <label for="inputWhyCanceled">作废原因</label>
-              <input id="inputWhyCanceled" type="text" name="whyCanceled" v-model="whyCanceled" title="作废原因,不少于4个字" placeholder="请填写作废原因">
+              <input id="inputWhyCanceled" type="text" v-model="whyCanceled" title="作废原因,不少于4个字" placeholder="请填写作废原因">
             </div>
           </div>
           <div class="modal-footer">  
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>  
-            <button type="button" id="btnSaveTheChangedData" @click="saveTheChangedData" class="btn btn-primary">确定</button>
+            <button class="btn btn-secondary" data-dismiss="modal">取消</button>  
+            <button id="btnSaveTheChangedData" @click="saveTheChangedData" class="btn btn-primary">确定</button>
           </div>           
         </div>
       </div>
@@ -197,9 +195,6 @@ console.log(this.filledInvoices[0]['ID']);
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
 #searchConditions >*{
   margin:5px 5px;
 }		

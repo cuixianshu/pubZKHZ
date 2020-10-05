@@ -1,29 +1,27 @@
 <template>
   <div class="father">
-    <ul class="nav nav-pills" role="tablist">
+    <ul class="nav nav-tabs" role="tablist">
       <li class="nav-item">
-        <a class="nav-link active" data-toggle="pill" href="#turn-in">款项上缴</a>
+        <a class="nav-link active" data-toggle="tab" href="#turn-in">款项上缴</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" data-toggle="pill" href="#returnMoneyBack">归还借款</a>
+        <a class="nav-link" data-toggle="tab" href="#returnMoneyBack">归还借款</a>
       </li>
     </ul>
     <div class="tab-content">
       <div id="turn-in" class="container-fluid tab-pane active">
-        <div class="row">
-            <div class="col-lg form-inline searchcontent">
-              <label for="queryConditions">关键词:</label> 
-              <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位等搜索关键词">
-              <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="缴款的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="缴款的时间范围"></datepicker> 
-              <button class="btn btn-primary" @click="getTIFs">🔍获取数据</button>
-              <button class="btn btn-secondary" @click="listOfTurnInFunds=[];" v-if="listOfTurnInFunds.length>0">清除</button>            
-              <button id="byhand" @click="newTurnInFunds" class="btn btn-primary" type="button">新建缴款</button>
-            </div>          
-        </div>
-        <div class="showerOfTurnedInFunds" v-if="listOfTurnInFunds.length>0">
+        <div class="row form-inline searchcontent">
+          <label for="queryConditions">关键词:</label> 
+          <input id="queryConditions" type="text" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位等搜索关键词">
+          <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="缴款的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="缴款的时间范围"></datepicker> 
+          <button class="btn btn-primary" @click="getTIFs">🔍获取数据</button>
+          <button class="btn btn-secondary" @click="listOfTurnInFunds=[];" v-if="listOfTurnInFunds.length>0">清除</button>            
+          <button id="byhand" @click="newTurnInFunds" class="btn btn-primary">新建缴款</button>
+        </div>          
+        <div class="divfortable" v-if="listOfTurnInFunds.length>0">
             <table class="table table-hover">
                <thead>
-                <th v-for="title,index in titlesForTIF" :width="widthOfTH[index]">{{title}}</th>
+                <th v-for="(title,index) in titlesForTIF" :width="widthOfTH[index]">{{title}}</th>
               </thead>
               <tbody>
                 <tr v-for="(row,index) in listOfTurnInFunds" @click="clickedARowInShower(row)">
@@ -43,26 +41,22 @@
         </div>          
       </div>
       <div id="returnMoneyBack" class="container-fluid tab-pane">
-        <div class="row">
-          <div class="col-lg form-inline searchcontent">
-            <label for="QC">关键词:</label> 
-            <input id="QC" type="text" name="keyWord" class="form-control" v-model="NRLQC.keyWord" placeholder="请输入搜索关键词" title="请款时的用途、备注信息、请款金额、收款账号等搜索关键词">
-            <datepicker class="datepicker"id="dateRange" v-model="NRLQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请款的时间,默认最近7天" :shortcuts="shortcuts" placeholder="请款的时间范围"></datepicker>
-            <select class="form-control" v-model="NRLQC.id_project" title="选择所属项目">
-              <option value="0">所有项目</option>
-              <option v-for="item in projects" :value="item.id">{{item.name}}</option>
-            </select>
-            <button class="btn btn-primary" @click="getNotReturnedList">🔍获取数据</button>
-            <button class="btn btn-secondary" @click="notReturnedList=[];" v-if="notReturnedList.length>0">清除</button>            
-          </div>          
-        </div>
-        <div class="showerOfReturningFunds" v-if="notReturnedList.length>0">
+        <div class="row form-inline searchcontent">
+          <input type="text" class="form-control" v-model="NRLQC.keyWord" placeholder="请输入搜索关键词" title="请款时的用途、备注信息、请款金额、收款账号等搜索关键词">
+          <datepicker class="datepicker"id="dateRange" v-model="NRLQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请款的时间,默认最近7天" :shortcuts="shortcuts" placeholder="请款的时间范围"></datepicker>
+          <select class="form-control" v-model="NRLQC.id_project" title="选择所属项目">
+            <option value="0">所有项目</option>
+            <option v-for="item in projects" :value="item.id">{{item.name}}</option>
+          </select>
+          <button class="btn btn-primary" @click="getNotReturnedList">🔍获取数据</button>
+          <button class="btn btn-secondary" @click="notReturnedList=[];" v-if="notReturnedList.length>0">清除</button>            
+        </div>          
+        <div class="divfortable" v-if="notReturnedList.length>0">
           <table class="table table-hover">
               <thead>
-                <th v-for="title,index in titlesOfNtRtnList" :width="widthOfNtRtnTH[index]">{{title}}</th>
+                <th v-for="(title,index) in titlesOfNtRtnList" :width="widthOfNtRtnTH[index]">{{title}}</th>
               </thead>
               <tbody>
-<!-- ['请款人','项目','款项用途','请款金额','请款账号','实收金额','收款时间','已还金额','请款备注']                 -->
                 <tr v-for="(row,index) in notReturnedList" @click="clkARToRtn(row)">
                   <td title="请款时间">{{row.time_applied}}</td>
                   <td title="请款人">{{getEmplyName(row)}}</td>
@@ -81,7 +75,7 @@
       </div>
     </div>
     <div class="modal fade" id="mdlTurnInFunds" role="dialog" aria-labelledby="mdlTurnInFunds" data-backdrop="static" data-keyboard: false>
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">  
           <div class="modal-header">
             <span v-if="turnInFundsNotice.id===''?false:true">
@@ -91,7 +85,7 @@
             <span v-else>
               <h5>缴款还款---新建缴款</h5>
             </span>  
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>  
               </button>  
           </div>
@@ -116,7 +110,7 @@
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="turnInFundsNotice.id_way_pay" placeholder="收款方式" title="收款方式" :disabled="isCashed">
+                  <select id="slctWayOfCashier" type="text" class="form-control" v-model="turnInFundsNotice.id_way_pay" placeholder="收款方式" title="收款方式" :disabled="isCashed">
                     <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>}
                   </select>
                 </div>
@@ -134,20 +128,20 @@
             </div>
           </div>
           <div class="modal-footer"> <!--  --> 
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-            <button type="button" @click="saveTheTurnedInFundsData" class="btn btn-primary" v-if="turnInFundsNotice.id_tbl_cashier?false:true">保存</button>
+            <button class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button @click="saveTheTurnedInFundsData" class="btn btn-primary" v-if="turnInFundsNotice.id_tbl_cashier?false:true">保存</button>
           </div>           
         </div>
       </div>
     </div>    
     <div class="modal fade" id="mdlToRTN" role="dialog" aria-labelledby="mdlToRTN" data-backdrop="static" data-keyboard: false>
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">  
           <div class="modal-header">
             <span>
               <h5>归还借款</h5>
             </span>  
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>  
               </button>  
           </div>
@@ -155,24 +149,23 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="debter">还款人员</label>
-                  <select id="debter" type="text" class="form-control" v-model="id_debter" title="还款人的姓名" disabled>
-                    <option v-for="item in employees" :value="item.id">{{item.name}}</option>
-                  </select>
+                  <label for="debter">借款事由</label>
+                  <input id="debter" type="text" class="form-control" :value="toRTN.use_for" title="原借款的用途和事由" readonly>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="ndRTNamt">借款余额</label>
-                  <input id="ndRTNamt" type="text" class="form-control" title="您的借款余额" v-model="needRTNAmt" readonly>
+                  <input id="ndRTNamt" type="text" class="form-control" title="本次借款余额" v-model="toRTN.needRTNAmt" readonly>
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="actRTNAmt">本次还款</label>
-                  <input id="actRTNAmt" type="number" class="form-control" v-model="actRTNAmount" placeholder="本次还款金额" title="本次还款金额">
+                  <label for="actRTNAmt">还款金额</label>
+                  <input id="actRTNAmt" type="number" class="form-control" v-model="toRTN.actRTNAmount" placeholder="本次还款金额" title="本次还款金额">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="RTNWay">还款方式</label>
-                  <select id="RTNWay" type="text" class="form-control" name="wayOfCashier" v-model="iWP" placeholder="还款方式" title="还款方式">
+                  <select id="RTNWay" type="text" class="form-control" v-model="toRTN.iWP" placeholder="还款方式" title="还款方式">
+                    <option value=0>还款方式</option>
                     <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>
                   </select>
                 </div>
@@ -180,7 +173,7 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="RTNRmk">还款备注</label>
-                  <input id="RTNRmk" type="text" class="form-control" v-model="RTNrmk" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
+                  <input id="RTNRmk" type="text" class="form-control" v-model="toRTN.RTNRmk" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
                 </div>
                 <div class="col-lg  form-inline">
                 </div>
@@ -188,8 +181,8 @@
             </div>
           </div>
           <div class="modal-footer">  
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-primary" @click="saveTheRTNData">保存</button>
+            <button class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button class="btn btn-primary" @click="saveTheRTNData">保存</button>
           </div>           
         </div>
       </div>
@@ -261,12 +254,12 @@ Date.prototype.format = function(fmt) {
           id_project:0,
         },
         toRTN:{//用于还款
+          actRTNAmount:0,
+          needRTNAmt:0,
+          iWP:0,
+          RTNrmk:'',
         },
         id_debter:this.$store.state.user.id_user,
-        needRTNAmt:0,
-        actRTNAmount:0,
-        iWP:'',
-        RTNrmk:'',
       }
     },
     components: {
@@ -300,9 +293,6 @@ Date.prototype.format = function(fmt) {
               });              
             } else {
               _this.listOfTurnInFunds=response.data;
-              // for(var title in response.data[0]) {
-              //   _this.titlesForTIF.push(title);
-              // }             
             }
           }).catch(function (error) {
             console.log(error);
@@ -335,7 +325,6 @@ Date.prototype.format = function(fmt) {
           });
           return false;          
         }
-
         var queryContent=this.turnInFundsNotice;
         queryContent.currentUserId=this.currentUserId;
 
@@ -352,7 +341,6 @@ Date.prototype.format = function(fmt) {
           queryContent.conditions='Update';
         } else {
           this.listOfTurnInFunds=[];
-          // this.titlesForTIF=[];
           if(this.turnInFundsNotice.amount<=0) {
             this.$toast({
               text: '请检查金额!',
@@ -407,12 +395,12 @@ Date.prototype.format = function(fmt) {
         this.listOfTurnInFunds=[];
         this.turnInFundsNotice.id='';
         this.turnInFundsNotice.id_tbl_cashier='';
-        $('#mdlTurnInFunds').modal('toggle');
         this.turnInFundsNotice.id_project=1;
         this.turnInFundsNotice.id_way_pay=1;
         this.turnInFundsNotice.amount=0;
         this.turnInFundsNotice.remark='';
         this.turnInFundsNotice.cause='';        
+        $('#mdlTurnInFunds').modal('toggle');
       },
       getNotReturnedList () {
         this.notReturnedList=[];
@@ -468,24 +456,22 @@ Date.prototype.format = function(fmt) {
       },
       clkARToRtn (r) {
         this.toRTN=r;
-        this.needRTNAmt=Number(this.toRTN.p_amount)-Number(this.toRTN.amount_returned);
+        this.toRTN.iWP=0;
+        this.toRTN.actRTNAmount=0;
+        this.toRTN.RTNrmk='';
+        this.toRTN.needRTNAmt=Number(this.toRTN.p_amount)-Number(this.toRTN.amount_returned);
         $('#mdlToRTN').modal('toggle');
       },
       saveTheRTNData () {
-        this.toRTN.id_debter=this.id_debter;
-        this.toRTN.actRTNAmount=this.actRTNAmount;
-        this.toRTN.iWP=this.iWP;
-        this.toRTN.RTNrmk=this.RTNrmk;
-
-        if(Number(this.toRTN.actRTNAmount)<0) {
+        if(Number(this.toRTN.actRTNAmount)<=0) {
           this.$toast({
-            text: '请检查本次还款!',
+            text: '请检查还款金额!',
             type: 'info',
             duration: 2000
           });
           return false;          
         }        
-        if(this.toRTN.iWP.length<1) {
+        if(!this.toRTN.iWP) {
           this.$toast({
             text: '请检查还款方式!',
             type: 'info',
@@ -493,15 +479,17 @@ Date.prototype.format = function(fmt) {
           });
           return false;          
         }
+        this.toRTN.id_debter=this.id_debter;
         this.toRTN.conditions='WithReturnMoney';
+console.log(this.toRTN);
+// return;
         var _this=this;
         this.$axios({
           method: 'post',
           url: 'updateTurnInFunds.php',
           data: qs.stringify(_this.toRTN)
           }).then(function (response) {
-// console.log(response.data);
-// return;
+            console.log(response.data);
             if(response.data===true) {
               $('#mdlToRTN').modal('toggle'); 
               _this.$toast({
@@ -516,7 +504,12 @@ Date.prototype.format = function(fmt) {
                   i--;  
                 }
               }
-              _this.toRTN={};
+              // _this.toRTN={
+              //   actRTNAmount:0,
+              //   needRTNAmt:0,
+              //   iWP:0,
+              //   RTNrmk:'',
+              // };
             } else {
               _this.$toast({
                 text: '操作失败,请稍后再试!',
@@ -588,28 +581,6 @@ Date.prototype.format = function(fmt) {
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-#searchConditions >*{
-  margin:5px;
-}   
-h5 {
-  color: #007bff;
-}
-datepicker {
-  margin-left: 10px;  
-}
-td {
-    overflow:hidden; 
-    white-space:nowrap; 
-    text-overflow:ellipsis;
-    max-width: 50px;
-}
-table {
-  overflow: auto;
-  font-size: 14px;
-}
 .modal-body input,.modal-body select {
   width: 80%;
 }
@@ -623,9 +594,7 @@ table {
   margin-left: 5px;
 }
 #byhand {
-  /*margin-left: 100px;*/
   position: absolute;
-  /*bottom: 0;*/
   right: 0;
 } 
 </style>

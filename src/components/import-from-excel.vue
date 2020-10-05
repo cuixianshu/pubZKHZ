@@ -4,30 +4,28 @@
   <div id="fromExcel" class="container-fluid">
     <div class="get-xlsx">
       <div class="row">
-        <div class="col-md form-inline">
-          <div>
-            <input id="openFileSelector" type="file" @change="excelFileChanged"  
-            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/>
-          </div>
+        <div>
+          <input id="openFileSelector" type="file" @change="excelFileChanged"  
+          accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/>
         </div>
-        <div class="col-md  form-inline" v-if="xlsTitle.length">
-          <button class="btn btn-secondary clearBtn" @click="clearXlsx">清空</button>
-        </div> 
-        <div class="col-md  form-inline" v-if="xlsTitle.length">
-          <button class="btn btn-primary" @click="saveXlsxDataToDBS">保存</button>
-        </div>                       
       </div>
     </div>
-    <table class="table table-hover pre-scrollable" v-if="xlsTitle.length">
-      <thead>
-        <th v-for="title in xlsTitle">{{title}}</th>
-      </thead>
-        <tbody>
-          <tr v-for="row in xlsData">
-            <td v-for="vlu in row" :title="vlu">{{vlu}}</td>
-          </tr>
-        </tbody>
-    </table>
+    <div class="divfortable" v-if="xlsTitle.length">
+      <table class="table table-hover pre-scrollable">
+        <thead>
+          <th v-for="title in xlsTitle">{{title}}</th>
+        </thead>
+          <tbody>
+            <tr v-for="row in xlsData">
+              <td v-for="vlu in row" :title="vlu">{{vlu}}</td>
+            </tr>
+          </tbody>
+      </table>      
+    </div>
+    <div v-if="xlsTitle.length">
+      <button class="btn btn-secondary clearBtn" @click="clearXlsx">清空</button>
+      <button class="btn btn-primary" @click="saveXlsxDataToDBS">保存</button>
+    </div> 
   </div>
   <div class="modal fade" id="duplicate_recorders_shower" role="dialog" aria-labelledby="warning_for_duplicate" data-backdrop="static" data-keyboard: false>
 	  <div class="modal-dialog modal-lg" role="document">
@@ -38,7 +36,7 @@
 	            <span aria-hidden="true">×</span>  
 	          </button>
 	      </div>
-	      <div id="board" class="modal-body">
+	      <div id="board" class="modal-body divfortable">
 	        <table style="width:100%;">
 	          <tbody>
 	            <tr v-for="tblRow in duplicateRecorders">
@@ -333,14 +331,14 @@ import ClipboardJS from 'clipboard';
 }
 table {
   overflow: auto;
-  font-size: 12px;
+  font-size: 14px;
 }
 .mx-input-wrapper {
   width: 100%;
 }
-.table table-hover {
-  font-size: 12px;
-}
+/*.table table-hover {
+  font-size: 14px;
+}*/
 #openFileSelector {
   /*display: none;*/
 }

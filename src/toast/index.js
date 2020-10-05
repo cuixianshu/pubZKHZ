@@ -1,4 +1,4 @@
-import Vue from 'vue'
+import Vue from 'vue/dist/vue.common.js'
 import toastComponent from './toast.vue'
 
 // 组件构造器，构造出一个 vue组件实例

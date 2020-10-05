@@ -1,26 +1,26 @@
 <template>
 <div class="father">
-  <ul class="nav nav-pills" role="tablist">
+  <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" data-toggle="pill" href="#newArrived">验收新到(非采购)物料</a>
+      <a class="nav-link active" data-toggle="tab" href="#newArrived">验收新到(非采购)物料</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" data-toggle="pill" href="#purchased">验收采购物料(含工程)</a>
+      <a class="nav-link" data-toggle="tab" href="#purchased">验收采购物料(含工程)</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" data-toggle="pill" href="#giveBack">验收员工归还物料</a>
+      <a class="nav-link" data-toggle="tab" href="#giveBack">验收员工归还物料</a>
     </li>
   </ul>
   <div class="tab-content">
     <div id="newArrived" class="container-fluid tab-pane active">
       <div class="form-inline searchbox">
         <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="物品名称,规格型号,品牌,库位等关键词">
-        <button @click="getListOfMaterials" class="btn btn-primary " type="button">
+        <button @click="getListOfMaterials" class="btn btn-primary">
           搜索物料
         </button>
-        <button @click="materials=[];"class="btn btn-secondary" type="button" v-if="materials.length>0">清空结果</button>
+        <button @click="materials=[];"class="btn btn-secondary" v-if="materials.length>0">清空结果</button>
       </div>
-      <div v-if="materials.length>0">
+      <div v-if="materials.length>0" class="divfortable">
         <table class="table table-hover">
           <thead>
             <th v-for="title,index in titleOfList" :width="width">{{title}}</th>
@@ -45,12 +45,12 @@
         <datepicker class="datepicker" id="dateRange" v-model="pcsQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请购时间,默认上个月" :shortcuts="shortcuts" placeholder="请购的时间范围">
         </datepicker>
         <input type="text" class="form-control" v-model="pcsQC.keyWord"  placeholder="请输入关键词" title="物品名称,规格型号,品牌,规格型号等关键词">
-        <button @click="getListOfPcsings" class="btn btn-primary " type="button">
+        <button @click="getListOfPcsings" class="btn btn-primary ">
           搜索采购单
         </button>
-        <button @click="purchasings=[];"class="btn btn-secondary" type="button" v-if="purchasings.length>0">清空结果</button>
+        <button @click="purchasings=[];"class="btn btn-secondary" v-if="purchasings.length>0">清空结果</button>
       </div>
-      <div v-if="purchasings.length>0">
+      <div v-if="purchasings.length>0" class="divfortable">
         <table class="table table-hover">
           <thead>
             <th v-for="(title,index) in pcsnsTitle" :width="pcsnsWidth">{{title}}</th>
@@ -87,10 +87,10 @@
           <option value="0">所有领用人</option>
           <option v-for="item in employees" :value="item.id">{{item.name}}</option>
         </select>
-        <button id="btnSearch" class="btn btn-primary" type="button" @click="getUnreturnedMData">搜索数据</button>
-        <button class="btn btn-secondary" type="button" @click="unreturnedMs=[];" v-if="unreturnedMs.length>0">清空结果</button>        
+        <button id="btnSearch" class="btn btn-primary" @click="getUnreturnedMData">搜索数据</button>
+        <button class="btn btn-secondary" @click="unreturnedMs=[];" v-if="unreturnedMs.length>0">清空结果</button>        
       </div>
-      <div v-if="unreturnedMs.length>0">
+      <div v-if="unreturnedMs.length>0" class="divfortable">
         <table class="table table-hover">
           <thead>
             <th v-for="title,index in unreturnedTitle" :width="unreturnedWidth">{{title}}</th>
@@ -114,7 +114,7 @@
     </div>    
   </div>
   <div class="modal fade" id="editerForNewArrived" role="dialog" aria-labelledby="editer" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <span>物料验收单</span>
@@ -124,54 +124,54 @@
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputNameOfMAT">名称:</label>
-                <input id="inputNameOfMAT" type="text" name="name" class="form-control" v-model="material.name" placeholder="物料名称" title="物料名称" readonly>
+                <input id="inputNameOfMAT" type="text" class="form-control" v-model="material.name" placeholder="物料名称" title="物料名称" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputUnit">单位:</label>
-                <input id="inputUnit" type="text" name="unit" class="form-control" v-model="material.unit" placeholder="物料计量单位" title="物料计量单位" readonly>
+                <input id="inputUnit" type="text" class="form-control" v-model="material.unit" placeholder="物料计量单位" title="物料计量单位" readonly>
               </div> 
             </div>
             <div class="row"> 
               <div class="col-lg form-inline">
                 <label for="inputBrand">品牌:</label>
-                <input id="inputBrand" type="text" name="brand" class="form-control" v-model="material.brand" placeholder="厂家品牌" title="厂家品牌" readonly>
+                <input id="inputBrand" type="text" class="form-control" v-model="material.brand" placeholder="厂家品牌" title="厂家品牌" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="inputModel">型号:</label>
-                <input id="inputModel" type="text" name="model" class="form-control" v-model="material.model" placeholder="规格型号" title="规格型号" readonly>
+                <input id="inputModel" type="text" class="form-control" v-model="material.model" placeholder="规格型号" title="规格型号" readonly>
               </div>
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputMin_unit_packing">包装:</label>
-                <input id="inputMin_unit_packing" type="text" name="min_unit_packing" class="form-control" v-model="material.min_unit_packing" placeholder="如:300ml/瓶,12瓶/箱等" title="包装单位" readonly>
+                <input id="inputMin_unit_packing" type="text" class="form-control" v-model="material.min_unit_packing" placeholder="如:300ml/瓶,12瓶/箱等" title="包装单位" readonly>
               </div> 
               <div class="col-lg form-inline">
                 <label for="inputStorePlace">库位:</label>
-                <input id="inputStorePlace" type="text" name="store_place" class="form-control" v-model="material.store_place" placeholder="如:A库/B区/C架/6层/1位" title="库名区位架号层号位号" readonly>
+                <input id="inputStorePlace" type="text" class="form-control" v-model="material.store_place" placeholder="如:A库/B区/C架/6层/1位" title="库名区位架号层号位号" readonly>
               </div>                                        
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputQty">数量:</label>
-                <input id="inputQty" type="number" name="qty" class="form-control" v-model="qty" placeholder="收货数量" title="收货数量">
+                <input id="inputQty" type="number" class="form-control" v-model="qty" placeholder="收货数量" title="收货数量">
               </div>
               <div class="col-lg form-inline">
                 <label for="inputRemark">备注:</label>
-                <input id="inputRemark" type="text" name="remark" class="form-control" v-model="material.remark" placeholder="备注信息" title="备注信息">
+                <input id="inputRemark" type="text" class="form-control" v-model="material.remark" placeholder="备注信息" title="备注信息">
               </div>              
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button class="btn btn-primary" type="button" @click="saveNewArrivedData">验收无误</button> 
+          <button class="btn btn-default" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary" @click="saveNewArrivedData">验收无误</button> 
         </div>  
       </div>
     </div>
   </div>
   <div class="modal fade" id="editerForReturning" role="dialog" aria-labelledby="editer" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <span>返还物料验收单</span>
@@ -181,66 +181,66 @@
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="aplr">原领用人:</label>
-                <select id="aplr" type="text" name="id_applyer" class="form-control" v-model="rtMtrl.id_applyer" title="原领用人" disabled>
+                <select id="aplr" type="text" class="form-control" v-model="rtMtrl.id_applyer" title="原领用人" disabled>
                   <option v-for="item in employees" :value="item.id">{{item.name}}</option>
                 </select>
               </div>
               <div class="col-lg form-inline">
                 <label for="mioTime">需归还数:</label>
-                <input id="mioTime" type="text" name="mio_qty" class="form-control" v-model="rtMtrl.mio_qty" title="还需归还的数量" readonly>
+                <input id="mioTime" type="text" class="form-control" v-model="rtMtrl.mio_qty" title="还需归还的数量" readonly>
               </div> 
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="NmOfMAT">物料名称:</label>
-                <input id="NmOfMAT" type="text" name="m_name" class="form-control" v-model="rtMtrl.m_name" title="物料名称" readonly>
+                <input id="NmOfMAT" type="text" class="form-control" v-model="rtMtrl.m_name" title="物料名称" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="Unit">计量单位:</label>
-                <input id="Unit" type="text" name="m_unit" class="form-control" v-model="rtMtrl.m_unit" title="物料计量单位" readonly>
+                <input id="Unit" type="text" class="form-control" v-model="rtMtrl.m_unit" title="物料计量单位" readonly>
               </div> 
             </div>
             <div class="row"> 
               <div class="col-lg form-inline">
                 <label for="Brd">物料品牌:</label>
-                <input id="Brd" type="text" name="m_brand" class="form-control" v-model="rtMtrl.m_brand" title="厂家品牌" readonly>
+                <input id="Brd" type="text" class="form-control" v-model="rtMtrl.m_brand" title="厂家品牌" readonly>
               </div>
               <div class="col-lg form-inline">
                 <label for="Mdl">规格型号:</label>
-                <input id="Mdl" type="text" name="m_model" class="form-control" v-model="rtMtrl.m_model" title="规格型号" readonly>
+                <input id="Mdl" type="text" class="form-control" v-model="rtMtrl.m_model" title="规格型号" readonly>
               </div>
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="MUP">包装单位:</label>
-                <input id="MUP" type="text" name="m_min_unit_packing" class="form-control" v-model="rtMtrl.m_min_unit_packing" title="包装单位" readonly>
+                <input id="MUP" type="text" class="form-control" v-model="rtMtrl.m_min_unit_packing" title="包装单位" readonly>
               </div> 
               <div class="col-lg form-inline">
                 <label for="StorePlc">存放库位:</label>
-                <input id="StorePlc" type="text" name="m_store_place" class="form-control" v-model="rtMtrl.m_store_place" title="库名区位架号层号位号" readonly>
+                <input id="StorePlc" type="text" class="form-control" v-model="rtMtrl.m_store_place" title="库名区位架号层号位号" readonly>
               </div>                                        
             </div>
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="QTY">返还数量:</label>
-                <input id="QTY" type="number" name="rtn_qty" class="form-control" v-model="rtn_qty" placeholder="返还数量" title="返还数量">
+                <input id="QTY" type="number" class="form-control" v-model="rtn_qty" placeholder="返还数量" title="返还数量">
               </div>
               <div class="col-lg form-inline">
                 <label for="RMK">库管备注:</label>
-                <input id="RMK" type="text" name="mio_remark" class="form-control" v-model="mio_remark" placeholder="库管备注" title="库管备注">
+                <input id="RMK" type="text" class="form-control" v-model="mio_remark" placeholder="库管备注" title="库管备注">
               </div>              
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button class="btn btn-primary" type="button" @click="saveReturnedData">验收无误</button>
+          <button class="btn btn-default" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary" @click="saveReturnedData">验收无误</button>
         </div>  
       </div>
     </div>
   </div>
   <div class="modal fade" id="purchasing" role="dialog" aria-labelledby="editer" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <span>采购验收单</span>
@@ -277,7 +277,7 @@
               </div> 
               <div class="col-lg form-inline">
                 <label for="QTY">验收数量:</label>
-                <input id="QTY" type="number" name="rtn_qty" class="form-control" v-model="thePurchasing.qtyAC" placeholder="验收数量" title="验收数量">
+                <input id="QTY" type="number" class="form-control" v-model="thePurchasing.qtyAC" placeholder="验收数量" title="验收数量">
               </div>
             </div>
             <div class="row">
@@ -291,8 +291,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button class="btn btn-primary" type="button" @click="saveACData">确认验收</button>
+          <button class="btn btn-default" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary" @click="saveACData">确认验收</button>
         </div>  
       </div>
     </div>
@@ -679,12 +679,6 @@
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
 .modal input,.modal select {
   width: 75%;
 }
@@ -700,14 +694,5 @@ h5 {
 .tab-pane {
   margin-top: 5px;
   margin-bottom: 5px;
-}
-table {
-  overflow: auto;
-}
-td {
-  overflow:hidden; 
-  white-space:nowrap; 
-  text-overflow:ellipsis;
-  max-width: 50px;
 }
 </style>

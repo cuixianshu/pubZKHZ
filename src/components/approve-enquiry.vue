@@ -2,20 +2,15 @@
 <div class="father">
   <h5>当前位置:采购业务/审核比价</h5>
   <div class="container-fluid">
-    <div class="form-group form-inline">
-      <div class="row">
-        <div class="col-lg">
-          <span for="schKeyWds">关键词:</span>
-          <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="项目名称\物品名称\规格型号\厂家品牌等">
-          <button @click="getapldPcsgWithCmtdEqrys" class="btn btn-primary" type="button">搜索数据</button>
-          <button @click="clearApldPcsgWithCmtdEqrys"class="btn btn-secondary" type="button" v-if="apldPcsgWithCmtdEqrys.length>0">清空</button>
-        </div>        
-      </div>
+    <div class="row form-inline query">
+      <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="项目名称\物品名称\规格型号\厂家品牌等">
+      <button @click="getapldPcsgWithCmtdEqrys" class="btn btn-primary">搜索数据</button>
+      <button @click="clearApldPcsgWithCmtdEqrys"class="btn btn-secondary" v-if="apldPcsgWithCmtdEqrys.length>0">清空</button>
     </div>
-    <div class="listShower" v-if="apldPcsgWithCmtdEqrys.length>0">
+    <div class="divfortable" v-if="apldPcsgWithCmtdEqrys.length>0">
       <table class="table table-hover">
         <thead>
-          <th v-for="title,index in titleOfAppliedList">{{title}}</th>
+          <th v-for="(title,index) in titleOfAppliedList">{{title}}</th>
         </thead>
         <tbody>
           <tr v-for="row in apldPcsgWithCmtdEqrys" @click="clickedARecorderToApprove(row)">
@@ -26,7 +21,7 @@
     </div>      
   </div>
   <div class="modal fade" id="mdfRecorder" role="dialog" aria-labelledby="mdfRecorder" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5>审核比价--请购ID:{{dtlsInApldPcsg.id}}</h5>
@@ -34,7 +29,7 @@
         </div>
         <div class="modal-body">
           <div class="container-fluid">
-            <div class="row">
+            <div class="row divfortable">
               <table class="table table-hover">
                 <thead>
                   <th v-for="title,index in titleOfEnquiriedList">{{title}}</th>
@@ -67,8 +62,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button class="btn btn-primary saveBtn" type="button" @click="saveApprovedData">保存</button> 
+          <button class="btn btn-default" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary saveBtn" @click="saveApprovedData">保存</button> 
         </div>  
       </div>
     </div>
@@ -273,21 +268,13 @@ Date.prototype.format = function(fmt) {
     }
   })
 </script>
-<style scopede>
-  .row {
-    margin:5px 0px;
-  }
-  .btngroup {
-    display: inline-block;
-    text-align: right;
-  }
-  .clearBtn ,.saveBtn {
-    margin-right: 10px;
-    width: 100px;
-  }
-  .container-fluid {
-    width: 100%;
-  }
+<style scoped>
+.row {
+  margin-top: 10px;
+}
+.query input,.query button {
+  margin-right: 5px;
+}
 #mdfRecorder input,#mdfRecorder select {
   width: 80%;
 }

@@ -1,23 +1,17 @@
 <template>
   <div class="father">
     <h5>当前位置:基础数据/客户单位信息</h5>
-    <div id="clientDepartment" class="container-fluid">
-      <div class="form-group form-inline searchBar">
-          <div class="col-lg">
-            <span for="schKeyWds">关键词:</span>
-            <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="名称、简称、">
-            <button @click="getListOfClientOgnztn"class="btn btn-primary" type="button">搜索数据</button>
-            <button @click="clearListOfClientOgnztn"class="btn btn-secondary" type="button" v-if="listOfClientOgnztn.length>0">清空</button>
-          
-          </div>
-          <div class="col-lg createnewclient">
-            <button @click="newCreate"class="btn btn-primary" type="button">新建客户</button>
-          </div>
+    <div class="container-fluid">
+      <div class="form-inline query row">
+        <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="名称、简称、">
+        <button @click="getListOfClientOgnztn"class="btn btn-primary">搜索数据</button>
+        <button @click="clearListOfClientOgnztn"class="btn btn-secondary" v-if="listOfClientOgnztn.length>0">清空</button>
+        <button @click="newCreate"class="btn btn-primary newitem">新建客户</button>
       </div>
-      <div class="listShower" v-if="listOfClientOgnztn.length>0">
+      <div class="divfortable" v-if="listOfClientOgnztn.length>0">
         <table class="table table-hover">
           <thead>
-            <th v-for="title,index in titleOfList" :width="widthOfTH[index]">{{title}}</th>
+            <th v-for="(title,index) in titleOfList" :width="widthOfTH[index]">{{title}}</th>
           </thead>
           <tbody>
             <tr v-for="row in listOfClientOgnztn" @click="clickedARecorderToModify(row)">
@@ -28,7 +22,7 @@
       </div>      
     </div>
     <div class="modal fade shower-ognztn" id="mdfRecorder" role="dialog" aria-labelledby="showClntOgnztnModifyer" data-backdrop="static" data-keyboard: false>
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="tipFormdfRecorder">客户单位ID:{{theClientOgnztn.id}}</h5>
@@ -37,38 +31,38 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col-lg form-inline">
-                  <label for="inputShortName">单位简称:</label>
-                  <input class="form-control" id="inputShortName" type="text" v-model="theClientOgnztn.short_name" title="客户单位简称">
+                  <label for="iptShortName">单位简称:</label>
+                  <input class="form-control" id="iptShortName" type="text" v-model="theClientOgnztn.short_name" title="客户单位简称">
                 </div>
                 <div class="col-lg form-inline">
-                  <label for="inputAdd">办公地址:</label>
-                  <input class="form-control" id="inputAdd" type="text" v-model="theClientOgnztn.address" title="客户实际办公地址">
+                  <label for="iptAdd">办公地址:</label>
+                  <input class="form-control" id="iptAdd" type="text" v-model="theClientOgnztn.address" title="客户实际办公地址">
                 </div>                
               </div>
               <div class="row">
                 <div class="col-lg form-inline">
-                  <label for="inputFullName">开票全称:</label>
-                  <input class="form-control" id="inputFullName" type="text" v-model="theClientOgnztn.full_name" title="开发票时的单位全称">
+                  <label for="iptFullName">开票全称:</label>
+                  <input class="form-control" id="iptFullName" type="text" v-model="theClientOgnztn.full_name" title="开发票时的单位全称">
                 </div>
                 <div class="col-lg form-inline">
-                  <label for="inputTaxNum">开票税号:</label>
-                  <input class="form-control" id="inputTaxNum" type="text" v-model="theClientOgnztn.tax_num_in_invoice" title="三证合一的税号">
+                  <label for="iptTaxNum">开票税号:</label>
+                  <input class="form-control" id="iptTaxNum" type="text" v-model="theClientOgnztn.tax_num_in_invoice" title="三证合一的税号">
                 </div>                
               </div>
               <div class="row">
                 <div class="col-lg form-inline">
-                  <label for="inputAddInvoice">地址电话:</label>
-                  <input class="form-control" id="inputAddressInvoice" type="text" v-model="theClientOgnztn.address_in_invoice" title="开发票时的单位地址和电话">
+                  <label for="iptAddInvoice">地址电话:</label>
+                  <input class="form-control" id="iptAddressInvoice" type="text" v-model="theClientOgnztn.address_in_invoice" title="开发票时的单位地址和电话">
                 </div>
                 <div class="col-lg form-inline">
-                  <label for="inputAccountInvoice">发票账号:</label>
-                  <input class="form-control" id="inputAccountInvoice" type="text" v-model="theClientOgnztn.account_in_invoice" title="开发票时的开户行和账号">
+                  <label for="iptAccountInvoice">发票账号:</label>
+                  <input class="form-control" id="iptAccountInvoice" type="text" v-model="theClientOgnztn.account_in_invoice" title="开发票时的开户行和账号">
                 </div>                
               </div>
               <div class="row">
                 <div class="col-lg form-inline">
-                  <label for="inputRemark">备注信息:</label>
-                  <input class="form-control" id="inputRemark" type="text" v-model="theClientOgnztn.other" title="备注信息">
+                  <label for="iptRemark">备注信息:</label>
+                  <input class="form-control" id="iptRemark" type="text" v-model="theClientOgnztn.other" title="备注信息">
                 </div>
                 <div class="col-lg form-inline">
                 </div>                
@@ -235,23 +229,18 @@ export default {
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
 .shower-ognztn input{
   width: 80%;
 }
-.shower-ognztn .row{
-  margin-top: 5px;
+.row{
+  margin-top: 10px;
 }
-.searchBar input,.searchBar button {
-  margin-right: 10px;
+.query input,.query button {
+  margin-right: 5px;
 }
-.createnewclient {
-  text-align: right;
+.newitem {
+  position: absolute;
+  right: 20px;
 }
 </style>
 

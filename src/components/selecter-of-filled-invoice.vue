@@ -2,17 +2,17 @@
 <div class="father">
   <h5>当前位置:发票业务/清单明细</h5>
   <div id="requestInvoice" class="container-fluid">
-    <div id="searchConditions"  class="form-group form-inline">
+    <div class="row form-inline">
       <label for="queryConditions">关键词:</label>
       <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="用车人,单位,项目等搜索关键词">
       <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="填开发票时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="填开发票的时间范围"></datepicker>
       <button class="btn btn-primary btnSearch" @click="getListOfInvoiceDetailsFromDBS">🔍获取数据</button>
-	</div>  	
+	  </div>  	
   </div>
-  <div class="listOfDetails" v-if="listOfInvoiceDetailsFromDBS.length>0">
-    <table class="table table-hover pre-scrollable">
+  <div class="divfortable" v-if="listOfInvoiceDetailsFromDBS.length>0">
+    <table class="table table-hover">
       <thead>
-        <th v-for="title,index in recordersTitle" :width="widthOfTH[index]">{{title}}</th>
+        <th v-for="(title,index) in recordersTitle" :width="widthOfTH[index]">{{title}}</th>
       </thead>
       <tbody @click="clickedARecorderToShowDetails">
         <tr v-for="row in listOfInvoiceDetailsFromDBS">
@@ -136,47 +136,11 @@ Date.prototype.format = function(fmt) {
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
-.clearBtn {
-	margin-right: 20px;
-}
-.saveBtn, .clearBtn {
-	width: 100px;
-}
-
-.mx-input-wrapper {
-  width: 100%;
-}
-table {
-  overflow: auto;
-  font-size: 14px;
-}
 .table table-hover {
   font-size: 12px;
 }
-td {
-    overflow:hidden; 
-    white-space:nowrap; 
-    text-overflow:ellipsis;
-    max-width: 50px;
-}
 .datepicker {
   margin-left: 10px;
-}
-.radios,.btnSearch {
-  margin-left: 20px;
-}
-.radio {
-   width: 1.1em;
-   height: 1.1em;
-   vertical-align:middle;
-   margin-top:-2px;
-   margin-bottom:1px;
 }
 </style>
 

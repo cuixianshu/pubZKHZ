@@ -2,17 +2,12 @@
 <div class="father">
   <h5>当前位置:采购业务/采购执行</h5>
   <div class="container-fluid">
-    <div class="form-group form-inline">
-      <div class="row">
-        <div class="col-lg">
-          <span for="schKeyWds">关键词:</span>
-          <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="项目名称\物品名称\规格型号\厂家品牌等">
-          <button @click="getPACAUAs" class="btn btn-primary" type="button">搜索数据</button>
-          <button @click="clearPACAUAs"class="btn btn-secondary" type="button" v-if="listOfPACAUAs.length>0">清空</button>
-        </div>        
-      </div>
+    <div class="row form-inline query">
+      <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="项目名称\物品名称\规格型号\厂家品牌等">
+      <button @click="getPACAUAs" class="btn btn-primary" type="button">搜索数据</button>
+      <button @click="clearPACAUAs"class="btn btn-secondary" type="button" v-if="listOfPACAUAs.length>0">清空</button>
     </div>    
-    <div class="listShower" v-if="listOfPACAUAs.length>0">
+    <div class="divfortable" v-if="listOfPACAUAs.length>0">
       <table class="table table-hover">
         <thead>
           <th v-for="(title,index) in titleOfApplyings">{{title}}</th>
@@ -36,17 +31,17 @@
     </div>
   </div>
   <div class="modal fade" id="infoShower" role="dialog" aria-labelledby="infoShower" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5>完成采购,提请验收--申请ID:{{queryContent.id_apldPcsg}}</h5>
         </div>
         <div class="modal-body">
           <div class="container-fluid">
-            <div class="row">
+            <div class="row divfortable">
               <table class="table table-hover">
                 <thead>
-                  <th v-for="title,index in titleOfEnquiryInInfoShower">{{title}}</th>
+                  <th v-for="(title,index) in titleOfEnquiryInInfoShower">{{title}}</th>
                 </thead>
                 <tbody>
                   <tr>
@@ -261,6 +256,11 @@ Date.prototype.format = function(fmt) {
   })
 </script>
 
-<style>
-  
+<style scoped>
+.row {
+  margin-top: 10px;
+}
+.query input,.query button {
+  margin-right: 5px;
+} 
 </style>

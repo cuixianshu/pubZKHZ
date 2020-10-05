@@ -1,23 +1,16 @@
 <template>
 <div class="father">
   <h5>当前位置:采购业务/询价比价</h5>
-  
   <div class="container-fluid">
-    <div class="form-group form-inline">
-      <div class="row">
-        <div class="col-lg">
-          <span for="schKeyWds">关键词:</span>
-          <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="项目名称\物品名称\规格型号\厂家品牌等">
-          <button @click="getApprovedApplyingPurchasings" class="btn btn-primary" type="button">搜索数据</button>
-          <button @click="clearApprovedPurchasingList"class="btn btn-secondary" type="button" v-if="listOfAprvedPcsg.length>0">清空</button>
-        </div>        
-      </div>
-
+    <div class="row form-inline query">
+      <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="项目名称\物品名称\规格型号\厂家品牌等">
+      <button @click="getApprovedApplyingPurchasings" class="btn btn-primary">搜索数据</button>
+      <button @click="clearApprovedPurchasingList"class="btn btn-secondary" v-if="listOfAprvedPcsg.length>0">清空</button>
     </div>
-    <div class="listShower" v-if="listOfAprvedPcsg.length>0">
+    <div class="divfortable" v-if="listOfAprvedPcsg.length>0">
       <table class="table table-hover">
         <thead>
-          <th v-for="title,index in titleOfListStatic">{{title}}</th>
+          <th v-for="(title,index) in titleOfListStatic">{{title}}</th>
           <!-- <th>询价比价单</th> -->
         </thead>
         <tbody>
@@ -50,17 +43,17 @@
     </div>      
   </div>
   <div class="modal fade" id="showerOfDetails" role="dialog" aria-labelledby="showerOfDetails" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5>未通过审核的比价单--请购ID:{{appliedPurchasingDetails.id}}</h5>
         </div>
         <div class="modal-body">
           <div class="container-fluid">
-            <div class="row">
+            <div class="row divfortable">
               <table class="table table-hover">
                 <thead>
-                  <th v-for="title,index in titleOfEnquiries">{{title}}</th>
+                  <th v-for="(title,index) in titleOfEnquiries">{{title}}</th>
                 </thead>
                 <tbody>
                   <tr v-for="row in enquiries" :style="row.is_made_deal?'color:red;font-weight:bold;':''" :title="row.is_made_deal?'已选中此行':'未选中'">
@@ -79,14 +72,14 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-          <button type="button" class="btn btn-primary" @click="addEnquiry">添加询价</button>
+          <button class="btn btn-secondary" data-dismiss="modal">关闭</button>
+          <button class="btn btn-primary" @click="addEnquiry">添加询价</button>
         </div>  
       </div>
     </div>
   </div>
   <div class="modal fade" id="addEnquiryCompare" role="dialog" aria-labelledby="addEnquiryCompare" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5>新建询价单---保存后不可修改,请认真填写!--请购ID:{{id_apldPcsg}}</h5>
@@ -136,20 +129,20 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-          <button type="button" class="btn btn-primary" @click="saveEnquiry">保存</button>
+          <button class="btn btn-secondary" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary" @click="saveEnquiry">保存</button>
         </div>
       </div>
     </div>
   </div>
   <div class="modal fade" id="modifyEnquiry" role="dialog" aria-labelledby="modifyEnquiry" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5>比价单--请购ID:{{id_apldPcsg}}</h5><!-- (<span style="color:red;">红色为以前选定的商家</span>) -->
         </div>
         <div class="modal-body">
-          <div class="container-fluid">
+          <div class="container-fluid divfortable">
 <!--             <div class="row">
               <div class="col-lg form-inline">
               </div>
@@ -184,8 +177,8 @@
         <div class="modal-footer">
           <label><b>选定理由</b></label><input id="reasonOfChoose" class="form-control" type="text" v-model="rsltOfCP.reason">
           
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-          <button type="button" class="btn btn-primary" @click="saveDataForApproving">提交审核</button>
+          <button class="btn btn-secondary" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary" @click="saveDataForApproving">提交审核</button>
         </div>
       </div>
     </div>
@@ -599,21 +592,13 @@ Date.prototype.format = function(fmt) {
     }
   })
 </script>
-<style scopede>
-  .row {
-    margin:5px 0px;
-  }
-  .btngroup {
-    display: inline-block;
-    text-align: right;
-  }
-  .clearBtn ,.saveBtn {
-    margin-right: 10px;
-    width: 100px;
-  }
-  .container-fluid {
-    width: 100%;
-  }
+<style scoped>
+.row {
+  margin-top: 10px;
+}
+.query input,.query button {
+  margin-right: 5px;
+}
 #showerOfDetails input,#showerOfDetails select {
   width: 80%;
 }

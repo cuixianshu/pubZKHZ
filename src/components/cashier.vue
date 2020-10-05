@@ -2,9 +2,9 @@
   <div class="father">
     <h5>当前位置:收款付款/销售回款</h5>
     <div class="container-fluid query">
-      <div class="form-inline queryOfCashier">
+      <div class="row form-inline queryOfCashier">
         <datepicker id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="业务发生的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="业务发生的时间范围"></datepicker>
-        <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="搜索关键词" title="客户、客户手机、客户单位、开始或举办地点、订单备注、销售金额、发票号等">
+        <input id="queryConditions" type="text" class="form-control" v-model="queryContent.keyWord" placeholder="搜索关键词" title="客户、客户手机、客户单位、开始或举办地点、订单备注、销售金额、发票号等">
         <select class="form-control" v-model="queryContent.id_project" title="所属项目">
           <option :value="0">所有项目</option>
           <option v-for="item in projects" :value="item.id">{{item.name}}</option>
@@ -15,7 +15,7 @@
         </select>
         <button class="btn btn-primary" @click="getUncollectedOrders">🔍获取数据</button>
       </div>
-    </div><!--  pre-scrollable -->
+    </div>
     <div class="divfortable" v-if="uncollectedOrders.length>0">
       <table class="table table-hover">
         <thead>
@@ -47,19 +47,19 @@
     </div>
     <div v-if="uncollectedOrders.length>0" style="margin-top: 10px;">
       <span class="collectiontip">已选中：{{selectedOrders.length}}条，应收总额：{{totalAmountNeeddToClct}}元。</span>
-      <button type="button" class="btn btn-primary" @click="openMdlCashier">去收款</button>
-      <button type="button" class="btn btn-secondary" @click="uncollectedOrders=[];">清空</button>
+      <button class="btn btn-primary" @click="openMdlCashier">去收款</button>
+      <button class="btn btn-secondary" @click="uncollectedOrders=[];">清空</button>
     </div>
 
     <div class="modal fade" id="mdlCashier" role="dialog" aria-labelledby="mdlCashier" data-backdrop="static" data-keyboard: false>
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">  
           <div class="modal-header">
             <span>
               <h5>收款---应收总额:￥{{totalAmountNeeddToClct}}
               </h5>
             </span>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>  
             </button>  
           </div>
@@ -76,14 +76,14 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctAS">一级</label>
-                  <select id="slctAS" type="text" class="form-control" name="ture" v-model="cashier.id_accounting_sub" title="一级会计科目" @change="acc_subChanged()">
+                  <select id="slctAS" type="text" class="form-control" v-model="cashier.id_accounting_sub" title="一级会计科目" @change="acc_subChanged()">
                     <option  value=0>一级科目</option>
                     <option v-for="item in accountingSubjects" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctNature">二级</label>
-                  <select id="slctNature" type="text" class="form-control" name="ture" v-model="cashier.id_detailed_accounting" title="二级会计科目">
+                  <select id="slctNature" type="text" class="form-control" v-model="cashier.id_detailed_accounting" title="二级会计科目">
                     <option  value=0>二级科目</option>
                     <option v-for="item in DAsAtTheAccSub" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
@@ -92,14 +92,14 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctCashierAccount">账号</label>
-                  <select id="slctCashierAccount" type="text" name="cashierAccount" class="form-control" placeholder="收款账号" v-model="cashier.id_account" title="收款账号">
+                  <select id="slctCashierAccount" type="text" class="form-control" placeholder="收款账号" v-model="cashier.id_account" title="收款账号">
                     <option  value=0>收款账号</option>
                   	<option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" name="wayOfCashier" v-model="cashier.id_way_pay" placeholder="收款方式" title="收款方式">
+                  <select id="slctWayOfCashier" type="text" class="form-control" v-model="cashier.id_way_pay" placeholder="收款方式" title="收款方式">
                     <option  value=0>收款方式</option>
                     <option v-for="item in waysOfPayments" :value="item.id">{{item.name}}</option>
                   </select>
@@ -108,24 +108,24 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="inputCashiedAmount">金额</label>
-                  <input id="inputCashiedAmount" type="number" class="form-control" name="cashiedAmount" v-model="cashier.amount" placeholder="实际收款金额" title="实际收款金额">
+                  <input id="inputCashiedAmount" type="number" class="form-control" v-model="cashier.amount" placeholder="实际收款金额" title="实际收款金额">
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="inputOther">备注</label>
-                  <input id="inputOther" type="text" class="form-control" name="otherInCashier" v-model="cashier.other" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
+                  <input id="inputOther" type="text" class="form-control" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
                 </div>
               </div>
             </div>
           </div>
           <div class="modal-footer">  
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-            <button type="button" @click="checkCollectedData" class="btn btn-primary">保存</button>
+            <button class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button @click="checkCollectedData" class="btn btn-primary">保存</button>
           </div>           
         </div>
       </div>
     </div>
     <div class="modal fade" id="warningbox" role="dialog" aria-labelledby="warningbox" data-backdrop="static" data-keyboard: false>
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">
           <div class="modal-header">
             <h5>收款金额少于应收金额</h5>
@@ -136,8 +136,8 @@
             <h5 class="warningbox">实收金额少于应收金额,您确定吗?</h5>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-            <button class="btn btn-primary" type="button" @click="confirmCollection">确定</button> 
+            <button class="btn btn-default" data-dismiss="modal">取消</button>
+            <button class="btn btn-primary" @click="confirmCollection">确定</button> 
           </div>  
         </div>
       </div>
@@ -229,6 +229,7 @@ Date.prototype.format = function(fmt) {
           url: 'getOrders.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
+            console.log(response.data);
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到符合条件的记录!',
@@ -349,6 +350,7 @@ Date.prototype.format = function(fmt) {
           conditions:'withCollectionData',
           orders:this.selectedOrders,
           business_type:1,
+          abstract:'销售"'+this.selectedOrders[0]['p_name']+'"等'+this.selectedOrders.length+'笔业务回款',
         };
         var _this=this;
         this.$axios({
@@ -356,6 +358,7 @@ Date.prototype.format = function(fmt) {
           url: 'updateCashier.php',
           data: qs.stringify(queryContent)
           }).then(function (response) {
+            console.log(response.data);
             if(response.data===true) {
               $('#mdlCashier').modal('toggle');//关闭
               _this.$toast({
@@ -366,7 +369,10 @@ Date.prototype.format = function(fmt) {
             //更新数据
               for(var i=0;i<_this.selectedOrders.length;i++) {
                 var ui=_this.uncollectedOrders.findIndex((ele) => ele['id'] == _this.selectedOrders[i]['id']);
-                _this.uncollectedOrders.splice(ui,1);
+                if(ui!==-1) {
+                  _this.uncollectedOrders.splice(ui,1);
+                  i--;
+                }
               }
               _this.selectedOrders=[];
             } else {
@@ -427,9 +433,6 @@ Date.prototype.format = function(fmt) {
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
 .collectiontip {
   font-size: 18px;
 }		

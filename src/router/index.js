@@ -1,56 +1,9 @@
-import Vue from 'vue';
+import Vue from 'vue/dist/vue.common.js';
 import Router from 'vue-router';
 import store from '@/store/store.js';
-// import clientDepartment from '@/components/client-department.vue';
-//import receivesAndReturns from '@/components/receives-returns';
 import operatedHistory from '@/components/operated-history';
-// import reportsSale from '@/components/reports-sale.vue';
-//import acceptanceCheck from '@/components/acceptance-check.vue';
-//import ticketCahier from '@/components/ticket-cashier.vue';
-//import materialsDistribute from '@/components/materials-distribute.vue';
-//import materialsInventory from '@/components/materials-inventory.vue';
-// import materialsApproveApplying from '@/components/materials-approve-applying.vue';
-// import purchasingProgress from '@/components/purchasing-progress';
-//import turnInFunds from '@/components/turn-in-funds.vue';
-// import materialSearchModify from '@/components/material-search-modify.vue';
-// import cashier from '@/components/cashier';
-// import requestPaying from '@/components/request-paying';
-// import acceptOtherFunds from '@/components/accept-other-funds';
-// import product from '@/components/product';
-// import inputByHand from '@/components/input-by-hand';
-// import importFromExcel from '@/components/import-from-excel.vue';
-// import checkOrders from '@/components/check-orders.vue';
-// import requestInvoice from '@/components/request-invoice.vue';
-// import ticketChangeRefound from '@/components/ticket-change-refound.vue';
-// import selecterOfFilledInvoice from '@/components/selecter-of-filled-invoice.vue';
-// import detailsInAFilledInvoice from '@/components/details-in-a-filled-invoice.vue';
-// import modifyApplyedFilledInvoice from '@/components/modify-applyed-filled-invoice.vue';
-// import refillCancelFilledInvoice from '@/components/refill-cancel-filled-invoice.vue';
-// import rulePrice from '@/components/rule-price.vue';
-// import project from '@/components/project.vue';
-// import contract from '@/components/contract.vue';
-// import equipment from '@/components/equipment.vue';
-// import employee from '@/components/employee.vue';
 import login from '@/components/login.vue';
-// import applyPurchasing from '@/components/apply-purchasing.vue';
-// import approveApplyingPurchasing from '@/components/approve-applying-purchasing.vue';
-// import enquiryComparePrice from '@/components/enquiry-compare-price.vue';
-// import approveEnquiry from '@/components/approve-enquiry.vue';
-// import launchPurchasing from '@/components/launch-purchasing.vue';
-// import checkReceipts from '@/components/check-receipts.vue';
-// import requestFunds from '@/components/request-funds.vue';
-// import rqstPcsgFunds from '@/components/rqst-pcsg-funds.vue';
-// import primaryAuditsRqstFunds from '@/components/primary-audits-requesting-funds.vue';
-// import finalAuditsRqstingFunds from '@/components/final-audits-rqsting-funds.vue';
-// import pay from '@/components/pay.vue';
-// import reviewPayment from '@/components/review-payment.vue';
-// import ticketInbound from '@/components/ticket-inbound.vue';
-// import ticketOutbound from '@/components/ticket-outbound.vue';
-// import rqstRfdFee from '@/components/rqst-rfdtkt-paying.vue';
 import home from '@/components/home.vue';
-// import authorizations from '@/components/authorizations.vue';
-// import changePswd from '@/components/change-pswd.vue';
-// import materialsApply from '@/components/materials-apply.vue';
 Vue.use(Router);
 
 const router =  new Router({
@@ -238,7 +191,7 @@ const router =  new Router({
     },
     {
       path: '/project',
-      name: 'bscinfo_project',
+      name: 'cnfrc_project',
       component:resolve => require(['@/components/project.vue'], resolve)
       // component: project
     },
@@ -366,6 +319,18 @@ const router =  new Router({
       path:'/change-pswd',
       name:'personal_modify_info',
       component:resolve => require(['@/components/change-pswd.vue'], resolve)
+      // component:changePswd
+    },
+    {
+      path:'/cnfrc-attendees',
+      name:'cnfrc_attendees',
+      component:resolve => require(['@/components/attendees.vue'], resolve)
+      // component:changePswd
+    },
+    {
+      path:'/cnfrc-communicate',
+      name:'cnfrc_communicate',
+      component:resolve => require(['@/components/communicate.vue'], resolve)
       // component:changePswd
     },
     {

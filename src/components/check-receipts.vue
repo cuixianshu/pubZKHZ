@@ -5,22 +5,22 @@
       <div class="row">
         <div class="col-lg form-inline searchcontent">
           <label for="queryConditions">关键词:</label> 
-          <input id="queryConditions" type="text" name="queryConditions" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位等搜索关键词">
+          <input id="queryConditions" type="text" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位等搜索关键词">
           <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="收款的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="收款的时间范围"></datepicker> 
           <button class="btn btn-primary" @click="getListOfCashier">🔍获取数据</button>
           <button class="btn btn-secondary" @click="clearList" v-if="listOfCashies.length>0">清除</button>            
         </div>          
       </div>
     </div>
-    <div class="" v-if="listOfCashies.length>0">
+    <div class="divfortable" v-if="listOfCashies.length>0">
       <table class="table table-hover">
         <thead>
           <th v-for="(title,index) in titlesOfList" :width="widthOfTH[index]">{{title}}</th>
         </thead>
         <tbody>
           <tr v-for="(row,index) in listOfCashies" @click="clickedARowInShower(row)">
-<!--  ['收款ID','收款金额','收款方式','收款账户','备注信息','收款日期','收款人'] -->
             <td title="收款编号">{{row.id}}</td>
+            <td title="业务摘要">{{row.abstract}}</td>
             <td title="收款金额">{{row.amount}}</td>
             <td title="收款方式">{{row.way_pay}}</td>
             <td title="收款账户">{{row.account}}</td>
@@ -32,13 +32,13 @@
       </table>
     </div>
     <div class="modal fade" id="checkReceipts" role="dialog" aria-labelledby="checkReceipts" data-backdrop="static" data-keyboard: false>
-      <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-dialog modal-lg">
         <div class="modal-content">  
           <div class="modal-header">
             <span>
               <h5>收款复核--收款ID:{{approvedResult.id}}</h5>
             </span>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>  
               </button>  
           </div>
@@ -47,7 +47,7 @@
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctBsnsType">类型</label>
-                  <select id="slctBsnsType" type="text" class="form-control" v-model="approvedResult.business_type" title="收取款项的业务类型" disabled>
+                  <select id="slctBsnsType" type="text" class="form-control" v-model="approvedResult.business_type" title="关联业务类型" disabled>
                     <option value=1>销售回款(非机票)</option>
                     <option value=2>上缴款项(非还款)</option>
                     <option value=3>机票款(含退票费)</option>
@@ -55,19 +55,21 @@
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
+                  <label for="iptAbstract">摘要</label>
+                  <input id="iptAbstract" type="text" class="form-control" :value="approvedResult.abstract" title="approvedResult.abstract" readonly>
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
                   <label for="slctAS">一级</label>
-                  <select id="slctAS" type="text" class="form-control" name="ture" v-model="approvedResult.id_accounting_sub" title="一级会计科目" @change="accSubChanged()">
+                  <select id="slctAS" type="text" class="form-control" v-model="approvedResult.id_accounting_sub" title="一级会计科目" @change="accSubChanged()">
                     <option  value=0>一级科目</option>
                     <option v-for="item in accountingSubjects" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
                   <label for="slctNature">二级</label>
-                  <select id="slctNature" type="text" class="form-control" name="ture" v-model="approvedResult.id_detailed_accounting" title="二级会计科目">
+                  <select id="slctNature" type="text" class="form-control" v-model="approvedResult.id_detailed_accounting" title="二级会计科目">
                     <option  value=0>二级科目</option>
                     <option v-for="item in DAsAtTheAccSub" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
@@ -107,8 +109,8 @@
             </div>
           </div>
           <div class="modal-footer">  
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-            <button type="button" id="btnSaveTheApprovedData" @click="saveTheApprovedData" class="btn btn-primary">确认复核</button>
+            <button class="btn btn-secondary" data-dismiss="modal">取消</button>
+            <button id="btnSaveTheApprovedData" @click="saveTheApprovedData" class="btn btn-primary">确认复核</button>
           </div>           
         </div>
       </div>
@@ -148,8 +150,8 @@ Date.prototype.format = function(fmt) {
           dateRange:[],
           conditions:''
         },
-        titlesOfList:['收款ID','收款金额','收款方式','收款账户','备注信息','收款日期','收款人'],
-        widthOfTH:['14%','14%','15%','15%','14%','14%','14%'],
+        titlesOfList:['收款ID','业务摘要','收款金额','收款方式','收款账户','备注信息','收款日期','收款人'],
+        widthOfTH:['8%','16%','10%','15%','15%','14%','14%','8%'],
         listOfCashies:[],
         currentUserId:this.$store.state.user.id_user,
         approvedResult:{
@@ -292,9 +294,6 @@ Date.prototype.format = function(fmt) {
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
 #searchConditions >*{
   margin:5px;
 }   
@@ -303,16 +302,6 @@ h5 {
 }
 datepicker {
   margin-left: 10px;  
-}
-td {
-    overflow:hidden; 
-    white-space:nowrap; 
-    text-overflow:ellipsis;
-    max-width: 50px;
-}
-table {
-  overflow: auto;
-  font-size: 14px;
 }
 .modal-body input,.modal-body select {
   width: 80%;

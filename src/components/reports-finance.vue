@@ -1,14 +1,14 @@
 <template>
 <div class="father">
-  <ul class="nav nav-pills" role="tablist">
+  <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
-      <a class="nav-link active" data-toggle="pill" href="#rcpt">收款报表</a>
+      <a class="nav-link active" data-toggle="tab" href="#rcpt">收款报表</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" data-toggle="pill" href="#pay">付款报表</a>
+      <a class="nav-link" data-toggle="tab" href="#pay">付款报表</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" data-toggle="pill" href="#invoice">发票报表</a>
+      <a class="nav-link" data-toggle="tab" href="#invoice" title="我公司发票开具情况报表">发票开具报表</a>
     </li>
   </ul>
   <div class="tab-content">
@@ -46,7 +46,7 @@
         <jsonexcel class="btn btn-primary" :data="rcpt_json_data" :fields="rcpt_json_fields" :name="rcpt_filename" worksheet="财务收款报表">存为Excel</jsonexcel>
         <button class="btn btn-secondary" type="button" @click="rcptnData=[]">清空</button>
       </div>
-      <div class="form pre-scrollable" v-if="rcptnData.length>0">
+      <div class="divfortable" v-if="rcptnData.length>0">
         <table class="table table-hover">
           <thead>
             <th v-for="(title,index) in rcptTitles" :width="rcptWidths[index]">{{title}}</th>
@@ -106,7 +106,7 @@
         <jsonexcel class="btn btn-primary" :data="pay_json_data" :fields="pay_json_fields" :name="pay_filename" worksheet="付款报表">存为Excel</jsonexcel>
         <button class="btn btn-secondary" type="button" @click="payData=[]">清空</button>
       </div>
-      <div class="form pre-scrollable" v-if="payData.length>0">
+      <div class="divfortable" v-if="payData.length>0">
         <table class="table table-hover">
           <thead>
             <th v-for="(title,index) in payTitles" :width="payWidths[index]">{{title}}</th>
@@ -166,7 +166,7 @@
         <jsonexcel class="btn btn-primary" :data="invoice_json_data" :fields="invoice_json_fields" :name="invoice_filename" worksheet="发票报表">存为Excel</jsonexcel>
         <button class="btn btn-secondary" type="button" @click="invoiceData=[]">清空</button>
       </div>
-      <div class="form pre-scrollable" v-if="invoiceData.length>0">
+      <div class="divfortable" v-if="invoiceData.length>0">
         <table class="table table-hover">
           <thead>
             <th v-for="(title,index) in invoiceTitles" :width="invoiceWidths[index]">{{title}}</th>
@@ -274,13 +274,14 @@ export default {
       payData:[],
       payTitles:['款项性质','会计科目','付款ID','付款账号','付款方式','付款金额','请款人','付款时间','所属项目','款项用途','发票号码','备注'],
       payWidths:['7%','12%','6%','7%','5%','8%','5%','12%','9%','11%','9%','9%'],
-      payNatures:[
-        {id:0,name:'款项性质'},
-        {id:1,name:'费用报销'},
-        {id:2,name:'借款备用'},
-        {id:3,name:'采购付款'},
-        {id:4,name:'机票退款'},
-      ],
+      payNatures:this.$store.state.naturesFunds,
+      // [
+      //   {id:0,name:'款项性质'},
+      //   {id:1,name:'费用报销'},
+      //   {id:2,name:'借款备用'},
+      //   {id:3,name:'采购付款'},
+      //   {id:4,name:'机票退款'},
+      // ],
       payTotalAmount:0,
       pay_json_fields:{},
       pay_json_data:[],
@@ -305,7 +306,6 @@ export default {
         '付款备注':'remark',
         '请款备注':'r_remark',//请款表中
       },
-
       invoiceQC:{
         dateRange:[],
         keyWord:'',
@@ -322,25 +322,25 @@ export default {
       invoice_filename:'发票报表',
       invoiceTotalAmount:0,
       invoice_volName:{
-        '开票ID':'id',
-        '所属项目':'id_project',
-        '申请ID':'r_id',
-        '申请人':'r_id_applyer',
-        '申请开票日期':'r_time_apply',
-        '申请开票金额':'r_amount',
-        '出票公司':'r_id_of_our_cmpny',
-        '发票类型':'r_id_type_invoice',
-        '发票号码':'num_of_invoice',
-        '开票商品名':'r_googs_name',
-        '开票金额':'amount',
-        '开票时间':'time_fill',
-        '开票人':'id_filler',
-        // '发票作废人':'id_canceled_by',
-        '作废时间':'time_canceled',
-        '发票抬头':'r_id_clt_prnt_ognztn',
-        '收款ID':'id_tbl_cashier',
-        '开票备注':'other',
-        '申请发票备注':'r_other',
+        "开票ID":"id",
+        "所属项目":"id_project",
+        "申请ID":"r_id",
+        "申请人":"r_id_applyer",
+        "申请开票日期":"r_time_apply",
+        "申请开票金额":"r_amount",
+        "出票公司":"r_id_of_our_cmpny",
+        "发票类型":"r_id_type_invoice",
+        "发票号码":"num_of_invoice",
+        "开票商品名":"r_googs_name",
+        "开票金额":"amount",
+        "开票时间":"time_fill",
+        "开票人":"id_filler",
+        // "发票作废人":"id_canceled_by",
+        "作废时间":"time_canceled",
+        "发票抬头":"r_id_clt_prnt_ognztn",
+        "收款ID":"id_tbl_cashier",
+        "开票备注":"other",
+        "申请发票备注":"r_other",
       },
       countOfInvoices:0,
       dtldAcntgs:this.$store.state.detailedAccountings,
@@ -488,6 +488,7 @@ export default {
             url: 'getInvoices.php',
             data: qs.stringify(_this.invoiceQC)
         }).then(function (response) {
+          console.log(response.data);
           if(response.data.length<1) {
             _this.$toast({
               text: '没有符合条件的记录',
@@ -498,7 +499,32 @@ export default {
           }
           _this.invoiceData=response.data;
           var listOfIdOfFilledInvoices=[];
-          _this.invoiceData.forEach(function(item,index,array){
+          // _this.invoiceData.forEach(function(item,index,array){
+          //   var ar=_this.projects.find((ele) => ele['id'] == item.id_project);
+          //   item.id_project=typeof(ar)=='undefined'?'':ar['name'];
+          //   var ar=_this.employees.find((ele) => ele['id'] == item.r_id_applyer);
+          //   item.r_id_applyer=typeof(ar)=='undefined'?'':ar['name'];
+          //   var ar=_this.ourCompanys.find((ele) => ele['id'] == item.r_id_of_our_cmpny);
+          //   item.r_id_of_our_cmpny=typeof(ar)=='undefined'?'':ar['name'];
+          //   var ar=_this.typeOfInvoices.find((ele) => ele['id'] == item.r_id_type_invoice);
+          //   item.r_id_type_invoice=typeof(ar)=='undefined'?'':ar['name'];
+          //   var ar=_this.employees.find((ele) => ele['id'] == item.id_filler);
+          //   item.id_filler=typeof(ar)=='undefined'?'':ar['name'];
+          //   var ar=_this.clntParentOgnztns.find((ele) => ele['id'] == item.r_id_clt_prnt_ognztn);
+          //   item.r_id_clt_prnt_ognztn=typeof(ar)=='undefined'?'':ar['full_name'];
+
+          //   if(!listOfIdOfFilledInvoices.includes(item['id'])) {
+          //     listOfIdOfFilledInvoices.push(item['id']);
+          //     _this.invoiceTotalAmount+= Number(item['amount']);
+          //   } else {
+          //     var el=array.find((ele)=> ele['id']==item['id']);
+          //     el['r_amount']=Number(item['r_amount'])+'+'+Number(el['r_amount']);
+          //     el['r_id']+=','+item['r_id'];
+          //     array.splice(index,1);
+          //   }
+          // });
+          for(var index=0;index<_this.invoiceData.length;index++) {
+            var item=_this.invoiceData[index];
             var ar=_this.projects.find((ele) => ele['id'] == item.id_project);
             item.id_project=typeof(ar)=='undefined'?'':ar['name'];
             var ar=_this.employees.find((ele) => ele['id'] == item.r_id_applyer);
@@ -512,16 +538,18 @@ export default {
             var ar=_this.clntParentOgnztns.find((ele) => ele['id'] == item.r_id_clt_prnt_ognztn);
             item.r_id_clt_prnt_ognztn=typeof(ar)=='undefined'?'':ar['full_name'];
 
+            item.num_of_invoice="'"+item.num_of_invoice;
             if(!listOfIdOfFilledInvoices.includes(item['id'])) {
               listOfIdOfFilledInvoices.push(item['id']);
               _this.invoiceTotalAmount+= Number(item['amount']);
             } else {
-              var el=array.find((ele)=> ele['id']==item['id']);
+              var el=_this.invoiceData.find((ele)=> ele['id']==item['id']);
               el['r_amount']=Number(item['r_amount'])+'+'+Number(el['r_amount']);
               el['r_id']+=','+item['r_id'];
-              array.splice(index,1);
+              _this.invoiceData.splice(index,1);
+              index--;
             }
-          });
+          }
           _this.countOfInvoices=listOfIdOfFilledInvoices.length;
           _this.invoice_json_data=[];
           _this.invoice_json_fields={};
@@ -571,12 +599,6 @@ export default {
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
 .tab-content {
   margin: 5px auto;
 }
@@ -585,16 +607,6 @@ h5 {
 }
 .row {
   margin-bottom: 2px;
-}
-table {
-  overflow: auto;
-  font-size: 12px;
-}
-td {
-  overflow:hidden; 
-  white-space:nowrap; 
-  text-overflow:ellipsis;
-  max-width: 50px;
 }
 .tip {
   font-size: 18px;

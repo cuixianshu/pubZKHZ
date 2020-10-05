@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="father">
     <h5>当前位置:基础数据/员工权限</h5>
     <div class="container-fluid">
-      <div id="searchConditions"  class="form-group form-inline">
+      <div class="row form-inline">
         <label for="employees">员工:</label>
         <select id="employees" v-model="employee.id" class="form-control" title="员工" placeholder="请选择员工" @change="changeTheUser">
           <option v-for="item in employees" :value="item.id" class="form-control">{{item.name}}</option>
@@ -26,11 +26,18 @@
 </template>
 
 <script>
+//权限的实现
+/*
+1.在tbl_components中增加相应的模块,注意:superior必须是对应组件的路由中name的前缀,如:cnfrc_communicate;
+2.在tbl_userauthorizations中添加:1.以name_router命名的字段;2.以其前缀命名的字段,如:cnfrc;
+3.在router中添加组件的路由信息
+4.根据权限表,有权限的会被路由守卫放行,同时也会在菜单中显示;
+ */
 import qs from 'qs';  
   export default {
     data () {
       return {
-        employees:this.$store.state.employees,
+        employees:this.$store.state.myEmplys,
         allEMPAuth:[],//全体员工的权限
         employee:{
           name:'',
@@ -41,9 +48,9 @@ import qs from 'qs';
         slctdUsersAuth:{},
         originalUA:{},//用户原始权限
         auth_dict:{},
-        vueCmpnt:[],
+        vueCmpnts:[],
         superiorMenu_en:[],
-        rootmenu_dictionary:{
+        rootmenu_dictionary:{//根菜单字典
           bscinfo:'基础数据',
           finance:'财务业务',
           invoices:'发票业务',
@@ -52,7 +59,8 @@ import qs from 'qs';
           personal:'个人中心',
           purchasing:'采购业务',
           rqstfunds:'请款报销',
-          reports:'业务报表'
+          reports:'业务报表',
+          cnfrc:'展会项目',
         }
       }
     },
@@ -78,8 +86,6 @@ import qs from 'qs';
         }
 
         this.slctdUsersAuth=JSON.parse(JSON.stringify(this.originalUA));
-// console.log(this.auth_dict);
-// return;
       },
       saveUserAuth() {
         for(var prop in this.slctdUsersAuth) {
@@ -103,6 +109,8 @@ import qs from 'qs';
             }
             this.slctdUsersAuth[prop]=hasSubAuth?1:0;
           }
+// console.log(this.slctdUsersAuth);
+// return;
           var _this=this;
           var url='';
           if(this.isNew) {
@@ -170,31 +178,31 @@ import qs from 'qs';
     created () {
       this.getAllEmpAuth();
       var _this=this;
-      this.vueCmpnt=[];
+      this.vueCmpnts=[];
       this.$axios({
         method: 'post',
         url: 'getComponents.php'
       }).then(function (response) {
-        _this.vueCmpnt=response.data;
+        _this.vueCmpnts=response.data;
         //根菜单
-        for(var i=0;i<_this.vueCmpnt.length;i++) {
-          if(!_this.superiorMenu_en.includes(_this.vueCmpnt[i]['superior']) && _this.vueCmpnt[i]['superior']!=='none') {
-            _this.superiorMenu_en.push(_this.vueCmpnt[i]['superior']);
-            _this.menuTree[_this.vueCmpnt[i]['superior']]=[];
+        for(var i=0;i<_this.vueCmpnts.length;i++) {
+          if(!_this.superiorMenu_en.includes(_this.vueCmpnts[i]['superior']) && _this.vueCmpnts[i]['superior']!=='none') {
+            _this.superiorMenu_en.push(_this.vueCmpnts[i]['superior']);
+            _this.menuTree[_this.vueCmpnts[i]['superior']]=[];
           }
         }
-        for(var i=0;i<_this.vueCmpnt.length;i++) {
+        for(var i=0;i<_this.vueCmpnts.length;i++) {
           for(var prop in _this.menuTree) {
-            if(_this.vueCmpnt[i]['superior']===prop) {
+            if(_this.vueCmpnts[i]['superior']===prop) {
               var obj={};
-              obj['name_router']=_this.vueCmpnt[i]['name_router'];
-              obj['text_in_menu']=_this.vueCmpnt[i]['text_in_menu'];
+              obj['name_router']=_this.vueCmpnts[i]['name_router'];
+              obj['text_in_menu']=_this.vueCmpnts[i]['text_in_menu'];
             //根菜单下的二级菜单
               _this.menuTree[prop].push(obj);
             }
           }
           //菜单字典
-          _this.auth_dict[_this.vueCmpnt[i]['name_router']]=_this.vueCmpnt[i]['text_in_menu'];
+          _this.auth_dict[_this.vueCmpnts[i]['name_router']]=_this.vueCmpnts[i]['text_in_menu'];
         }
       }).catch(function (error) {
         _this.$toast({
@@ -208,9 +216,6 @@ import qs from 'qs';
 </script>
 
 <style scoped>
-h5 {
-  color: #007bff;
-}
 .mainmenutitle {
   color:#FF8C00;
 }

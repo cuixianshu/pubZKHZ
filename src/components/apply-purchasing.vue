@@ -2,23 +2,17 @@
 <div class="father">
   <h5>当前位置:采购业务/请购物品</h5>
   <div class="container-fluid">
-    <div class="form-group form-inline">
-        <div class="col-lg">
-          <span for="schKeyWds">关键词:</span>
-          <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="物品名称\规格型号\厂家品牌等">
-          <button @click="getListOfAppliedPurchasing" class="btn btn-primary" type="button" title="过去半年内的请购采购记录">搜索数据</button>
-          <button @click="clearlistOfAppliedPurchasing"class="btn btn-secondary" type="button" v-if="listOfAppliedPurchasings.length>0">清空</button>
-        </div>
-        <div class="col-lg">
-          <button @click="newCreateApplyPurchasing" class="btn btn-primary" type="button">新建采购申请</button>
-        </div>
+    <div class="row form-inline query">
+      <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="物品名称\规格型号\厂家品牌等">
+      <button @click="getListOfAppliedPurchasing" class="btn btn-primary" title="过去半年内的请购采购记录">搜索数据</button>
+      <button @click="clearlistOfAppliedPurchasing"class="btn btn-secondary" v-if="listOfAppliedPurchasings.length>0">清空</button>
+      <button @click="newCreateApplyPurchasing" class="btn btn-primary newitem">新建采购申请</button>
     </div>
-    <div class="listShower" v-if="listOfAppliedPurchasings.length>0">
+    <div class="divfortable" v-if="listOfAppliedPurchasings.length>0">
       <table class="table table-hover">
         <thead>
           <th v-for="title,index in titleOfList">{{title}}</th>
         </thead>
-<!-- ['请购ID','项目','物品','数量','包装单位','品牌','型号','详情','需要日期','申请人','执行进度'] -->
         <tbody>
           <tr v-for="row in listOfAppliedPurchasings" @click="clickedARecorderToModify(row)">
             <td :title='row.id'>{{row.id}}</td>
@@ -38,7 +32,7 @@
     </div>      
   </div>
   <div class="modal fade" id="mdlPurchasing" role="dialog" aria-labelledby="mdlPurchasing" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5>采购申请单<span v-show="APDetails.id==''?false:true">--ID:{{APDetails.id}}</span></h5>
@@ -48,50 +42,50 @@
               <div class="row">
                 <div class="col-lg form-inline">
                   <label for="slctProject" class="require">所属项目</label>
-                  <select id="slctProject" type="text" name="project" class="form-control" placeholder="所属项目" v-model="APDetails.id_project" title="选择所属项目" :readonly="applyingIsPassedApproving(APDetails.id)">
+                  <select id="slctProject" type="text" class="form-control" placeholder="所属项目" v-model="APDetails.id_project" title="选择所属项目" :readonly="applyingIsPassedApproving(APDetails.id)">
                     <option value=0>请选择项目</option>
                     <option v-for="item in projects" :value="item.id">{{item.prjct}}</option>
                   </select>
                 </div>
                 <div class="col-lg form-inline">
                   <label for="nameOfMaterial" class="require">物品名称</label>
-                  <input id="nameOfMaterial" type="text" name="name" class="form-control" placeholder="物品名称" v-model="APDetails.name" title="物品名称" :readonly="applyingIsPassedApproving(APDetails.id)">
+                  <input id="nameOfMaterial" type="text" class="form-control" placeholder="物品名称" v-model="APDetails.name" title="物品名称" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>
               </div>
               <div class="row">                
                 <div class="col-lg form-inline">
                   <label for="inputUnit">计量单位</label>
-                  <input id="inputUnit" type="text" name="unit" class="form-control" placeholder="计量单位" v-model="APDetails.unit" title="计量单位" :readonly="applyingIsPassedApproving(APDetails.id)">
+                  <input id="inputUnit" type="text" class="form-control" placeholder="计量单位" v-model="APDetails.unit" title="计量单位" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>          
                 <div class="col-lg form-inline">
                   <label for="inputQuantity" class="require">请购数量</label>
-                  <input id="inputQuantity" type="number" name="quantity" class="form-control" placeholder="请购数量" v-model="APDetails.quantity" title="请购数量,必须大于 0" :readonly="applyingIsPassedApproving(APDetails.id)">
+                  <input id="inputQuantity" type="number" class="form-control" placeholder="请购数量" v-model="APDetails.quantity" title="请购数量,必须大于 0" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg form-inline">
                   <label for="inputBrand" class="require">厂商品牌</label>
-                  <input id="inputBrand" type="text" name="brand" class="form-control" placeholder="厂商品牌" v-model="APDetails.brand" title="厂商品牌" :readonly="applyingIsPassedApproving(APDetails.id)">
+                  <input id="inputBrand" type="text" class="form-control" placeholder="厂商品牌" v-model="APDetails.brand" title="厂商品牌" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>
                 <div class="col-lg form-inline">
                   <label for="inputModel" class="require">规格型号</label>
-                  <input id="inputModel" type="text" name="model" class="form-control" placeholder="规格型号" v-model="APDetails.model" title="规格型号" :readonly="applyingIsPassedApproving(APDetails.id)">
+                  <input id="inputModel" type="text" class="form-control" placeholder="规格型号" v-model="APDetails.model" title="规格型号" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>
               </div>
               <div class="row">    
                 <div class="col-lg form-inline">
                   <label for="inputDetail" class="require">用途说明</label>
-                  <input id="inputDetail" type="text" name="detail" class="form-control" placeholder="用途说明" v-model="APDetails.detail" title="用途说明" :readonly="applyingIsPassedApproving(APDetails.id)">
+                  <input id="inputDetail" type="text" class="form-control" placeholder="用途说明" v-model="APDetails.detail" title="用途说明" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>
                 <div class="col-lg form-inline">
                   <label for="inptStartPoint" class="require">需要日期</label>
-                  <input id="inptStartPoint" type="date" name="date_needed" class="form-control" placeholder="需要日期" v-model="APDetails.date_needed" title="需要日期" :readonly="applyingIsPassedApproving(APDetails.id)">
+                  <input id="inptStartPoint" type="date" class="form-control" placeholder="需要日期" v-model="APDetails.date_needed" title="需要日期" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg form-inline">
                   <label for="inputMem">备注说明</label>
-                  <input id="inputMem" type="text" name="material_mem" class="form-control" placeholder="备注说明" v-model="APDetails.remark" title="其它需要说明的事项" :readonly="applyingIsPassedApproving(APDetails.id)">
+                  <input id="inputMem" type="text" class="form-control" placeholder="备注说明" v-model="APDetails.remark" title="其它需要说明的事项" :readonly="applyingIsPassedApproving(APDetails.id)">
                 </div>
                 <div class="col-lg form-inline">
                 </div>
@@ -99,8 +93,8 @@
             </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button class="btn btn-primary saveBtn" type="button" @click="saveApplyPurchasing" v-if="!applyingIsPassedApproving(APDetails.id)">保存</button> 
+          <button class="btn btn-default" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary saveBtn" @click="saveApplyPurchasing" v-if="!applyingIsPassedApproving(APDetails.id)">保存</button> 
         </div>  
       </div>
     </div>
@@ -391,23 +385,16 @@ Date.prototype.format = function(fmt) {
   })
 </script>
 <style scopede>
-  .row {
-    margin:5px 0px;
-  }
-  h5 {
-    color: #007bff;
-  }
-  .btngroup {
-    display: inline-block;
-    text-align: right;
-  }
-  .clearBtn ,.saveBtn {
-    margin-right: 10px;
-    width: 100px;
-  }
-  .container-fluid {
-    width: 100%;
-  }
+.row {
+  margin-top: 10px;
+}
+.query input,.query button {
+  margin-right: 5px;
+}
+.newitem {
+  position: absolute;
+  right: 20px;
+}
 #mdlPurchasing input,#mdlPurchasing select {
   width: 80%;
 }  

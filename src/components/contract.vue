@@ -2,22 +2,16 @@
 <div class="father">
   <h5>当前位置:基础数据/合同管理</h5>
   <div class="container-fluid">
-    <div class="form-group form-inline">
-        <div class="col-lg">
-          <span for="schKeyWds">关键词:</span>
-          <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="甲方、联系人、产品、地点等">
-          <button @click="getListOfContracts" class="btn btn-primary" type="button">搜索数据</button>
-          <button @click="clearlistOfContracts"class="btn btn-secondary" type="button" v-if="listOfContracts.length>0">清空</button>
-          
-        </div>
-        <div class="col-lg createnewcontract">
-          <button @click="newCreateContract" class="btn btn-primary" type="button">新建合同</button>
-        </div>
+    <div class="row form-inline query">
+      <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="甲方、联系人、产品、地点等">
+      <button @click="getListOfContracts" class="btn btn-primary">搜索数据</button>
+      <button @click="clearlistOfContracts"class="btn btn-secondary" v-if="listOfContracts.length>0">清空</button>
+      <button @click="newCreateContract" class="btn btn-primary newitem">新建合同</button>
     </div>
-    <div class="listShower" v-if="listOfContracts.length>0">
+    <div class="divfortable" v-if="listOfContracts.length>0">
       <table class="table table-hover">
         <thead>
-          <th v-for="title,index in titleOfList">{{title}}</th>
+          <th v-for="(title,index) in titleOfList">{{title}}</th>
         </thead>
         <tbody @click="clickedARecorderToModify">
           <tr v-for="row in listOfContracts">
@@ -28,7 +22,7 @@
     </div>      
   </div>
   <div class="modal fade" id="mdfRecorder" role="dialog" aria-labelledby="mdfRecorder" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           合同编辑器--合同ID:{{contract.id}}
@@ -38,23 +32,23 @@
               <div class="row">
                 <div class="col-lg form-inline">
                   <label for="inputPartA">甲方名称:</label>
-                  <input id="inputPartA" type="text" name="partA" class="form-control" v-model="contract.partA" placeholder="甲方名称" title="甲方名称">
+                  <input id="inputPartA" type="text" class="form-control" v-model="contract.partA" placeholder="甲方名称" title="甲方名称">
                 </div>
                 <div class="col-lg form-inline">
                   <label for="inputAgent">甲方代表:</label>
-                  <input id="inputAgent" type="text" name="agentA" class="form-control" placeholder="甲方代表和电话" title="甲方代表人和电话号" v-model="contract.agentA" required>
+                  <input id="inputAgent" type="text" class="form-control" placeholder="甲方代表和电话" title="甲方代表人和电话号" v-model="contract.agentA" required>
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg form-inline">
                   <label for="slctOurCmpny">我方名称:</label>
-                  <select id="slctOurCmpny" type="text" name="ourCompany" class="form-control" v-model="contract.ourCompany" placeholder="我方公司名" title="我方签约公司名称" required>
+                  <select id="slctOurCmpny" type="text" class="form-control" v-model="contract.ourCompany" placeholder="我方公司名" title="我方签约公司名称" required>
                     <option v-for="item in ourCompanys">{{item.name}}</option>
                   </select>
                 </div>
                 <div class="col-lg form-inline">
                   <label for="inputOurAgent">我方代表:</label>
-                  <select id="inputOurAgent" type="text" name="ourAgent" class="form-control" v-model="contract.ourAgent" placeholder="我方代表人" title="我方签约代表人" required>
+                  <select id="inputOurAgent" type="text" class="form-control" v-model="contract.ourAgent" placeholder="我方代表人" title="我方签约代表人" required>
                     <option v-for="item in employees">{{item.name}}</option>
                   </select>
                 </div>
@@ -62,31 +56,31 @@
               <div class="row">
                 <div class="col-lg form-inline">
                   <label for="inputContent">主要内容:</label>
-                  <input id="inputContent" type="text" name="basicContent" class="form-control" v-model="contract.basicContent" placeholder="合同主要内容" title="对合同内容的主要概括">
+                  <input id="inputContent" type="text" class="form-control" v-model="contract.basicContent" placeholder="合同主要内容" title="对合同内容的主要概括">
                 </div>                
                 <div class="col-lg form-inline">
                   <label for="inputProduct">产品名称:</label>
-                  <input id="inputProduct" type="text" name="nameOfProduct" class="form-control" v-model="contract.nameOfProduct" placeholder="合同销售的产品" title="产品名称">
+                  <input id="inputProduct" type="text" class="form-control" v-model="contract.nameOfProduct" placeholder="合同销售的产品" title="产品名称">
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg form-inline">
                   <label for="inputPrice">产品单价:</label>
-                  <input id="inputPrice" type="number" name="unitPrice" class="form-control" v-model="contract.unitPrice" placeholder="请输入单价" title="产品单价">
+                  <input id="inputPrice" type="number" class="form-control" v-model="contract.unitPrice" placeholder="请输入单价" title="产品单价">
                 </div>
                 <div class="col-lg form-inline">
                   <label for="inputCount">合同数量:</label>
-                  <input id="inputCount" type="number" name="count" class="form-control" v-model="contract.count" placeholder="请输入数量" title="产品数量">
+                  <input id="inputCount" type="number" class="form-control" v-model="contract.count" placeholder="请输入数量" title="产品数量">
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg form-inline">
                   <label for="inputAmount">合同金额:</label>
-                  <input id="inputAmount" type="number" name="amount" class="form-control" v-model="contract.amount" placeholder="合同金额" title="合同金额">
+                  <input id="inputAmount" type="number" class="form-control" v-model="contract.amount" placeholder="合同金额" title="合同金额">
                 </div>                
                 <div class="col-lg form-inline">
                   <label for="inputPayment">付款方式:</label>
-                  <select id="inputPayment" type="text" name="payment" class="form-control" v-model="contract.payment" placeholder="付款方式" title="付款方式">
+                  <select id="inputPayment" type="text" class="form-control" v-model="contract.payment" placeholder="付款方式" title="付款方式">
                     <option v-for="item in payments">{{item.name}}</option>
                   </select>
                 </div>
@@ -94,39 +88,39 @@
               <div class="row">
                 <div class="col-lg form-inline">
                   <label for="dtpkrStartDate">生效日期:</label>
-                  <input id="dtpkrStartDate" type="date" name="startDate" class="form-control" v-model="contract.startDate" placeholder="生效日期" title="合同生效日期">
+                  <input id="dtpkrStartDate" type="date" class="form-control" v-model="contract.startDate" placeholder="生效日期" title="合同生效日期">
                 </div>
                 <div class="col-lg form-inline">
                   <label for="dtpkrEndDate">失效日期:</label>
-                  <input id="dtpkrEndDate" type="date" name="endDate" class="form-control" v-model="contract.endDate" placeholder="合同失效日期" title="合同失效日期">
+                  <input id="dtpkrEndDate" type="date" class="form-control" v-model="contract.endDate" placeholder="合同失效日期" title="合同失效日期">
                 </div>
               </div>              
               <div class="row">
                 <div class="col-lg form-inline">
                   <label for="dtpkrSignedDate">签约日期:</label>
-                  <input id="dtpkrSignedDate" type="date" name="signedDate" class="form-control" v-model="contract.signedDate" placeholder="签约日期" title="合同的签订日期">
+                  <input id="dtpkrSignedDate" type="date" class="form-control" v-model="contract.signedDate" placeholder="签约日期" title="合同的签订日期">
                 </div>
                 <div class="col-lg form-inline">
                   <label for="inputRemark">备注信息:</label>
-                  <input id="inputRemark" type="text" name="remark" class="form-control" v-model="contract.remark" placeholder="备注信息" title="备注信息">
+                  <input id="inputRemark" type="text" class="form-control" v-model="contract.remark" placeholder="备注信息" title="备注信息">
                 </div>                
               </div>
               <div class="row">
                 <div class="col-lg form-inline">
                   <label for="inputIsFinished">执行进度:</label>
-                  <input id="inputIsFinished" type="number" name="isFinished" class="form-control" v-model="contract.isFinished" placeholder="执行进度" title="0:未完成;1:已完成">
+                  <input id="inputIsFinished" type="number" class="form-control" v-model="contract.isFinished" placeholder="执行进度" title="0:未完成;1:已完成">
                 </div>
                 <div class="col-lg form-inline">
                   <label for="inputNumber">合同编号:</label>
-                  <input id="inputNumber" type="text" name="number" class="form-control" v-model="contract.number" placeholder="合同编号" title="合同编号">
+                  <input id="inputNumber" type="text" class="form-control" v-model="contract.number" placeholder="合同编号" title="合同编号">
                 </div>                
               </div>
 
             </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button class="btn btn-primary saveBtn" type="button" @click="saveData">保存</button> 
+          <button class="btn btn-default" data-dismiss="modal">取消</button>
+          <button class="btn btn-primary saveBtn" @click="saveData">保存</button> 
         </div>  
       </div>
     </div>
@@ -401,12 +395,6 @@ console.log(response.data);
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
 #mdfRecorder input,#mdfRecorder select {
   width: 70%;
 }
@@ -418,6 +406,13 @@ h5 {
 }
 #mdfRecorder .row {
   margin-bottom: 5px;
+}
+.query input,.query button {
+  margin-right: 5px;
+}
+.newitem {
+  position: absolute;
+  right: 20px;
 }
 </style>
 

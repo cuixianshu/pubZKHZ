@@ -89,7 +89,6 @@
             <li v-if="user.rqstfunds_purchasing_funds"><span class="dropdown-item menu-item" @click="loadPage('/rqst-pcsg-funds')">采购请款</span></li>
             <li v-if="user.rqstfunds_rfdtkt_paying"><span class="dropdown-item menu-item" @click="loadPage('/rqst-rfdtkt-paying')">机票退款</span></li>            
             <li v-if="user.rqstfunds_primary_audits"><span class="dropdown-item menu-item" @click="loadPage('/prmry-audits-rqst-funds')">请款初审</span></li>
-<!--             <li v-if="user.orders"><span class="dropdown-item menu-item">请款初审</span></li> -->
             <li v-if="user.rqstfunds_final_audits"><span class="dropdown-item menu-item" @click="loadPage('/final-audits-rqst-funds')">请款复审</span></li>
           </div>
         </li>        
@@ -123,11 +122,11 @@
                 产品管理
               </span>
             </li>
-            <li v-if="user.bscinfo_project">
+<!--             <li v-if="user.bscinfo_project">
               <span class="dropdown-item menu-item" @click="loadPage('/project')">
                 项目管理
               </span>
-            </li>
+            </li> -->
             <li v-if="user.bscinfo_contract">
               <span class="dropdown-item menu-item" @click="loadPage('/contract')">
                 合同管理
@@ -173,6 +172,61 @@
           </div>
         </li>        
       </ul> 
+      <ul class="nav nav-tabs menu-tabs" v-if="user.materials">
+        <li class="dropdown">
+          <span data-toggle="dropdown" class="dropdown-toggle menu-title">物料管理</span>
+          <div class="dropdown-menu">
+            <li v-if="user.materials_acceptance"><span class="dropdown-item menu-item" @click="loadPage('/acceptanceCheck')">验收入库</span></li>
+            <li><span class="dropdown-item menu-item" @click="loadPage('/materialsApply')">申请领用</span></li>
+            <li v-if="user.materials_approve_applying"><span class="dropdown-item menu-item" @click="loadPage('/materialsApproveApplying')">审核领用</span></li>
+            <li v-if="user.materials_distribute"><span class="dropdown-item menu-item" @click="loadPage('/materialsDistribute')">发放物料</span></li>
+            <li v-if="user.materials_search"><span class="dropdown-item menu-item" @click="loadPage('/materialSearchModify')">查找新建</span></li>
+            <li v-if="user.materials_Inventory"><span class="dropdown-item menu-item" @click="loadPage('/materialsInventory')">库存盘点</span></li>
+          </div>
+        </li>        
+      </ul> 
+      <ul class="nav nav-tabs menu-tabs" v-if="user.cnfrc">
+        <li class="dropdown">
+          <span data-toggle="dropdown" class="dropdown-toggle menu-title">展会项目</span>
+          <div class="dropdown-menu">
+            <li v-if="user.cnfrc_project">
+              <span class="dropdown-item menu-item" @click="loadPage('/project')">
+                项目管理
+              </span>
+            </li>
+            <li v-if="user.cnfrc_attendees">
+              <span class="dropdown-item menu-item" @click="loadPage('/cnfrc-attendees')">
+                嘉宾代表
+              </span>
+            </li>
+            <li v-if="user.cnfrc_communicate">
+              <span class="dropdown-item menu-item" @click="loadPage('/cnfrc-communicate')">
+                国际商务
+              </span>
+            </li>
+            <li v-if="user.cnfrc_sponsors">
+              <span class="dropdown-item menu-item" @click="loadPage('/authorizations')">
+                招展招商
+              </span>
+            </li>
+            <li v-if="user.bscinfo_product">
+              <span class="dropdown-item menu-item" @click="loadPage('/product')">
+                供应商
+              </span>
+            </li>
+            <li v-if="user.bscinfo_contract">
+              <span class="dropdown-item menu-item" @click="loadPage('/contract')">
+                合同管理
+              </span>
+            </li>
+            <li v-if="user.bscinfo_equipment">
+              <span class="dropdown-item menu-item" @click="loadPage('/equipment')">
+                设备管理
+              </span>
+            </li>
+          </div>
+        </li>        
+      </ul> 
       <ul class="nav nav-tabs menu-tabs" v-if="user.reports">
         <li class="dropdown">
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">业务报表</span>
@@ -187,19 +241,6 @@
           </div>
         </li>        
       </ul>
-      <ul class="nav nav-tabs menu-tabs" v-if="user.materials">
-        <li class="dropdown">
-          <span data-toggle="dropdown" class="dropdown-toggle menu-title">物料管理</span>
-          <div class="dropdown-menu">
-            <li v-if="user.materials_acceptance"><span class="dropdown-item menu-item" @click="loadPage('/acceptanceCheck')">验收入库</span></li>
-            <li><span class="dropdown-item menu-item" @click="loadPage('/materialsApply')">申请领用</span></li>
-            <li v-if="user.materials_approve_applying"><span class="dropdown-item menu-item" @click="loadPage('/materialsApproveApplying')">审核领用</span></li>
-            <li v-if="user.materials_distribute"><span class="dropdown-item menu-item" @click="loadPage('/materialsDistribute')">发放物料</span></li>
-            <li v-if="user.materials_search"><span class="dropdown-item menu-item" @click="loadPage('/materialSearchModify')">查找新建</span></li>
-            <li v-if="user.materials_Inventory"><span class="dropdown-item menu-item" @click="loadPage('/materialsInventory')">库存盘点</span></li>
-          </div>
-        </li>        
-      </ul> 
       <ul class="nav nav-tabs menu-tabs" v-if="user.personal">
         <li class="dropdown">
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">个人中心</span>
@@ -212,19 +253,9 @@
           </div>
         </li>        
       </ul> 
-<!--       <ul class="nav nav-tabs menu-tabs">
-        <li class="dropdown">
-          <span data-toggle="dropdown" class="dropdown-toggle menu-title">请款报销</span>
-          <div class="dropdown-menu">
-            <li v-if="user.orders"><span class="dropdown-item menu-item">请款</span></li>
-            <li v-if="user.orders"><span class="dropdown-item menu-item">请款初审</span></li>
-            <li v-if="user.orders"><span class="dropdown-item menu-item">请款复审</span></li>
-          </div>
-        </li>        
-      </ul>  -->                                                                             
     </div>
 
-    <div class="content-row"><!-- row  -->
+    <div class="content-row">
       <router-view></router-view>
     </div>
     <div class="modal fade" id="quitSys" role="dialog" aria-labelledby="quitSys" data-backdrop="static" data-keyboard: false>
@@ -232,7 +263,7 @@
         <div class="modal-content">  
           <div class="modal-header">
             <span><h4>退出系统提示</h4></span>  
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <button class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>  
               </button>  
           </div>
@@ -240,8 +271,8 @@
             <h5>您确定要退出系统吗？</h5>
           </div>
           <div class="modal-footer">  
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>  
-            <button type="button" class="btn btn-primary" @click="confirmQuiting">确定</button>
+            <button class="btn btn-secondary" data-dismiss="modal">取消</button>  
+            <button class="btn btn-primary" @click="confirmQuiting">确定</button>
           </div>           
         </div>
       </div>

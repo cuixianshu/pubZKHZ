@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import Vue from 'vue/dist/vue.common.js';
 import Vuex from 'vuex';
 import qs from 'qs';
 import axios from 'axios';
@@ -26,6 +26,7 @@ const store = new Vuex.Store({
     naturesFunds:[],
     accountingSubjects:[],
     detailedAccountings:[],
+    agendas:[],
   },
   mutations:{
     changeLogin(state,stt) {
@@ -95,6 +96,9 @@ const store = new Vuex.Store({
     initializeDetailedAccountings(state,data) {
       state.detailedAccountings=data;
     },
+    initializeAgendas(state,data) {
+      state.agendas=data;
+    },
   },
   getters:{
 
@@ -127,6 +131,7 @@ const store = new Vuex.Store({
           store.dispatch('getNaturesFunds',that);
           store.dispatch('getAccountingSubject',that);
           store.dispatch('getDetailedAccountings',that);
+          store.dispatch('getAgendas',that);
           that.$router.push('/home');
         } else {
           console.log(response.data);
@@ -439,6 +444,23 @@ const store = new Vuex.Store({
       }).then(function (response) {
         // console.log(response.data);
         store.commit('initializeDetailedAccountings',response.data);
+      }).catch(function (error) {
+        console.log(response.data);
+        that.$toast({
+          text: '异步通信错误!'+error,
+          type: 'danger',
+          duration: 4000
+        });
+      });      
+    },
+    getAgendas(store,vue) {
+      var that=vue;
+      that.$axios({
+        method: 'post',
+        url: 'getAgendas.php',
+      }).then(function (response) {
+        // console.log(response.data);
+        store.commit('initializeAgendas',response.data);
       }).catch(function (error) {
         console.log(response.data);
         that.$toast({

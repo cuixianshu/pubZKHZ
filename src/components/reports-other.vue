@@ -1,12 +1,9 @@
 <template>
 <div class="father">
-  <ul class="nav nav-pills" role="tablist">
+  <ul class="nav nav-tabs" role="tablist">
     <li class="nav-item">
-      <a class="nav-link" data-toggle="pill" href="#pay">物料出入库报表</a>
+      <a class="nav-link active" data-toggle="tab" href="#pay">物料出入库报表</a>
     </li>
-<!--     <li class="nav-item">
-      <a class="nav-link" data-toggle="pill" href="#invoice">发票报表</a>
-    </li> -->
   </ul>
   <div class="tab-content">
     <div id="pay" class="container-fluid tab-pane active"><!--   -->
@@ -38,12 +35,12 @@
       <div v-if="materialIOData.length>0">
         <span class="tip">
           共{{materialIOData.length}}次。
-          总出库数:{{distributeTotalAmount}},总入库数:{{inboundTotalAmount}}。
+          总出库数:{{distributeTotalAmount.toFixed(2)}},总入库数:{{inboundTotalAmount.toFixed(2)}}。
         </span>
         <jsonexcel class="btn btn-primary" :data="material_json_data" :fields="material_json_fields" :name="material_filename" worksheet="物料出入库报表">存为Excel</jsonexcel>
         <button class="btn btn-secondary" type="button" @click="materialIOData=[]">清空</button>
       </div>
-      <div class="form pre-scrollable" v-if="materialIOData.length>0">
+      <div class="divfortable" v-if="materialIOData.length>0">
         <table class="table table-hover">
           <thead>
             <th v-for="(title,index) in materialIOTitles" :width="materialIOWidths[index]">{{title}}</th>
@@ -67,67 +64,6 @@
         </table>
       </div>
     </div>
-<!--     <div id="invoice" class="container-fluid tab-pane">
-      <div class="row">
-        <div class="form-inline" v-if="invoiceData.length<1">
-          <datepicker class="datepicker" id="dateRange" v-model="invoiceQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="发票填开的时间范围,默认上个月" :shortcuts="shortcuts" placeholder="填开发票的时间范围">
-          </datepicker>
-          <input class="form-control" v-model="invoiceQC.keyWord" title="发票号,抬头,商品名,金额,备注等" placeholder="查询关键字" style="width:110px; background: #CEFFCE;">
-          <select class="form-control" v-model="invoiceQC.id_project" title="选择所属项目">
-            <option :value="0">所有项目</option>
-            <option v-for="item in projects" :value="item.id">{{item.name}}</option>
-          </select>
-          <select class="form-control" v-model="invoiceQC.id_ourCompany" title="出具发票公司名">
-            <option :value="0">全部公司</option>
-            <option v-for="item in ourCompanys" :value="item.id">{{item.name}}</option>
-          </select>
-          <select class="form-control" v-model="invoiceQC.isCanceled" title="作废状态">
-            <option value="0">未作废</option>
-            <option value="1">已作废</option>
-            <option value="2">作废状态</option>
-          </select>
-          <select class="form-control" v-model="invoiceQC.isCashed" title="作废状态">
-            <option value="0">未收款</option>
-            <option value="1">已收款</option>
-            <option value="2">收款状态</option>
-          </select>
-          <button id="btnSearch" class="btn btn-primary" type="button" @click="getInvoiceData">搜索数据</button>
-        </div>
-      </div>
-      <hr style="height:1px;border:none;border-top:2px solid #007bff;" />
-      <div v-if="invoiceData.length>0">
-        <span class="tip">
-          共{{countOfInvoices}}张。
-          开票总额:{{invoiceTotalAmount}}元。
-        </span>
-        <jsonexcel class="btn btn-primary" :data="invoice_json_data" :fields="invoice_json_fields" :name="invoice_filename" worksheet="发票报表">存为Excel</jsonexcel>
-        <button class="btn btn-secondary" type="button" @click="invoiceData=[]">清空</button>
-      </div>
-      <div class="form pre-scrollable" v-if="invoiceData.length>0">
-        <table class="table table-hover">
-          <thead>
-            <th v-for="(title,index) in invoiceTitles" :width="invoiceWidths[index]">{{title}}</th>
-          </thead>
-          <tbody>
-            <tr v-for="row in invoiceData">
-              <td title='开票ID'>{{row.id}}</td>
-              <td :title='row.id_project'>{{row.id_project}}</td>
-              <td :title='row.r_id_applyer'>{{row.r_id_applyer}}</td>
-              <td :title='row.time_fill'>{{row.time_fill}}</td>
-              <td :title='row.r_id_of_our_cmpny'>{{row.r_id_of_our_cmpny}}</td>
-              <td :title='row.r_id_type_invoice'>{{row.r_id_type_invoice}}</td>
-              <td :title='row.num_of_invoice'>{{row.num_of_invoice}}</td>
-              <td :title='row.r_id_clt_prnt_ognztn'>{{row.r_id_clt_prnt_ognztn}}</td>
-              <td :title='row.r_googs_name'>{{row.r_googs_name}}</td>
-              <td :title='row.amount'>{{row.amount}}</td>
-              <td :title='row.id_tbl_cashier'>{{row.id_tbl_cashier}}</td>
-              <td :title='row.other'>{{row.other}}</td>
-              <td :title='row.r_other'>{{row.r_other}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>  -->
   </div>    
 </div>
 </template>
@@ -190,7 +126,7 @@ export default {
       material_json_fields:{},
       material_json_data:[],
       material_filename:'物料出入库报表', 
-      material_volName:{
+      material_colName:{
         '进出库ID':'id',
         '申领人':'a_id_applyer',
         '所属项目':'a_id_project',
@@ -274,8 +210,8 @@ export default {
           _this.material_json_fields={};
           _this.material_json_data=_this.materialIOData;
           _this.material_filename='物料出入库报表';
-          for(var prop in _this.material_volName) {
-            _this.material_json_fields[prop]=_this.material_volName[prop];
+          for(var prop in _this.material_colName) {
+            _this.material_json_fields[prop]=_this.material_colName[prop];
           }
           _this.material_filename+=((new Date()).format("yyyyMMddhhmmss")).toString();
         }).catch(function (error) {
@@ -314,12 +250,6 @@ export default {
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
 .tab-content {
   margin: 5px auto;
 }
@@ -328,16 +258,6 @@ h5 {
 }
 .row {
   margin-bottom: 2px;
-}
-table {
-  overflow: auto;
-  font-size: 12px;
-}
-td {
-  overflow:hidden; 
-  white-space:nowrap; 
-  text-overflow:ellipsis;
-  max-width: 50px;
 }
 .tip {
   font-size: 18px;

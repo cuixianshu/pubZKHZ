@@ -1,20 +1,14 @@
 <template>
 <div class="father">
   <h5>当前位置:基础数据/产品管理</h5>
-  <div id="clientDepartment" class="container-fluid">
-    <div class="form-group form-inline">
-        <div class="col-lg">
-          <span for="schKeyWds">关键词:</span>
-          <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="名称、规格型号等">
-          <button @click="getListOfProduct" class="btn btn-primary" type="button">搜索数据</button>
-          <button @click="clearlistOfProduct"class="btn btn-secondary" type="button" v-if="listOfProduct.length>0">清空</button>
-          
-        </div>
-        <div class="col-lg createnewproduct">
-          <button @click="newCreateProduct" class="btn btn-primary" type="button">新建产品</button>
-        </div>
+  <div class="container-fluid">
+    <div class="row form-inline query">
+      <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="名称、规格型号等">
+      <button @click="getListOfProduct" class="btn btn-primary">搜索数据</button>
+      <button @click="clearlistOfProduct"class="btn btn-secondary" v-if="listOfProduct.length>0">清空</button>
+      <button @click="newCreateProduct" class="btn btn-primary newitem">新建产品</button>
     </div>
-    <div class="listShower" v-if="listOfProduct.length>0">
+    <div class="divfortable" v-if="listOfProduct.length>0">
       <table class="table table-hover">
         <thead>
           <th v-for="title,index in productTitle">{{title}}</th>
@@ -28,7 +22,7 @@
     </div>      
   </div>
   <div class="modal fade shower-product" id="mdfRecorder" role="dialog" aria-labelledby="showProductModifyer" data-backdrop="static" data-keyboard: false>
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="tipForMdfRecorder">产品编辑器--产品ID:{{product.id}}</h5>
@@ -38,7 +32,7 @@
             <div class="row">
               <div class="col-lg form-inline">
                 <label for="inputProductType">产品类别:</label>
-                <select id="slctType" type="text" name="productType" class="form-control" v-model="product.id_type" title="产品所属类别">
+                <select id="slctType" type="text" class="form-control" v-model="product.id_type" title="产品所属类别">
                   <option v-for="item in typeListOfPrdct" :value="item.id">{{item.type_product}}</option>
                 </select>
               </div>                
@@ -78,7 +72,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+          <button class="btn btn-secondary" data-dismiss="modal">取消</button>
           <button class="btn btn-primary saveBtn" @click="saveData">保存</button>  
         </div>
       </div>
@@ -267,23 +261,21 @@ unit: (...)
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
-h5 {
-  color: #007bff;
-}
 .row {
   margin-top: 10px;
 }
 .shower-product input,.shower-product select{
   width: 80%;
 } 
-.createnewproduct {
-  text-align: right;
-}
 .saveBtn {
   width: 100px;
+}
+.query input,.query button {
+  margin-right: 5px;
+}
+.newitem {
+  position: absolute;
+  right: 20px;
 }
 </style>
 
