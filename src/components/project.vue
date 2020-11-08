@@ -10,10 +10,6 @@
     <li class="nav-item">
       <a class="nav-link" data-toggle="tab" href="#tracksViewer" title="查看/新建/修改专场" @click="showProjectEditer=false;">查看/新建/修改专场</a>
     </li>
-<!--     <li class="nav-item">
-      <a class="nav-link" data-toggle="tab" href="#AddOrDeleteAttendees" title="为会议专场添加或删除代表" @click="getATDsWithAllAttendedRcds
-">为会议专场添加或删除代表</a>
-    </li> -->
     <li class="nav-item">
       <a class="nav-link" data-toggle="tab" href="#schedulesInTracks" title="查看/添加/修改专场的日程">查看/新建/修改日程</a>
     </li>
@@ -21,9 +17,9 @@
   <div class="tab-content pre-scrollable" style="min-height:720px;">
     <div id="overviewprjct" class="container-fluid tab-pane active">
       <div class="row form-inline">
-        <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="名称等">
-        <button @click="getAllProjects" class="btn btn-primary">搜索数据</button>
-        <button @click="allProjects=[];" class="btn btn-secondary" v-if="allProjects.length>0">清空</button>
+        <input type="text" class="form-control mgrt10" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="名称等">
+        <button @click="getAllProjects" class="btn btn-primary mgrt10">搜索数据</button>
+        <button @click="allProjects=[];" class="btn btn-secondary mgrt10" v-if="allProjects.length>0">清空</button>
       </div>
       <hr style="height:1px;border:none;border-top:2px solid #007bff;" />
       <div class="divfortable" v-if="allProjects.length>0 && !showProjectViewer">
@@ -183,7 +179,7 @@
             </thead>
             <tbody>
               <tr v-for="row in tracksInThisProject">
-                <td :title='row.name'>{{row.name}}</td>
+                <td :title='row.subject'>{{row.subject}}</td>
                 <td :title='row.address'>{{row.address}}</td>
                 <td :title='row.time_ranges'>{{row.time_ranges}}</td>
                 <td :title='row.id_chair'>{{row.id_chair}}</td>
@@ -204,10 +200,10 @@
     </div>
     <div id="CreateOrEditPrjct" class="container-fluid tab-pane">
       <div class="row form-inline" v-if="!showProjectEditer">
-        <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="名称等">
-        <button @click="getAllProjects" class="btn btn-primary">搜索数据</button>
+        <input type="text" class="form-control mgrt10" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="名称等">
+        <button @click="getAllProjects" class="btn btn-primary mgrt10">搜索数据</button>
         <button @click="allProjects=[];" class="btn btn-secondary" v-if="allProjects.length>0">清空</button>
-        <button class="btn btn-primary new-create" @click="newCreateProject">新建展会项目</button>
+        <button class="btn btn-primary btn-at-right" @click="newCreateProject">新建展会项目</button>
       </div>
       <hr style="height:1px;border:none;border-top:2px solid #007bff;" />
       <div class="divfortable" v-if="allProjects.length>0 && !showProjectEditer">
@@ -367,7 +363,7 @@
             </thead>
             <tbody>
               <tr v-for="(row,index) in tracksInThisProject">
-                <td @click="editATrackInPrjctViewer(row,index)" :title='row.name'>{{row.name}}</td>
+                <td @click="editATrackInPrjctViewer(row,index)" :title='row.subject'>{{row.subject}}</td>
                 <td @click="editATrackInPrjctViewer(row,index)" :title='row.address'>{{row.address}}</td>
                 <td @click="editATrackInPrjctViewer(row,index)" :title='row.time_ranges'>{{row.time_ranges}}</td>
                 <td @click="editATrackInPrjctViewer(row,index)" :title='row.id_chair'>{{row.id_chair}}</td>
@@ -392,7 +388,7 @@
                     <div class="row">
                       <div class="col-lg form-inline">
                         <label>主题</label>
-                        <input type="text" class="form-control" v-model="track.name" placeholder="专场主题" title="专场主题">
+                        <input type="text" class="form-control" v-model="track.subject" placeholder="专场主题" title="专场主题">
                       </div>
                       <div class="col-lg form-inline">
                         <label>地点</label>
@@ -448,14 +444,16 @@
     </div>
     <div id="tracksViewer" class="container-fluid tab-pane">
       <div class="row form-inline">
-        <select class="form-control" v-model="queryContent.id_project">
-          <option value=0>请选择</option>
-          <option v-for="item in allProjects" :value="item.id">{{item.name}}</option>
-        </select>
-        <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入关键词" title="名称等">
-        <button @click="getTracksToViewOrEdit" class="btn btn-primary">搜索数据</button>
-        <button @click="tracksInViewer=[];" class="btn btn-secondary" v-if="tracksInViewer.length>0">清空</button>
-        <button class="btn btn-primary new-create" @click="newCreateTrack" v-if="!tracksReadOnly">新建会议专场</button>
+        <div class="input-group" style="margin-right:5px; width:480px;">
+          <input type="text" class="form-control" v-model="queryContent.keyWord" placeholder="项目或大会的关键词" @input="prjctKeyWordInputed">
+          <select type="text" class="form-control mgrt10" v-model="queryContent.id_project" title="大会项目" :disabled="tracksReadOnly">
+            <option  value='0'>请选择项目或大会</option>
+            <option v-for="item in fltdPrjcts" :value="item.id">{{item.name}}</option>
+          </select>
+        </div>
+        <button @click="getTracksToViewOrEdit" class="btn btn-primary mgrt10">搜索数据</button>
+        <button @click="tracksInViewer=[];" class="btn btn-secondary mgrt10" v-if="tracksInViewer.length>0">清空</button>
+        <button class="btn btn-primary btn-at-right" @click="newCreateTrack" v-if="!tracksReadOnly">新建会议专场</button>
       </div>
       <hr style="height:1px;border:none;border-top:2px solid #007bff;" />
       <div class="tablebox" v-if="showTracksTableInTrkViewer">
@@ -465,16 +463,16 @@
           </thead>
           <tbody><!--  @dblclick="" title='' ['ID','所属项目','主题','地点','时间段','主席','副主席','备注','初录人','修改人','修改日期'] -->
             <tr v-for="row in tracksInViewer" @click="clkATrackInTrkViewerToModify(row)">
-              <td>{{row.id_project}}</td>
-              <td>{{row.name}}</td>
-              <td>{{row.address}}</td>
+              <td>{{row.p_name}}</td>
+              <td class="txtlft">{{row.subject}}</td>
+              <!-- <td>{{row.address}}</td> -->
               <td>{{row.time_ranges}}</td>
-              <td>{{row.id_chair}}</td>
-              <td>{{row.id_co_chair}}</td>
-              <td>{{row.remark}}</td>
-              <td>{{row.id_creater}}</td>
-              <td>{{row.id_editer}}</td>
-              <td>{{row.time_edited}}</td>
+              <td>{{row.name_chair?row.name_chair:'---'}}</td>
+              <td>{{row.name_co_chair?row.name_co_chair:'---'}}</td>
+              <!-- <td>{{row.remark}}</td> -->
+              <td>{{row.total_rgstd}}</td>
+              <td>{{row.total_cmnctd}}</td>
+              <td>{{row.total_persons}}</td>
             </tr>
           </tbody>
         </table>
@@ -483,52 +481,44 @@
         </div>
       </div>
       <div class="container-fluid" v-if="showTrackEditerInTrackViewer">
-        <div class="row">
-          <div class="col-lg form-inline">
-            <label>项目</label>
-            <select class="form-control" v-model="track.id_project" :disabled="isModifying || tracksReadOnly">
-              <option value=0>请选择</option>
-              <option v-for="item in allProjects" :value="item.id">{{item.name}}</option>
-            </select>
-          </div>
-          <div class="col-lg form-inline">
-          </div>
-          <div class="col-lg form-inline">
-          </div>
+        <div class="form-inline mgtp10">
+          <label>项目</label>
+          <select class="form-control" v-model="track.id_project" :disabled="isModifying || tracksReadOnly" style="margin-left: 5px;width: 90%;">
+            <option value=0>请选择</option>
+            <option v-for="item in allProjects" :value="item.id">{{item.name}}</option>
+          </select>
         </div>
-        <div class="row">
-          <div class="col-lg form-inline">
-            <label>主题</label>
-            <input type="text" class="form-control" v-model="track.name" placeholder="专场主题" title="专场主题" :readonly="tracksReadOnly">
-          </div>
-          <div class="col-lg form-inline">
-            <label>时间</label>
-            <input type="text" class="form-control" v-model="track.time_ranges" placeholder="8888-08-18 08:08-18:18" title="专场举办时间段" :readonly="tracksReadOnly">
-          </div>
-          <div class="col-lg form-inline">
-            <label>地点</label>
-            <input type="text" class="form-control" v-model="track.address" placeholder="专场举办地点" title="专场举办地点" :readonly="tracksReadOnly">
-          </div>
+        <div class="form-inline mgtp10">
+          <label>主题</label>
+          <input type="text" class="form-control" v-model="track.subject" placeholder="专场主题" title="专场主题" :readonly="tracksReadOnly" style="width: 90%;">
         </div>
-        <div class="row"> 
-          <div class="col-lg form-inline">
-            <label>主席</label>
-             <select type="text" class="form-control" v-model="track.id_chair" title="专场主席" :disabled="tracksReadOnly">
-              <option  value='0'>请选择</option>
-              <option v-for="item in employees" :value="item.id">{{item.name}}</option>
-            </select>
-          </div>                             
-          <div class="col-lg form-inline">
-            <label>副主</label>
-             <select type="text" class="form-control" v-model="track.id_co_chair" title="专场副主席" :disabled="tracksReadOnly">
-              <option  value='0'>请选择</option>
-              <option v-for="item in employees" :value="item.id">{{item.name}}</option>
-            </select>
-          </div> 
-          <div class="col-lg form-inline">
-            <label>备注</label>
-            <input type="text" class="form-control" v-model="track.remark" placeholder="备注信息" title="备注信息" :readonly="tracksReadOnly">
-          </div>                                        
+        <div class="form-inline mgtp10">
+          <label>时间</label>
+          <input type="text" class="form-control" v-model="track.time_ranges" placeholder="8888-08-18 08:08-18:18" title="专场举办时间段" :readonly="tracksReadOnly" style="width: 90%;">
+        </div>
+        <div class="form-inline mgtp10">
+          <label>地点</label>
+          <input type="text" class="form-control" v-model="track.address" placeholder="专场举办地点" title="专场举办地点" :readonly="tracksReadOnly" style="width: 90%;">
+        </div>
+        <div class="form-inline mgtp10"> 
+          <label>主席</label>
+          <input type="text" class="form-control" v-model="track.chairKeyWord" @input="chairKeyWordsInputed" :readonly="isNewCreateSchedule" style="width:30%;">
+          <select type="text" class="form-control" v-model="track.id_chair" title="专场主席" :disabled="isNewCreateSchedule" style="width:60%;">
+            <option  value='0'>请选择</option>
+            <option v-for="item in fltdAtdsInCurTrackForChair" :value="item.id">{{item.name}}</option>
+          </select>              
+        </div>
+        <div class="form-inline mgtp10">
+          <label>副主</label>
+          <input type="text" class="form-control" v-model="track.co_chairKeyWord" @input="coChairKeyWordsInputed" :readonly="isNewCreateSchedule" style="width:30%;">
+          <select type="text" class="form-control" v-model="track.id_co_chair" title="专场副主席" :disabled="isNewCreateSchedule" style="width:60%;">
+            <option  value='0'>请选择</option>
+            <option v-for="item in fltdAtdsInCurTrackForCoChair" :value="item.id">{{item.name}}</option>
+          </select>              
+        </div>
+        <div class="form-inline mgtp10">
+          <label>备注</label>
+          <input type="text" class="form-control" v-model="track.remark" placeholder="备注信息" title="备注信息" :readonly="tracksReadOnly" style="width: 90%;">
         </div>
         <div class="row">
           <div class="col-lg">
@@ -549,7 +539,7 @@
       <hr style="height:1px;border:none;border-top:2px solid #007bff;" />
       <div v-if="isShowTip" class="row">
         <div class="form-inline col-lg">
-          <span class="theTitle">{{theTrackForEdtingAtds.name}},{{theTrackForEdtingAtds.time_ranges}},{{theTrackForEdtingAtds.address}}</span>
+          <span class="theTitle">{{theTrackForEdtingAtds.subject}},{{theTrackForEdtingAtds.time_ranges}},{{theTrackForEdtingAtds.address}}</span>
         </div>
       </div>
       <div v-if="isShowTip">
@@ -636,7 +626,7 @@
           </thead>
           <tbody>
             <tr v-for="row in tracksInThisProject" @click="clkATrackToAddOrReduceATDs(row)" title='双击选择'>
-              <td>{{row.name}}</td>
+              <td>{{row.subject}}</td>
               <td>{{row.id_project}}</td>
               <td>{{row.time_ranges}}</td>
               <td>{{row.id_chair}}</td>
@@ -651,12 +641,12 @@
         <div class="row form-inline">
           <select class="form-control" v-model="queryContent.id_track" title="请选择专场">
             <option value=0>不限专场</option>
-            <option v-for="item in tracksForSchedules" :value="item.id">{{item.name}}</option>
+            <option v-for="item in tracksForSchedules" :value="item.id">{{item.subject}}</option>
           </select>
-          <input type="text" class="form-control" v-model="queryContent.keyWord"  placeholder="请输入日程关键词" title="名称/时间段/主持人/演讲人/演讲题目/备注等">
-          <button @click="getSchedulesToViewOrEdit" class="btn btn-primary">搜索数据</button>
-          <button @click="schedulesForShowingOrEditing=[];" class="btn btn-secondary" v-if="schedulesForShowingOrEditing.length>0">清空</button>
-          <button class="btn btn-primary new-create" @click="newCreateSchedule" v-if="!schedulesReadOnly">新建日程</button>
+          <input type="text" class="form-control mgrt10" v-model="queryContent.keyWord"  placeholder="请输入日程关键词" title="名称/时间段/主持人/演讲人/演讲题目/备注等">
+          <button @click="getSchedulesToViewOrEdit" class="btn btn-primary mgrt10">搜索数据</button>
+          <button @click="schedulesForShowingOrEditing=[];" class="btn btn-secondary mgrt10" v-if="schedulesForShowingOrEditing.length>0">清空</button>
+          <button class="btn btn-primary btn-at-right" @click="newCreateSchedule" v-if="!schedulesReadOnly">新建日程</button>
         </div>
         <hr style="height:1px;border:none;border-top:2px solid #007bff;" />
       </div>
@@ -667,17 +657,13 @@
           </thead>
           <tbody>
             <tr v-for="row in schedulesForShowingOrEditing" @click="clkAScheduleToModify(row)">
+              <td :title='row.trk_subject'>{{row.trk_subject}}</td>
               <td :title='row.name'>{{row.name}}</td>
-              <td :title='row.id_track'>{{row.id_track}}</td>
               <td :title='row.location'>{{row.location}}</td>
               <td :title='row.time_ranges'>{{row.time_ranges}}</td>
-              <td :title='row.id_agenda'>{{row.id_agenda}}</td>
-              <td :title='row.hosts_id'>{{row.hosts_id}}</td>
-              <td :title='row.speaker_id'>{{row.speaker_id}}</td>
+              <td :title='row.speaker_id'>{{row.spkr_name}}</td>
               <td :title='row.speech_topics'>{{row.speech_topics}}</td>
               <td :title='row.remark'>{{row.remark}}</td>
-              <td :title='row.id_creater'>{{row.id_creater}}</td>
-              <td :title='row.id_modifyer'>{{row.id_modifyer}}</td>
               <td :title='row.time_modifyed'>{{row.time_modifyed}}</td>
             </tr>
           </tbody>
@@ -693,71 +679,49 @@
         </div>
         <div class="row">
           <div class="col-lg form-inline">
-            <label>专场</label>
-            <select class="form-control" v-model="currentSchedule.id_track" title="请选择专场" :disabled="!isNewCreateSchedule">
+            <label>所属专场</label>
+            <select class="form-control" v-model="currentSchedule.id_track" title="请选择专场" :disabled="!isNewCreateSchedule" @change="trackIdChanged">
               <option value=0>请选择</option>
-              <option v-for="item in tracksForSchedules" :value="item.id">{{item.name}}</option>
+              <option v-for="item in tracksForSchedules" :value="item.id">{{item.subject}}</option>
             </select>
           </div>
           <div class="col-lg form-inline">
-            <label>名称</label>
-            <input type="text" class="form-control" v-model="currentSchedule.name" placeholder="日程名称">
+            <label>专场时间</label>
+            <input type="text" class="form-control" v-model="currentSchedule.trkTmRgs" placeholder="专场时间" readonly>
           </div>
+        </div>
+        <div class="row">
           <div class="col-lg form-inline">
-            <label>时段</label>
+            <label>日程时段</label>
             <input type="text" class="form-control" v-model="currentSchedule.time_ranges" placeholder="2018-08-18 18:08-22:18">
           </div>
+          <div class="col-lg form-inline">
+            <label>日程名称</label>
+            <input type="text" class="form-control" v-model="currentSchedule.name" placeholder="日程名称">
+          </div>
         </div>
         <div class="row">
+          <div class="col-lg form-inline" style="width: 100%;">
+            <label>做报告者</label>
+            <input type="text" class="form-control" v-model="currentSchedule.spkrKeyWord" @input="spkrKwsInputed" style="width: 30%;">
+            <select type="text" class="form-control" v-model="currentSchedule.speaker_id" title="报告人" style="width: 50%; margin-left: 0px;">
+              <option  value='0'>请选择</option>
+              <option v-for="item in fltdAtdsInCurTrkForSdlSpkr" :value="item.id">{{item.name}}</option>
+            </select>              
+          </div>
           <div class="col-lg form-inline">
-            <label>地点</label>
+            <label>日程地点</label>
             <input type="text" class="form-control" v-model="currentSchedule.location" placeholder="日程所在地点">
           </div>
-          <div class="col-lg form-inline">
-            <label>环节</label>
-            <select type="text" class="form-control" v-model="currentSchedule.id_agenda">
-              <option value=0>选择环节</option>
-              <option value=1>报到</option>
-              <option value=2>签到</option>
-            </select>
-          </div>
-          <div class="col-lg form-inline">
-            <label>主持</label>
-            <select class="form-control" v-model="currentSchedule.hosts_id" title="请选择主持人">
-              <option value=0>请选择</option>
-              <option v-for="item in employees" :value="item.id">{{item.name}}</option>
-            </select>
-          </div>
         </div>
         <div class="row">
           <div class="col-lg form-inline">
-            <label>报告</label>
-            <select class="form-control" v-model="currentSchedule.speaker_id" title="请选择报告人">
-              <option value=0>请选择</option>
-              <option v-for="item in employees" :value="item.id">{{item.name}}</option>
-            </select>
-          </div>
-          <div class="col-lg form-inline">
-            <label>题目</label>
+            <label>报告题目</label>
             <input type="text" class="form-control" v-model="currentSchedule.speech_topics" placeholder="报告题目">
           </div>
           <div class="col-lg form-inline">
-            <label>备注</label>
+            <label>日程备注</label>
             <input type="text" class="form-control" v-model="currentSchedule.remark" placeholder="备注信息">
-          </div>
-        </div>
-        <div class="row" v-if="!isNewCreateSchedule">
-          <div class="col-lg form-inline">
-            <label>初录</label>
-            <input type="text" class="form-control" v-model="currentSchedule.id_creater" readonly title="初始录入人">
-          </div>
-          <div class="col-lg form-inline">
-            <label>更新</label>
-            <input type="text" class="form-control" v-model="currentSchedule.id_modifyer" readonly title="上次更新人">
-          </div>
-          <div class="col-lg form-inline">
-            <label>日期</label>
-            <input type="text" class="form-control" v-model="currentSchedule.time_modifyed" readonly title="上次更新日期">
           </div>
         </div>
         <div class="row">
@@ -772,15 +736,16 @@
       </div>
     </div>
   </div>
+  <div v-if="showLoading" class="mask">
+    <img class="loading" src="@/assets/loading.gif" alt="正在载入数据"/>
+  </div>
 </div>
 </template>
 
 
 <script>
 import qs from 'qs';
-import trtmplt from './tr-in-project-for-schedule.vue';
-import cmprObjs from '@/cuiLibs/cmprObjsAreEqual.js';
-import deepClone from '@/cuiLibs/objDeepClone.js';
+// import trtmplt from './tr-in-project-for-schedule.vue';
   export default {
     data () {
       return {
@@ -790,6 +755,7 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
           id_track:0,
           keyWord:''
         },
+        showLoading:false,
         allProjects:JSON.parse(JSON.stringify(this.$store.state.projects)),
         projectTitle:['项目名称','甲方','联系人及电话','主要内容','开始日期','结束日期','项目举办地点','项目规模','完成状态','负责人','合同号','自有','备注'],
         prjctTitleWidth:['7%','8%','9%','9%','9%','9%','9%','7%','7%','7%','7%','6%','6%'],
@@ -828,13 +794,19 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
         
         //tracks
         tracksInViewer:[],
-        tracksTitle:['所属项目','主题','地点','时间段','主席','副主席','备注','初录人','修改人','修改日期'],
-        tracksTitleWidth:['10%','10%','10%','10%','10%','10%','10%','10%','10%','10%','10%'],
+        tracksTitle:['所属项目','专场主题','专场时间段','主席','副主席','注册数','沟通数','总人数'],
+        tracksTitleWidth:['16%','16%','16%','11%','11%','10%','10%','10%'],
         originTrackInViewer:[],
         showTrackEditerInTrackViewer:false,
         showTracksTableInTrkViewer:false,
         isModifying:true,
         tracksReadOnly:false,
+        fltdAtdsInCurTrackForChair:[],
+        fltdAtdsInCurTrackForCoChair:[],
+        allAtdsInCurTrack:[],//common with schedules
+        fltdPrjcts:JSON.parse(JSON.stringify(this.$store.state.projects)),
+        origin_chair:0,
+        origin_co_chair:0,
         
         //schedules
         schedulesForShowingOrEditing:[],
@@ -844,9 +816,12 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
         showSchedulesSearchBox:true,
         showSchedulesTable:false,
         showSchedulesEditer:false,
-        schedulesTitle:['名称','专场','地点','时间段','日程','主持人','演讲人','演讲题目','备注','初录人','修改人','修改日期'],
-        schedulesTitleWidth:['9%','9%','9%','9%','9%','9%','9%','9%','10%','6%','6%','6%'],
+        schedulesTitle:['所属专场','日程名称','地点','时间段','演讲人','演讲题目','备注','修改日期'],
+        schedulesTitleWidth:['15%','15%','9%','15%','10%','15%','9%','12%'],
         isNewCreateSchedule:false,
+        fltdAtdsInCurTrkForSdlSpkr:[],
+        id_org_spkr:0,
+
 
         originTracksInPrjct:[],
         isEditTrack:false,
@@ -978,7 +953,7 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
         //初始化track
         this.track.id='';
         this.track.id_project=this.theOriginProject.id;
-        this.track.name='';
+        this.track.subject='';
         this.track.address='';
         this.track.time_ranges='';
         this.track.remark='';
@@ -989,7 +964,7 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
         this.ATDsForChair=JSON.parse(JSON.stringify(this.employees));
       },
       pushTrackIntoTracksOfThisProject() {
-        if(!this.track.name) {
+        if(!this.track.subject) {
           this.$toast({text: '请正确填写主题!',type: 'info',duration: 2000});
           return;
         }
@@ -1014,7 +989,7 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
         //初始化track
         this.track.id='';
         this.track.id_project=this.theOriginProject.id;
-        this.track.name='';
+        this.track.subject='';
         this.track.address='';
         this.track.time_ranges='';
         this.track.remark='';
@@ -1145,12 +1120,34 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
         });
       },
 //*******************************************************************************//
+      prjctKeyWordInputed() {
+        if(this.queryContent.keyWord.replace(/^\s+|\s+$/g,"").length) {
+          this.fltdPrjcts=this.allProjects.filter(function(u){
+            for(let prop in u) {
+              if(u[prop] && u[prop].indexOf(this.queryContent.keyWord)>-1) {
+                return u;
+                break;
+              }
+            }
+          },this);
+          if(this.fltdPrjcts.length && this.fltdPrjcts.length!==this.allProjects.length) {
+            this.queryContent.id_project=this.fltdPrjcts[0]['id'];
+          } else {
+            this.queryContent.id_project=0;
+          }
+        } else {
+          this.fltdPrjcts=JSON.parse(JSON.stringify(this.allProjects));
+          this.queryContent.id_project=0;
+        }
+      },
+
       getTracksToViewOrEdit() {
+        this.showLoading=true;
         this.showTracksTableInTrkViewer=true;
         this.showTrackEditerInTrackViewer=false;
         this.tracksInViewer=[];
         let _this=this;
-        this.queryContent.conditions="byKewWordAndProjectId";
+        this.queryContent.conditions="byProjectIdForViewingOrEditingTracks";
         this.$axios({
           method: 'post',
           url: 'getTracks.php',
@@ -1158,17 +1155,86 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
         }).then(function (response) {
           console.log(response.data);
           _this.tracksInViewer=response.data;
+          _this.showLoading=false;
         }).catch(function (error) {
           console.log(error);
           _this.$toast({text: '通信错误!',type: 'danger',duration: 4000});
         });
       },
       clkATrackInTrkViewerToModify(r) {
-        this.showTrackEditerInTrackViewer=true;
-        this.showTracksTableInTrkViewer=false;
-        this.isModifying=true;
-        this.originTrackInViewer=JSON.parse(JSON.stringify(r));
-        this.track=JSON.parse(JSON.stringify(r));
+        this.showLoading=true;
+        this.origin_chair=r['id_chair']?r['id_chair']:0;
+        this.origin_co_chair=r['id_co_chair']?r['id_co_chair']:0;
+        var queryContent={};
+        var _this=this;
+        this.allAtdsInCurTrack=[];
+        queryContent.conditions="byTrackIdForViewingOrEditingTrackOrSchedules";
+        queryContent.id_track=r.id;
+        this.$axios({
+          method: 'post',
+          url: 'getAttendees.php',
+          data: qs.stringify(queryContent)
+        }).then(function (response) {
+          console.log(response.data);
+          _this.allAtdsInCurTrack=response.data;
+          _this.fltdAtdsInCurTrackForChair=JSON.parse(JSON.stringify(_this.allAtdsInCurTrack));
+          _this.fltdAtdsInCurTrackForCoChair=JSON.parse(JSON.stringify(_this.allAtdsInCurTrack));
+          _this.showTrackEditerInTrackViewer=true;
+          _this.showTracksTableInTrkViewer=false;
+          _this.isModifying=true;
+          _this.isNewCreateSchedule=false;
+          _this.originTrackInViewer=JSON.parse(JSON.stringify(r));
+          _this.track=JSON.parse(JSON.stringify(r));
+          _this.showLoading=false;
+        }).catch(function (error) {
+          console.log(error);
+          _this.$toast({
+            text: '通信错误!'+response.data,
+            type: 'danger',
+            duration: 4000
+          });
+        });        
+      },
+      chairKeyWordsInputed() {
+        if(this.track.chairKeyWord.replace(/^\s+|\s+$/g,"").length) {
+          this.fltdAtdsInCurTrackForChair=this.allAtdsInCurTrack.filter(function(u){
+            for(let prop in u) {
+              if(u[prop] && u[prop].indexOf(this.track.chairKeyWord)>-1) {
+                return u;
+                break;
+              }
+            }
+          },this);
+          if(this.fltdAtdsInCurTrackForChair.length && this.fltdAtdsInCurTrackForChair.length!==this.allAtdsInCurTrack.length) {
+            this.track.id_chair=this.fltdAtdsInCurTrackForChair[0]['id'];
+          } else {
+            this.track.id_chair=0;
+          }
+        } else {
+          this.fltdAtdsInCurTrackForChair=JSON.parse(JSON.stringify(this.allAtdsInCurTrack));
+          this.track.id_chair=0;
+        }
+      },
+      coChairKeyWordsInputed() {
+        if(this.track.co_chairKeyWord.replace(/^\s+|\s+$/g,"").length) {
+          this.fltdAtdsInCurTrackForCoChair=this.allAtdsInCurTrack.filter(function(u){
+            for(let prop in u) {
+              if(u[prop] && u[prop].indexOf(this.track.co_chairKeyWord)>-1) {
+                return u;
+                break;
+              }
+            }
+          },this);
+          if(this.fltdAtdsInCurTrackForCoChair.length && this.fltdAtdsInCurTrackForCoChair.length!==this.allAtdsInCurTrack.length) {
+            this.track.id_co_chair=this.fltdAtdsInCurTrackForCoChair[0]['id'];
+          } else {
+            this.track.id_co_chair=0;
+          }
+        } else {
+          this.fltdAtdsInCurTrackForCoChair=JSON.parse(JSON.stringify(this.allAtdsInCurTrack));
+          this.track.id_co_chair=0;
+        }
+
       },
       backToTracksTable() {
         this.showTrackEditerInTrackViewer=false;
@@ -1186,7 +1252,7 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
             return;
           }
         }
-        if(!this.track.name) {
+        if(!this.track.subject) {
           this.$toast({text: '请正确填写主题!',type: 'info',duration: 2000});
           return;
         }
@@ -1201,10 +1267,12 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
 
         let url="";
         if(!this.isModifying) {//新建
-          this.queryContent.conditions="newTrack";
+          this.queryContent.conditions="newTrackForTrackCreater";
           url="insertNewToTracks.php";
         } else {//更改
-          this.queryContent.conditions="oldUpdate";
+          this.queryContent.conditions="withEditedInfoForEditingTrack";
+          this.queryContent.origin_chair=this.origin_chair;
+          this.queryContent.origin_co_chair=this.origin_co_chair;
           url="updateTracks.php";
         }
         this.queryContent.track=this.track;
@@ -1218,9 +1286,9 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
           if(response.data===true) {
             _this.$toast({text:'成功保存数据!',type: 'success',duration:800});
             let i=_this.tracksInViewer.findIndex((ele)=>ele['id']==_this.track.id);
-            if(i>-1) {
+            if(i>-1) {//更新
               _this.tracksInViewer.splice(i,1,_this.track);
-            } else {
+            } else {//新建
               _this.tracksInViewer.push(_this.track);
             } 
             _this.track={
@@ -1247,6 +1315,7 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
         this.showTrackEditerInTrackViewer=true;
         this.showTracksTableInTrkViewer=false;
         this.isModifying=false;
+        this.isNewCreateSchedule=true;
         this.track={
           id:'',
           id_project:0,
@@ -1258,6 +1327,9 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
           remark:'',
           id_creater:this.id_curUser,
         };
+        this.fltdAtdsInCurTrackForChair=[];
+        this.fltdAtdsInCurTrackForCoChair=[];
+        this.allAtdsInCurTrack=[];
       },
 
 //***************************************************************************************//
@@ -1280,6 +1352,7 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
         });
       },
       getSchedulesToViewOrEdit() {
+        // console.log(this.allAtdsInCurTrack);
         this.showSchedulesEditer=false;
         this.showSchedulesSearchBox=true;
         this.showSchedulesTable=true;
@@ -1313,24 +1386,98 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
         this.showSchedulesEditer=true;
         this.isNewCreateSchedule=true;
         this.currentSchedule={
-          id:0,name:'',id_track:0,time_ranges:'',location:'',id_agenda:'',
-          hosts_id:0,speaker_id:0,speech_topics:'',remark:'',id_creater:this.id_curUser,
+          id:0,name:'',id_track:0,time_ranges:'',location:'',speaker_id:0,speech_topics:'',remark:'',id_creater:this.id_curUser,
           time_created:'',id_modifyer:0,time_modifyed:'',is_deleted:0
         };
+        this.fltdAtdsInCurTrkForSdlSpkr=[];
+      },
+      trackIdChanged() {
+        if(!this.currentSchedule.id_track) {
+          this.fltdAtdsInCurTrkForSdlSpkr=[];
+          return;
+        }
+        var queryContent={};
+        var _this=this;
+        this.allAtdsInCurTrack=[];
+        queryContent.conditions="byTrackIdForViewingOrEditingTrackOrSchedules";
+        queryContent.id_track=this.currentSchedule.id_track;
+        this.$axios({
+          method: 'post',
+          url: 'getAttendees.php',
+          data: qs.stringify(queryContent)
+        }).then(function (response) {
+          _this.allAtdsInCurTrack=response.data;
+          _this.fltdAtdsInCurTrkForSdlSpkr=JSON.parse(JSON.stringify(_this.allAtdsInCurTrack));
+        }).catch(function (error) {
+          console.log(error);
+          _this.$toast({
+            text: '通信错误!'+error,
+            type: 'danger',
+            duration: 4000
+          });
+        });        
+      },
+      spkrKwsInputed() {
+        if(this.currentSchedule.spkrKeyWord.replace(/^\s+|\s+$/g,"").length) {
+          this.fltdAtdsInCurTrkForSdlSpkr=this.allAtdsInCurTrack.filter(function(u){
+            for(let prop in u) {
+              if(u[prop] && u[prop].indexOf(this.currentSchedule.spkrKeyWord)>-1) {
+                return u;
+                break;
+              }
+            }
+          },this);
+          if(this.fltdAtdsInCurTrkForSdlSpkr.length && this.fltdAtdsInCurTrkForSdlSpkr.length!==this.allAtdsInCurTrack.length) {
+            this.currentSchedule.speaker_id=this.fltdAtdsInCurTrkForSdlSpkr[0]['id'];
+          } else {
+            this.currentSchedule.speaker_id=0;
+          }
+        } else {
+          this.fltdAtdsInCurTrkForSdlSpkr=JSON.parse(JSON.stringify(this.allAtdsInCurTrack));
+          this.currentSchedule.speaker_id=0;
+        }
       },
       backToSchedulesTableViewer() {
         this.showSchedulesSearchBox=true;
         this.showSchedulesTable=true;
         this.showSchedulesEditer=false;
-
       },
       clkAScheduleToModify(r) {
-        this.showSchedulesSearchBox=false;
-        this.showSchedulesTable=false;
-        this.showSchedulesEditer=true;
-        this.currentSchedule=r;
-        this.currentSchedule.id_modifyer=this.id_curUser;
-        this.isNewCreateSchedule=false;
+        this.showLoading=true;
+        this.id_org_spkr=r.speaker_id;
+        var queryContent={};
+        var _this=this;
+        this.allAtdsInCurTrack=[];
+        queryContent.conditions="byTrackIdForViewingOrEditingTrackOrSchedules";
+        queryContent.id_track=r.id_track;
+        this.$axios({
+          method: 'post',
+          url: 'getAttendees.php',
+          data: qs.stringify(queryContent)
+        }).then(function (response) {
+          _this.allAtdsInCurTrack=response.data;
+          _this.fltdAtdsInCurTrkForSdlSpkr=JSON.parse(JSON.stringify(_this.allAtdsInCurTrack));
+          _this.showSchedulesSearchBox=false;
+          _this.showSchedulesTable=false;
+          _this.showSchedulesEditer=true;
+          _this.currentSchedule=r;
+          _this.currentSchedule.id_modifyer=_this.id_curUser;
+          let s=_this.tracksForSchedules.find((ele)=>ele.id==r.id_track);
+          if(s) {
+            _this.currentSchedule.trkTmRgs=s.time_ranges;
+          } else {
+            _this.currentSchedule.trkTmRgs="---";
+          }
+          _this.isNewCreateSchedule=false;
+          _this.showLoading=false;
+        }).catch(function (error) {
+          console.log(error);
+          _this.$toast({
+            text: '通信错误!'+error,
+            type: 'danger',
+            duration: 4000
+          });
+        });
       },
       saveTheNewOrEditedSchedul() {
         if(this.currentSchedule.id_track==0) {
@@ -1349,14 +1496,10 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
           this.$toast({text: '请正确填写地点!',type:'warning',duration:1200});
           return;
         }
-        if(this.currentSchedule.id_agenda==0) {
-          this.$toast({text: '请选择环节!',type:'warning',duration:1200});
-          return;
-        }
-        if(this.currentSchedule.speaker_id!=0 && this.currentSchedule.speech_topics.length<8 || this.currentSchedule.speaker_id==0 && this.currentSchedule.speech_topics.length>0) {
-          this.$toast({text: '有报告人时,题目不能少于8个字;没有报告人时请不要填写题目!',type:'warning',duration:3000});
-          return;
-        }
+        // if(this.currentSchedule.speaker_id!=0 && this.currentSchedule.speech_topics.length<8 || this.currentSchedule.speaker_id==0 && this.currentSchedule.speech_topics.length>0) {
+        //   this.$toast({text: '有报告人时,题目不能少于8个字;没有报告人时请不要填写题目!',type:'warning',duration:3000});
+        //   return;
+        // }
         let url="";
         let queryContent={
           conditions:"",
@@ -1366,9 +1509,13 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
           queryContent.conditions="newscheduleiscoming";
           url="insertNewToSchedules.php";
         } else {
-          queryContent.conditions="updateExistedSchedules";
+          queryContent.conditions="withEditedInfoForEditingSchedule";
+          queryContent.id_org_spkr=this.id_org_spkr;
           url="updateSchedules.php";
         }
+        queryContent.id_curUser=this.id_curUser;
+        console.log(queryContent);
+        // return;
         let _this=this;
         this.$axios({
           method: 'post',
@@ -1378,11 +1525,13 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
           console.log(response.data);
           if(response.data===true) {
             _this.$toast({text:'成功保存数据!',type: 'success',duration:800});
+            _this.showSchedulesSearchBox=true;
+            _this.showSchedulesTable=true;
+            _this.showSchedulesEditer=false;
+          } else {
+            _this.$toast({text:'失败了,请稍后再试!',type: 'warning',duration:1500});
           }
           //数据验证并保存成功后
-          _this.showSchedulesSearchBox=true;
-          _this.showSchedulesTable=true;
-          _this.showSchedulesEditer=false;
         }).catch(function (error) {
           _this.$toast({text: '通信错误!'+response.data,type:'danger',duration: 4000});
         });
@@ -1748,7 +1897,7 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
       },
     },
     components: {
-      trtmplt
+      // trtmplt
     },
     watch :{
       'strOfOriginSlctdATDs': {
@@ -1758,6 +1907,11 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
       },
     },
     computed:{
+      // getAtdName() {
+      //   return function() {
+
+      //   }
+      // },
     },
     beforeCreate:function() {
       var queryContent={};
@@ -1800,7 +1954,7 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
 </script>
 
 <style scoped>
-.col-lg input,.col-lg select {
+.col-lg input,.col-lg select,.col-lg .input-group {
   width: 80%;
   margin-left: 5px;
 }
@@ -1811,9 +1965,9 @@ import deepClone from '@/cuiLibs/objDeepClone.js';
 input {
   margin-left: 5px;
 }
-.new-create {
+.btn-at-right {
   position: absolute;
-  right: 20px;
+  right: 50px;
 }
 .theTitle {
   color: red;
@@ -1854,5 +2008,32 @@ input {
 .add {
   background: #007bff;  
   border:1px solid #007bff;
+}
+.mgrt10 {
+  margin-right: 10px;
+}
+.txtlft {
+  text-align: left;
+}
+.mask{
+  position:fixed;
+  top     : 0;
+  left    : 0;
+  bottom  : 0;
+  right   : 0;
+  background:#000;  /*一般遮罩随便设置一个颜色*/
+  opacity:70%;
+}
+.loading {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%,-110%);
+}
+.mgtp10 {
+  margin-top: 10px;
+}
+.wt90p {
+  width: 90%;
 }
 </style>

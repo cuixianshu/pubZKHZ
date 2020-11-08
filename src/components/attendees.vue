@@ -7,7 +7,7 @@
       <li class="nav-item">
         <a class="nav-link" data-toggle="tab" href="#sendInvitation">发送邀请</a>
       </li> 
-      <li class="nav-item">
+<!--       <li class="nav-item">
         <a class="nav-link" data-toggle="tab" href="#newCreateOrModify" @click="goToNewOrEditerTab">新建或修改嘉宾基本信息</a>
       </li>
       <li class="nav-item">
@@ -15,17 +15,17 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" data-toggle="tab" href="#VIPTrips" @click="getAttendees">VIP贵宾行程管理</a>
-      </li>
+      </li>  -->
     </ul>
     <div class="tab-content">
-      <div id="checkInfo" class="container-fluid tab-pane  pre-scrollable active">
+      <div id="checkInfo" class="container-fluid tab-pane pre-scrollable active">
         <div v-if="showCiSearchBox">
           <div class="row form-inline">
-            <select class="form-control" v-model="queryContent.id_track">
-              <option value=0>选择专场</option>
-              <option v-for="(item,index) in tracks" :value="item.id">{{item.name}}</option>
+            <select class="form-control mgrt10" v-model="queryContent.id_track">
+              <option value=0>不限专场</option>
+              <option v-for="(item,index) in tracks" :value="item.id">{{item.subject}}</option>
             </select>
-            <input type="text" class="form-control" placeholder="关键词" v-model="queryContent.keyWord">
+            <input type="text" class="form-control mgrt10" placeholder="关键词" v-model="queryContent.keyWord">
             <button  class="btn btn-primary" @click="getAttendeesInCi">搜索代表</button>
             
           </div>
@@ -47,78 +47,52 @@
             </div>
             <div class="samecard" v-for="(row,index) in attendeesInCI">
               <div class="row">
-                <div class="col-lg form-inline">
-                  <label>编号</label>
-                  <input class="form-control" type="text" v-model="row.id" style="background: #20c997;" readonly>
+                <div class="col-lg-4 form-inline">
+                  <label>姓名</label>
+                  <input class="form-control bgchvy-txtwt" type="text" v-model="row.name" style="width:85%;">
                 </div>
-                <div class="col-lg form-inline">
-                  <label>全名</label>
-                  <input class="form-control" type="text" v-model="row.name" style="background: #20c997;">
-                </div>
-                <div class="col-lg form-inline">
-                  <label>头衔</label>
-                  <input class="form-control" type="text" v-model="row.title1" style="background: #20c997;">
-                </div>
-                <div class="col-lg form-inline">
-                  <label>职位</label>
-                  <input class="form-control" type="text" v-model="row.position" style="background: #20c997;">
-                </div>
-                <div class="col-lg form-inline">
+                <div class="col-lg-3 form-inline">
                   <label>国家</label>
-                  <input class="form-control" type="text" v-model="row.country" style="background: #20c997;">
+                  <input class="form-control bgchvy-txtwt" type="text" v-model="row.country" style="width:85%;">
+                </div>
+               <div class="col-lg form-inline">
+                  <label>专场</label>
+                  <select class="form-control bgchvy-txtwt" v-model="row.id_last_track">
+                    <option value=0>选择专场</option>
+                    <option v-for="item in tracks" :value="item.id">{{item.subject}}</option>
+                  </select>
+                </div>
+                <div class="col-lg-2 form-inline">
+                  <label>黑名单</label>
+                  <select class="form-control bgchvy-txtwt" v-model="row.is_blacklisted" style="">
+                    <option value="0">否</option>
+                    <option value="1">是</option>
+                  </select>
+                </div>
+                 <div class="col-lg-1 form-inline">
+                  <span class="bgchvy-txtwt">{{row.id}}</span>
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg form-inline">
-                  <label>专场</label>
-                  <select class="form-control" v-model="row.id_last_track" style="background:#20c997;">
-                    <option value=0>选择专场</option>
-                    <option v-for="item in tracks" :value="item.id">{{item.name}}</option>
-                  </select>
-                </div>
-                <div class="col-lg form-inline">
                   <label>邮箱</label>
-                  <input class="form-control" type="text" v-model="row.email1" style="background: #20c997;">
+                  <input class="form-control bgchvy-txtwt" type="text" v-model="row.email1" style="width:90%;">
                 </div>
+              </div>
+              <div class="row">
                 <div class="col-lg form-inline">
                   <label>机构</label>
-                  <input class="form-control" type="text" v-model="row.workplace" style="background: #20c997;">
-                </div>
-                <div class="col-lg form-inline">
-                  <label>性别</label>
-                  <select class="form-control" type="text" v-model="row.gender" style="background: #20c997;">
-                    <option value="1">男</option>
-                    <option value="0">女</option>
-                  </select>
-                </div>
-                <div class="col-lg form-inline">
-                  <label>黑名</label>
-                  <select class="form-control" v-model="row.is_blacklisted" style="background: #20c997;">
-                    <option value="0">正常</option>
-                    <option value="1">黑名单</option>
-                  </select>
+                  <input class="form-control bgchvy-txtwt slmbdr" type="text" v-model="row.workplace" style="width:90%;">
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg form-inline">
                   <label>备注</label>
-                  <textarea rows="2" v-model="row.remark" style="background: #20c997;border: 1px solid #ced4da;" title="备注"></textarea>
+                  <input class="form-control bgchvy-txtwt" type="text" v-model="row.remark" style="width:90%;" title="备注">
                 </div>
               </div>
               <div class="row">
-                <div class="col-lg form-inline">
-                  <label>荣誉</label>
-                  <textarea rows="2" v-model="row.awards" style="background: #20c997;border: 1px solid #ced4da;" title="荣誉"></textarea>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg form-inline">
-                  <label>成就</label>
-                  <textarea rows="2" v-model="row.attainment" style="background: #20c997;border: 1px solid #ced4da;" title="成就"></textarea>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg"><!--  form-inline -->
+                <div class="col-lg">
                   <button class="btn btn-primary  btn-sm" @click="saveCurrentATD(row)">保存修改</button>
                 </div>
               </div>
@@ -146,9 +120,9 @@
         <div class="container-fluid form-inline searchbox">
           <label>拟参加</label>
           <select class="form-control" v-model="queryContent.id_track">
-            <option value=0>不限专场</option>
-            <option v-for="item in tracks" :value="item.id">{{item.name}}</option>
-          </select>;
+            <option value=0>请选择专场</option>
+            <option v-for="item in tracks" :value="item.id">{{item.subject}}</option>
+          </select>;&nbsp
           <label>已邀请</label>
           <select class="form-control" v-model="queryContent.invitedTimes">
             <option value=0>0</option>
@@ -161,10 +135,10 @@
             <option value=7>7</option>
             <option value=8>8</option>
             <option value=9>9</option>
-          </select>次;
+          </select>次;&nbsp
           <label>上次于</label>
           <input type="date" class="form-control" v-model="queryContent.sDate">至
-          <input type="date" class="form-control" v-model="queryContent.eDate">间;
+          <input type="date" class="form-control" v-model="queryContent.eDate">间;&nbsp
           </select>
           <label>需导出</label>
           <select class="form-control" v-model="queryContent.wantQty">
@@ -184,225 +158,26 @@
           <h5>{{textOfOperatedResult}}</h5>
         </div> 
         <div>
-          <button class="btn btn-secondary" v-if="emailList.length>0" @click="emailList=[];">清除</button>
+          <button class="btn btn-secondary" v-if="emailList.length>0" @click="clrAtdArr">清除</button>
           <button class="btn btn-primary" @click="saveAsCsvToSendEmails" v-if="emailList.length>0">存为CSV以发送邀请</button>
 
         </div>
         <div class="divfortable container-fluid" v-if="emailList.length>0">
           <table class="table table-hover">
             <thead>
-              <th>ID</th><th>全名</th><th>邮箱</th><th>文章名</th><th>文章摘要</th><th>专场编号</th>
+              <th>姓名</th><th>邮箱</th><th>论文题目</th><th>专场主题</th><th style="width:6%;">专场号</th>
             </thead>
             <tbody>
               <tr v-for="row in emailList">
-                <td>{{row.id}}</td>
-                <td>{{row.name}}</td>
-                <td>{{row.email1}}</td>
-                <td>{{row.atcl_title}}</td>
-                <td>{{row.atcl_abstract}}</td>
+                <td class="txtleft">{{row.name}}</td>
+                <td class="txtleft">{{row.email1}}</td>
+                <td class="txtleft">{{row.atcl_title}}</td>
+                <td>{{getTrackName(row.id_last_track)}}</td>
                 <td>{{row.id_last_track}}</td>
               </tr>
             </tbody>
           </table>
         </div>
-<!--         <div v-if="showSendIvtnSchBox" class="attendee-viewer container-fluid pre-scrollable">
-          <div class="row" style="margin-bottom: 10px;">
-            <div class="col-lg">
-              <h5 style="margin-top: 10px;">{{anAtd.name}}----{{anAtd.workplace}}----{{anAtd.position}}</h5>
-            </div>
-          </div>
-          <div>
-            <button class="btn btn-link" data-toggle="collapse" data-target="#atdviewer">展开/收起--基本信息--编辑器</button>
-          </div>
-          <div name="atdviewer" style="margin-top: 5px;"  id="atdviewer" class="collapse  show">
-            <div class="row">
-              <div class="col-lg form-inline">
-                <label>嘉宾姓名</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.name" placeholder="嘉宾姓名" title="嘉宾姓名">
-              </div>
-              <div class="col-lg form-inline">
-                <label>工作单位</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.workplace" placeholder="工作单位" title="工作单位">
-              </div> 
-              <div class="col-lg form-inline">
-                <label>行政级别</label>
-                <select disabled type="text" class="form-control" v-model="anAtd.administrative_rank" title="行政级别">
-                  <option value=0>选择级别</option>
-                  <option value=1>正局级</option>
-                  <option value=2>副局级</option>
-                  <option value=2>正处级</option>
-                </select>                
-              </div>
-              <div class="col-lg form-inline">
-                <label>担任职务</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.position" placeholder="担任所在单位的职务" title="担任所在单位的职务">
-              </div>                                        
-            </div>
-            <div class="row">
-              <div class="col-lg form-inline">
-                <label>嘉宾性别</label>
-                <select disabled type="text" class="form-control" v-model="anAtd.gender">
-                  <option value=1>男</option>
-                  <option value=0>女</option>
-                </select>
-              </div>
-              <div class="col-lg form-inline">
-                <label>专业职称</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.professional_title" title="专业职称">
-              </div>                             
-              <div class="col-lg form-inline">
-                <label>主研方向</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.ICO" placeholder="负责或研究方向及成绩" title="负责或研究方向及成绩">
-              </div> 
-              <div class="col-lg form-inline">
-                <label>所在国家</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.national" placeholder="所在国家" title="所在国家">
-              </div>
-            </div>
-            <div class="row"> 
-              <div class="col-lg form-inline">
-                <label>手机号一</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.mp1" placeholder="手机号" title="手机号">
-            </div>
-            <div class="col-lg form-inline">
-              <label>兼任职一</label>
-              <input readonly type="text" class="form-control" v-model="anAtd.title1" placeholder="兼任职务1" title="兼任某个组织的某个职务1">
-              </div>                                        
-              <div class="col-lg form-inline">
-                <label>兼任职二</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.title2" placeholder="兼任职务2" title="兼任某个组织的某个职务2">
-              </div>
-              <div class="col-lg form-inline">
-                <label>兼任职三</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.title3" placeholder="兼任职务3" title="兼任某个组织的某个职务3">
-              </div>
-            </div>
-            <div class="row"> 
-              <div class="col-lg form-inline">
-                <label>手机号二</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.mp2" placeholder="手机号" title="手机号">
-            </div>                                        
-            <div class="col-lg form-inline">
-              <label>办公电话</label>
-              <input readonly type="text" class="form-control" v-model="anAtd.fp1" title="办公电话">
-              </div> 
-              <div class="col-lg form-inline">
-                <label>第一秘书</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.secretary1_a_tel" title="第1秘书及电话">
-              </div>                                        
-              <div class="col-lg form-inline">
-                <label>第二秘书</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.secretary2_a_tel" title="第2秘书及电话">
-              </div>                                        
-            </div>
-            <div class="row">
-              <div class="col-lg form-inline">
-                <label>电子信箱</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.email1" placeholder="电子信箱" title="电子信箱">
-              </div> 
-              <div class="col-lg form-inline">
-                <label>备用信箱</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.email2" title="备用电子信箱">
-              </div> 
-              <div class="col-lg form-inline">
-                <label>身份证号</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.num_idcard" placeholder="身份证号" title="身份证号">
-              </div>
-              <div class="col-lg form-inline">
-                <label>护照号码</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.num_passport" placeholder="护照号码" title="护照号码">
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-lg form-inline">
-                <label>微信昵称</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.nknm_wc" placeholder="微信昵称" title="微信昵称">
-            </div>
-            <div class="col-lg form-inline">
-              <label>发票抬头</label>
-              <input readonly type="text" class="form-control" v-model="anAtd.ognzn_invoice" placeholder="发票抬头" title="发票抬头">
-              </div>
-              <div class="col-lg form-inline">
-                <label>发票税号</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.taxnum_invoice" placeholder="发票税号" title="发票税号">
-              </div>
-              <div class="col-lg form-inline">
-                <label>开户信息</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.account_invoice" placeholder="开户信息" title="开户信息">
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-lg form-inline">
-                <label>备注信息</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.remark" placeholder="备注信息" title="备注信息">
-              </div>
-              <div class="col-lg form-inline">
-                <label>发票地址</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.addr_a_tel_invoice" placeholder="发票地址电话" title="发票地址电话">
-              </div>
-              <div class="col-lg form-inline">
-              </div>
-              <div class="col-lg form-inline">
-                <label>目标客户</label>
-                <select class="form-control" v-model="anAtd.is_useful" title="是否是目标客户" disabled>
-                  <option value="0">否</option>
-                  <option value="1">是</option>
-                </select>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-lg form-inline">
-                <label>主要成就</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.attainment" placeholder="主要成就" :title="anAtd.attainment" style="width:95%;">
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-lg form-inline">
-                <label>获得奖项</label>
-                <input readonly type="text" class="form-control" v-model="anAtd.awards" placeholder="获得奖项" :title="anAtd.awards" style="width:95%;">
-              </div>
-            </div>
-          </div>
-
-
-          <div name="resumeEditer" class="row">
-            <div class="col-lg">
-              <button class="btn btn-link" data-toggle="collapse" data-target="#editAtdedCnfrcRcds">展开/收起--参会记录和主要履历--编辑器</button>
-            </div>
-          </div>
-          <div name="cnfrcEditer" style="margin-top: 5px;"  id="editAtdedCnfrcRcds" class="collapse">
-              <ul class="nav nav-tabs" role="tablist">
-                <li class="nav-item">
-                  <a class="nav-link active" data-toggle="tab" href="#atdedCnfrcRcdsEditer">参会记录</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link" data-toggle="tab" href="#resumeEditer">主要履历</a>
-                </li>
-              </ul>
-              <div class="tab-content">
-                <div id="atdedCnfrcRcdsEditer" class="container-fluid tab-pane active">
-                  <table class="table table-hover">
-                    <thead>
-                      <th v-for="(item,index) in titleOfAtdedCnfcRcds" :width="widthOfAtdedCnfcRcds[index]">{{item}}</th>
-                    </thead>
-                    <tbody>
-                      <atdedcnfrcrcds v-for="(item,index) in sbdyAtdedCnfrcRcds" @dltRow="deleteTheRowAdvnc" @addRow="addOneRowAdvnc" :key="index" :index="index" :rcdOfCnfrc="item"></atdedcnfrcrcds>
-                    </tbody>
-                  </table>
-                </div>
-                <div id="resumeEditer" class="container-fluid tab-pane">
-                  <textarea rows="14" v-model="anAtd.resume" placeholder="不能超过1023个字" readonly>
-                   </textarea>
-                </div>
-              </div>
-          </div>
-
-          <div class="row" style="margin-top: 30px;">
-            <div class="col-lg">
-              <button class="btn btn-info" @click="showSendIvtnSchBox=false;">返回</button>
-            </div>  
-          </div>
-        </div> -->
       </div>
       <div id="newCreateOrModify" class="container-fluid tab-pane">
         <div name="atdsSchBox" v-if="showSchBoxInNewOrEditTab">
@@ -732,12 +507,12 @@
                       <td @dblclick="DeleteFromHasAtddCnfrcs(row)" title='双击此处从已参会列表中删除'>{{row.address_of_project}}</td>
                       <td>
                         <select v-model="row.acr.role"><!--   -->
-                          <option value='主办者'>主办者</option>
-                          <option value='VIP'>VIP</option>
-                          <option value='报告人'>报告人</option>
-                          <option value='一般参会代表'>一般参会代表</option>
-                          <option value='观众或听众'>观众或听众</option>
-                          <option value='承办者'>承办者</option>
+                          <option value=0>普通参会者</option>
+                          <option value=1>主席</option>
+                          <option value=2>主席并报告</option>
+                          <option value=3>副主席</option>
+                          <option value=4>副主席并报告</option>
+                          <option value=5>报告人</option>
                         </select>
                       </td>
                       <td title="不能超过250个字,多的部分会丢失"><input type="text" placeholder="报告题目" v-model="row.acr.speech_topics"></td><!--  -->
@@ -758,7 +533,7 @@
                           <tr>
                             <th style="width:30%;">时间</th>
                             <th style="width:30%;">地点</th>
-                            <th style="width:30%;">议程</th>
+                            <th style="width:30%;">环节</th>
                             <th style="width:10%;"><input type="checkbox" v-model="isSlctAllScheduls" @click="clkdTheAllSlctCheckboxInScheduleShower"></th>
                           </tr>
                         </thead>
@@ -1036,6 +811,9 @@
         </div>
       </div>
     </div>
+    <div v-if="showLoading" class="mask">
+      <img class="loading" :src="require('../../static/loading.gif')" alt="正在载入数据"/>
+    </div>    
   </div>
 </template>
 <script>
@@ -1047,6 +825,7 @@
     data () {
       return {
         //common
+        showLoading:false,
         currentUserId:this.$store.state.user.id_user,
         myEmplys:this.$store.state.myEmplys,
         projects:this.$store.state.projects,
@@ -1179,12 +958,12 @@
           url: 'getTracks.php',
           data:qs.stringify(_this.queryContent)
         }).then(function (response) {
+            console.log(response.data);
           if(typeof(response.data)==='object') {
             if(response.data.length>0) {
               _this.tracks=response.data;
             }
           } else {
-            console.log(response.data);
           }
         }).catch(function (error) {
           console.log(error);
@@ -1192,6 +971,9 @@
         });
       },
       getAttendeesInCi() {
+        this.showLoading=true;
+        this.attendeesInCI=[];
+        this.countOfTotalPages=0;
         this.showCiATDsList=true;
         this.showCiSearchBox=false;
         this.queryContent.conditions="byKeyWordAndTrack's ID ForCheckATDsInfo";
@@ -1229,7 +1011,9 @@
           } else {
             console.log(response.data);
           }
+          _this.showLoading=false;
         }).catch(function (error) {
+          _this.showLoading=false;
           console.log(error);
           _this.$toast({text:'通信错误!',type:'danger',duration: 2000});
         });
@@ -1246,10 +1030,12 @@
         
         if((firstPosition-20)<=0) {
           this.startId=this.idsOfAll[0];
+          this.endId=this.idsOfAll[19];
         } else {
           this.startId=this.idsOfAll[firstPosition-20];
+          this.endId=this.idsOfAll[firstPosition-1];
         }
-        this.endId=this.idsOfAll[firstPosition-1];
+        
         this.getATDsByStartAndEndID(this.startId,this.endId);
       },
       gotoNextPage(){
@@ -1267,12 +1053,12 @@
       pageNumberInputed() {
         //将用户输入中的非数字部分过滤掉
         this.currentPageNumber=this.currentPageNumber.replace(/[^\d]/g,'');
-        this.currentPageNumber=this.currentPageNumber=='' || this.currentPageNumber<=0?1:Number(this.currentPageNumber);
+        this.currentPageNumber=(this.currentPageNumber=='' || this.currentPageNumber<=0)?1:Number(this.currentPageNumber);
         this.currentPageNumber=this.currentPageNumber>=this.countOfTotalPages?Number(this.countOfTotalPages):Number(this.currentPageNumber);
         //获取该页码的起始和结束位置
         this.startId=this.idsOfAll[(this.currentPageNumber-1)*20];
         if(((this.currentPageNumber-1)*20+19)>this.countOfRows) {
-          this.endId=this.countOfRows-1;
+          this.endId=this.idsOfAll[this.countOfRows-1];
         } else {
           this.endId=this.idsOfAll[(this.currentPageNumber-1)*20+19];
         }
@@ -1286,7 +1072,7 @@
         this.queryContent.startId=s;
         this.queryContent.endId=e;
         this.queryContent.countInOnePage=this.countInOnePage;
-        // console.log(this.queryContent);
+        console.log(this.queryContent);
         var _this=this;
         this.$axios({
           method: 'post',
@@ -1345,6 +1131,7 @@
           this.queryContent.sDate=this.queryContent.eDate;
           this.queryContent.eDate=d;
         }
+        this.showLoading=true;
         this.queryContent.conditions="byIdTrackInvitedTimesDurationForSendingInvite";
         console.log(this.queryContent);
         this.emailList=[];
@@ -1357,20 +1144,30 @@
           console.log(response.data);
           _this.emailList=response.data;
           _this.textOfOperatedResult=_this.emailList.length?"已找到"+_this.emailList.length+"条数据":"没有找到符合条件的数据";
+          _this.showLoading=false;
         }).catch(function (error) {
+          _this.showLoading=false;
           console.log(error);
           _this.$toast({text:'通信错误!',type:'danger',duration:4000});
         });
       },
+      clrAtdArr() {
+        this.emailList=[];
+        this.textOfOperatedResult="没有找到符合条件的数据";
+      },
       saveAsCsvToSendEmails() {
         let csvFileName="ForSendingInvite";//id_track
         csvFileName+=((new Date()).getTime()).toString();
+        this.emailList.forEach( function(element) {
+          let o=this.tracks.find((ele) => ele['id'] == element['id_last_track']);
+          element.subject= typeof o==='undefined'?'':o.subject;          
+        },this);
         let obj={
           data:this.emailList,
           fileName:csvFileName,
           columns:{
-            txtInheader:['id','name','email','article_title','track'],//表头文字
-            fields:['id','name','email1','article_title','id_last_track'],//对应字段名
+            txtInheader:['姓名','电子信箱','论文题目','专场主题','专场代号'],//表头文字
+            fields:['name','email1','atcl_title','subject','id_last_track'],//对应字段名
           }
         };
         saveAsCSV.setDataConver(obj);
@@ -2097,6 +1894,13 @@
           return typeof o==='undefined'?'':o.name;
         }
       },
+      getTrackName() {
+        return function(i) {
+
+          let o=this.tracks.find((ele) => ele['id'] == i);
+          return typeof o==='undefined'?'':o.subject;
+        }
+      },
       // getAtddCnfrcRcdsByIdPrjct() {
       //   return function (r) {
       //     // return;
@@ -2204,7 +2008,7 @@
   right: 20px;
 }
 textarea {
-  width: 100%;
+  width: 90%;
 }
 .row .col-lg input, .row .col-lg select {
   width: 80%;
@@ -2250,11 +2054,40 @@ margin-bottom: 10px;
   max-width: none;
 }
 .samecard {
-  /*border: solid 1px #007bff;*/
   border-radius:5px;
-  background-color: #20c997;
+  background-color: #3C3C3C;
   padding: 5px;
   margin-bottom: 10px;
-
+}
+.samecard label {
+  color: white;
+}
+.mgrt10 {
+  margin-right:10px;
+}
+.txtleft {
+  text-align: left;
+}
+.bgchvy-txtwt {
+  background: #3C3C3C;
+  color: white;  
+}
+.slmbdr {
+  border: 1px solid #ced4da;
+}
+.mask{
+  position:fixed;
+  top     : 0;
+  left    : 0;
+  bottom  : 0;
+  right   : 0;
+  background:#000;  /*一般遮罩随便设置一个颜色*/
+  opacity:70%;
+}
+.loading {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  transform: translate(-50%,-110%);
 }
 </style>

@@ -1,9 +1,0 @@
-CREATE TABLE `tbl_type_product` (
- `id` tinyint(3) unsigned zerofill NOT NULL AUTO_INCREMENT,
- `short_en` varchar(5) NOT NULL COMMENT '英文简称',
- `short_cn` varchar(5) NOT NULL COMMENT '中文简称',
- `id_creater` smallint(6) NOT NULL,
- `time_create` datetime NOT NULL,
- `other` varchar(64) DEFAULT NULL,
- PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='产品类目'

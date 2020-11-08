@@ -2,7 +2,6 @@
     <div class="image-view">
         <div class="addbox">
             <input id= "inputImg" class="inputBox" type="file" @change="getImgBase()" accept="image/*">
-            <!--  " -->
             <div class="addbtn" @click="selectImage">添加凭证</div>
         </div>
         <div class="view">
@@ -15,7 +14,6 @@
 </template>
 
 <script>
-//    import Vue from 'vue'
     function getInputBoxClick(){
         return  $('#inputImg').click();
     };
@@ -27,10 +25,6 @@
             }
         },
        methods: {
-            // sendPicsToParent:function() {
-            //   window.Event = new Vue();
-            //   this.$emit('havePictrues',this.imgBase64);//;
-            // },            
             //获取图片base64实现预览
             getImgBase(){
                 //alert('被调用');
@@ -59,7 +53,6 @@
                     type: 'wraning',
                      duration: 2000
                   });                    
-                    //'\'为转意字符
                     return; 
                 }
 
@@ -70,7 +63,6 @@
                 reader.onload = function(e) {
                    do {
                        if(_this.images[i]==e.target.result){
-//                         alert('第'+ (i+1) +'张重复!')
                            _this.$toast({
                             text: '第'+ (i+1) +'张重复!',
                             type: 'wraning',
@@ -82,7 +74,6 @@
                          i++;
                         } 
                    } while (i<7){
-                         // alert('恭喜,没重复')
                          _this.images.push(e.target.result);
                          if (_this.images.length===6)  {
                             $(".addbox").hide();   

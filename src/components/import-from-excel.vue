@@ -88,7 +88,7 @@ import ClipboardJS from 'clipboard';
         var reader = new FileReader();// 用FileReader来读取
         FileReader.prototype.readAsBinaryString = function(f) {
           var binary = "";
-          var workBook; // 读取完成的数据
+          var workBook={}; // 读取完成的数据
           var reader = new FileReader();
           reader.onload = function(e) {
             var bytes = new Uint8Array(reader.result);

@@ -1,8 +1,0 @@
-CREATE TABLE `tbl_way_pay` (
- `id` tinyint(3) unsigned zerofill NOT NULL AUTO_INCREMENT,
- `name` char(4) NOT NULL COMMENT '收付方式名称',
- `time_lastmodify` datetime NOT NULL COMMENT '最后更改时间',
- `id_lastmodifyer` smallint(6) unsigned zerofill NOT NULL COMMENT '最后更改者',
- `other` varchar(64) DEFAULT NULL,
- PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='收付款方式'

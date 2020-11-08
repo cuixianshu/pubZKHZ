@@ -21,8 +21,8 @@
     </div>
     <div class="footer">
       <p>
-        <a href="http://www.beian.gov.cn/portal/registerSystemInfo" target="_blank">
-          辽ICP备19004409号
+        <a href="http://www.beian.miit.gov.cn/" target="_blank">
+          辽ICP备19004409号-2
         </a>
       </p>
       <p>
