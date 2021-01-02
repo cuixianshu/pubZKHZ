@@ -12,13 +12,13 @@
           <datepicker class="datepicker" id="dateRange" v-model="MIOQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="出入库时间,默认上个月" :shortcuts="shortcuts" placeholder="出入库的时间范围">
           </datepicker>
           <input class="form-control" v-model="MIOQC.keyWord" title="用途,备注信息等" placeholder="查询关键字" style="width:110px; background: #CEFFCE;">
-          <select class="form-control" v-model="MIOQC.material" title="选择物料">
-            <option value="0">所有物料</option>
-            <option v-for="item in materials" :value="item.id">{{item.name}}</option>
-          </select>
-          <select class="form-control" v-model="MIOQC.id_project" title="选择所属项目">
+          <select class="form-control" v-model="MIOQC.id_project" title="选择所属项目" style="max-width:200px;">
             <option value="0">所有项目</option>
             <option v-for="item in projects" :value="item.id">{{item.name}}</option>
+          </select>
+          <select class="form-control" v-model="MIOQC.material" title="选择物料" style="max-width:150px;">
+            <option value="0">所有物料</option>
+            <option v-for="item in materials" :value="item.id">{{item.name}}</option>
           </select>
           <select class="form-control" v-model="MIOQC.id_applyer" title="选择申领人">
             <option value="0">所有申领人</option>
@@ -56,6 +56,7 @@
               <td :title='row.m_brand'>{{row.m_brand}}</td>
               <td :title='row.m_model'>{{row.m_model}}</td>
               <td :title='row.m_unit'>{{row.m_unit}}</td>
+              <td :title='row.m_last_price'>{{row.m_last_price}}</td>
               <td :title='row.qty'>{{row.qty}}</td>
               <td :title='row.a_remark'>{{row.a_remark}}</td>
               <td :title='row.id_op'>{{row.id_op}}</td>
@@ -65,6 +66,9 @@
       </div>
     </div>
   </div>    
+  <div id="loading" class="loadingbox" v-show="showLoading">
+    <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+  </div>
 </div>
 </template>
 
@@ -95,6 +99,8 @@ Date.prototype.format = function(fmt) {
 export default {
   data() {
     return {
+      imgUrl:require('@/assets/images/loading.gif'),
+      showLoading:false,
       shortcuts:false,
       projects:this.$store.state.projects,
       employees:this.$store.state.employees,
@@ -109,8 +115,8 @@ export default {
         opType:5,
       },
       materialIOData:[],
-      materialIOTitles:['出入库时间','出入库类型','申领人','所属项目','物料用途','物料名称','物料品牌','规格型号','计量单位','数量','申领备注','仓管'],
-      materialIOWidths:['10%','9%','6%','9%','9%','9%','9%','9%','7%','7%','9%','7%'],
+      materialIOTitles:['出入库时间','出入库类型','申领人','所属项目','物料用途','物料名称','物料品牌','规格型号','单位','上次进价','数量','申领备注','仓管'],
+      materialIOWidths:['10%','8%','6%','8%','8%','8%','8%','8%','7%','6%','7%','9%','7%'],
       IOTypes:[
         {id:0,name:'发放出库'},
         {id:1,name:'验收入库'},
@@ -143,6 +149,7 @@ export default {
         '物料备注':'m_remark',//请款表中
         '存放仓库':'m_store_place',//请款表中
         '计量单位':'m_unit',
+        '上次进价':'m_last_price',
         '数量':'qty',
         '仓管备注':'remark',
         '出入库时间':'time_op',
@@ -156,6 +163,8 @@ export default {
   },
   methods: {
     getMaterialIOData () {
+      this.showLoading=true;
+      $("body").css("overflow","hidden");
       this.distributeTotalAmount=0;
       this.inboundTotalAmount=0;
       this.checkedADD=0;
@@ -175,6 +184,8 @@ export default {
             url: 'getMaterialIO.php',
             data: qs.stringify(_this.MIOQC)
         }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           if(response.data.length<1) {
             _this.$toast({
               text: '没有符合条件的记录',
@@ -215,6 +226,8 @@ export default {
           }
           _this.material_filename+=((new Date()).format("yyyyMMddhhmmss")).toString();
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           _this.$toast({
              text: '异步通信错误!'+error,
              type: 'danger',

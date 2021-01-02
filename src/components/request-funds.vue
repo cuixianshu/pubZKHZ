@@ -48,46 +48,53 @@
           </div>
           <div class="modal-body">
             <div class="container-fluid">
-              <div class="row">
-                <div class="col-lg  form-inline">
-                  <label for="slctProject">项目</label>
-                  <select id="slctProject" type="text" class="form-control" placeholder="所属项目" v-model="requestFunds.id_project" title="所属项目" :disabled="requestFunds.result_approved==1">
+                <div class="form-inline mgtp10">
+                  <label>项目</label>
+                  <select type="text" class="form-control" placeholder="所属项目" v-model="requestFunds.id_project" title="所属项目" :disabled="requestFunds.result_approved==1">
+                    <option value="0">请选择</option>}
+                    option
                     <option v-for="item in projects" :value="item.id">{{item.name}}</option>}
                   </select>
                 </div>
-                <div class="col-lg  form-inline">
-                  <label for="inputUsage">用途</label>
-                  <input id="inputUsage" type="text" class="form-control" v-model="requestFunds.use_for" title="款项用途,不超过64个字" placeholder="款项用途,不超过64个字" :disabled="requestFunds.result_approved==1">
+                <div class="form-inline mgtp10">
+                  <label>用途</label>
+                  <input type="text" class="form-control" v-model="requestFunds.use_for" title="款项用途,不超过64个字" placeholder="款项用途,不超过64个字" :disabled="requestFunds.result_approved==1">
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-lg  form-inline">
-                  <label for="inputCashiedAmount">金额</label>
-                  <input id="inputCashiedAmount" type="number" class="form-control" v-model="requestFunds.amount" placeholder="请款金额" title="请款金额" :disabled="requestFunds.result_approved==1">
+                <div class="form-inline mgtp10">
+                  <label>金额</label>
+                  <input type="number" class="form-control" v-model="requestFunds.amount" placeholder="请款金额" title="请款金额" :disabled="requestFunds.result_approved==1">
                 </div>
-                <div class="col-lg  form-inline">
-                  <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" v-model="requestFunds.id_way_pay" placeholder="收款方式" title="收款方式" :disabled="requestFunds.result_approved==1">
-                    <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>}
+                <div class="form-inline mgtp10">
+                  <label>方式</label>
+                  <select type="text" class="form-control" v-model="requestFunds.id_way_pay" placeholder="收款方式" title="收款方式" :disabled="requestFunds.result_approved==1">
+                    <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>
                   </select>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-lg  form-inline">
-                  <label for="inputAccount">账号</label>
-                  <input id="slctCashierAccount" type="text" class="form-control" placeholder="接收款项的账号" v-model="requestFunds.account" title="账号名和账号" :disabled="requestFunds.result_approved==1">
+                <div class="form-inline mgtp10">
+                  <label>账号</label>
+                  <input type="text" class="form-control" placeholder="接收款项的账号" v-model="requestFunds.account" title="账号名和账号" :disabled="requestFunds.result_approved==1">
                 </div>
-                <div class="col-lg  form-inline">
-                  <label for="inputRemark">备注</label>
-                  <input id="inputRemark" type="text" class="form-control" v-model="requestFunds.remark" title="发票或票据号、备注信息,不超过64个字" placeholder="发票或票据号、备注信息" :disabled="requestFunds.result_approved==1">
+                <div class="form-inline mgtp10">
+                  <label>发票</label><!-- ="requestFunds.result_approved==1" -->
+                  <input type="text" class="form-control" v-model="requestFunds.nums_of_invoices" placeholder="点击右侧 加号 添加发票号码" readonly>
+                  <button class="btn btn-link" title="点击添加发票号码" v-if="requestFunds.result_approved!=1" @click="showAddNumsBox=!showAddNumsBox;">+</button>
                 </div>
-              </div>
-              <div class="row" v-if="requestFunds.result_approved==0 || requestFunds.result_approved2==0">
-                <div class="col-lg form-inline reason-reject">
+                <div class="form-inline mgtp10" v-if="showAddNumsBox">
+                  &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+                  <input type="text" class="form-control mgrt5" v-model="anInvoiceNum" title="一个发票号码" placeholder="一次只能输入一个发票号码" style="width:50%;">
+                  <button class="btn btn-primary btn-sm mgrt5" @click="addAnInvoiceNumber">确定</button>
+                  <button class="btn btn-secondary btn-sm mgrt5" @click="showAddNumsBox=false;">取消</button>
+                </div>
+                <div class="form-inline mgtp10">
+                  <label>备注</label>
+                  <input type="text" class="form-control" v-model="requestFunds.remark" title="备注信息,不超过64个字" placeholder="备注信息" :disabled="requestFunds.result_approved==1">
+                </div>
+              <div v-if="requestFunds.result_approved==0 || requestFunds.result_approved2==0">
+                <div class="form-inline mgtp10 redfont">
                   <label>初审意见:</label>
                   <span>{{requestFunds.reason_reject}}</span>
                 </div>
-                <div class="col-lg form-inline reason-reject">
+                <div class="form-inline mgtp10 redfont">
                   <label>复审意见:</label>
                   <span>{{requestFunds.reason_reject2}}</span>
                 </div>
@@ -96,11 +103,14 @@
           </div>
           <div class="modal-footer">  
             <button class="btn btn-secondary" data-dismiss="modal">取消</button>
-            <button id="btnSaveTheRequestedData" @click="saveTheRequestedData" class="btn btn-primary" v-if="requestFunds.result_approved!==1 || requestFunds.result_approved2!==1">提交</button>
+            <button @click="saveTheRequestedData" class="btn btn-primary" v-if="requestFunds.result_approved!==1 || requestFunds.result_approved2!==1">提交</button>
           </div>           
         </div>
       </div>
     </div>    
+    <div id="loading" class="loadingbox" v-show="showLoading">
+      <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+    </div>
   </div>
 </template>
 
@@ -130,12 +140,16 @@ Date.prototype.format = function(fmt) {
   export default {
     data() {
       return {
+        imgUrl:require('@/assets/images/loading.gif'),
+        showLoading:false,
         shortcuts:false,
         queryContent:{
           keyWord:'',
           dateRange:[],
           conditions:''
         },
+        showAddNumsBox:false,
+        anInvoiceNum:'',
         titlesOfList:['款项性质','项目','金额','支付方式','账号名和账号','用途','备注','请款日期','请款进度'],
         widthOfTH:['6%','8%','8%','9%','19%','18%','12%','9%','11%'],
         listOfRequestFunds:[],
@@ -149,13 +163,14 @@ Date.prototype.format = function(fmt) {
           amount:0,
           remark:'',
           project:'',
-          id_project:'',
+          id_project:0,
           use_for:'',
           reason_reject:'',
           reason_reject2:'',
           result_approved:'',
           result_approved2:'',
-          nature:1
+          nature:1,
+          nums_of_invoices:'',
         },
         wayOfPayment:this.$store.state.waysOfPayment,
         projects:this.$store.state.projects,
@@ -168,6 +183,8 @@ Date.prototype.format = function(fmt) {
     },    
     methods: {
       getListOfRequestFunds() {
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         if(this.queryContent.dateRange.length<2 || !this.queryContent.dateRange[0] || !this.queryContent.dateRange[1]){//如果日期填写不全,默认是过去1周
           var day1=new Date();
           day1.setDate(day1.getDate() - 7);
@@ -185,6 +202,8 @@ Date.prototype.format = function(fmt) {
           url: 'getRequestFunds.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
             console.log(response.data);
             if(response.data.length<1) {
               _this.$toast({
@@ -197,6 +216,8 @@ Date.prototype.format = function(fmt) {
             }
 
           }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
             console.log(error);
             _this.$toast({
                text: '异步通信错误!'+error,
@@ -206,59 +227,31 @@ Date.prototype.format = function(fmt) {
           });
       },
       clickedARowInShower(dataRow) {
-// console.log(dataRow);
         this.idOfRequestFunds=dataRow.id;
         this.requestFunds=dataRow;
-        // this.requestFunds.account=dataRow.account;
-        // this.requestFunds.id_way_pay=dataRow.id_way_pay;
-        // this.requestFunds.amount=dataRow.amount;
-        // this.requestFunds.remark=dataRow.remark;
-        // this.requestFunds.id_project=dataRow.id_project;
-        // this.requestFunds.use_for=dataRow.use_for;
-        // this.requestFunds.reason_reject=dataRow.reason_reject;
-        // this.requestFunds.result_approved=dataRow.result_approved;
-        // this.requestFunds.reason_reject2=dataRow.reason_reject2;
-        // this.requestFunds.result_approved2=dataRow.result_approved2;
-       
-        // for(var i=0;i<this.wayOfPayment.length;i++) {
-        //   if(this.requestFunds.id_way_pay=this.wayOfPayment[i].id) {
-        //     this.requestFunds.way=this.wayOfPayment[i]['name'];
-        //   }
-        // }
-        // for(var i=0;i<this.projects.length;i++) {
-        //   if(this.requestFunds.id_project==this.projects[i].id) {
-        //     this.requestFunds.project=this.projects[i].prjct;
-        //   }
-        // }        
+        this.showAddNumsBox=false;
         $('#mdlRequestFunds').modal('toggle');
       },
+      addAnInvoiceNumber() {
+        this.anInvoiceNum=this.anInvoiceNum.replace(/(^\s*)|(\s*$)/g, "");
+        let reg=/^\d{8,}$/;//验证至少8位数字
+        if (!reg.test(this.anInvoiceNum)) {
+          this.$toast({text: '只能由纯数字组成,且不少于8位!',type:'info',duration:2000});
+          return;
+        }
+        this.requestFunds.nums_of_invoices=(this.requestFunds.nums_of_invoices.length<1?"":(this.requestFunds.nums_of_invoices+","))+this.anInvoiceNum;
+        this.anInvoiceNum="";
+        this.showAddNumsBox=false;
+      },
       saveTheRequestedData() {
-        if(this.requestFunds.id_project=='') {
-          this.$toast({
-            text: '请选择项目!',
-            type: 'info',
-            duration: 2000
-          });
+        if(this.requestFunds.id_project==0) {
+          this.$toast({text:'请选择项目!',type:'info',duration:2000});
           return false;          
         }        
         if(this.requestFunds.id_way_pay=='') {
-          this.$toast({
-            text: '请选择付款方式!',
-            type: 'info',
-            duration: 2000
-          });
+          this.$toast({text:'请选择付款方式!',type:'info',duration:2000});
           return false;          
         }
-        // var queryContent={
-        //   id:this.idOfRequestFunds,
-        //   id_way_pay:this.requestFunds.id_way_pay,
-        //   remark:this.requestFunds.remark,
-        //   amount:this.requestFunds.amount,
-        //   id_applyer:this.currentUserId,
-        //   conditions:'',
-        //   id_project:this.requestFunds.id_project
-        // };
-
         var queryContent=this.requestFunds;
         queryContent.id_applyer=this.currentUserId;
         queryContent.conditions='';
@@ -291,25 +284,20 @@ Date.prototype.format = function(fmt) {
             });
             return false;
           }
-          // if(this.requestFunds.remark.length<4) {
-          //   this.$toast({
-          //     text: '请填写备注信息,不少于4个字',
-          //     type: 'info',
-          //     duration: 2000
-          //   });
-          //   return;
-          // }
           queryContent.conditions='NewCreateRequestFunds';
         }
-// console.log(queryContent);
+console.log(queryContent);
 // return;
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         var _this=this;
         this.$axios({
           method: 'post',
           url: 'updateRequestFunds.php',
           data: qs.stringify(queryContent)
           }).then(function (response) {
-// console.log(response.data);
+          _this.showLoading=false;
+          $("body").css("overflow","");
             if(response.data===true) {
               $('#mdlRequestFunds').modal('toggle'); 
               _this.$toast({
@@ -333,6 +321,8 @@ Date.prototype.format = function(fmt) {
               $('#mdlRequestFunds').modal('toggle');             
             }
           }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
             console.log(error);
             _this.$toast({
               text: '异步通信错误!'+error,
@@ -362,13 +352,14 @@ Date.prototype.format = function(fmt) {
         this.requestFunds.id_way_pay=1;
         this.requestFunds.amount=0;
         this.requestFunds.remark='';
-        this.requestFunds.id_project='';
+        this.requestFunds.id_project=0;
         this.requestFunds.project='';
         this.requestFunds.use_for='';
         this.requestFunds.reason_reject='';
         this.requestFunds.result_approved='newCreate';
         this.requestFunds.reason_reject2='';
         this.requestFunds.result_approved2='newCreate';
+        this.requestFunds.nums_of_invoices="";
         $('#mdlRequestFunds').modal('toggle');
       }
     },
@@ -447,10 +438,10 @@ Date.prototype.format = function(fmt) {
 .modal-body input,.modal-body select {
   width: 80%;
 }
-.row {
+.row,.mgtp10 {
   margin-top: 10px;
 }
-.query input,.query button {
+.query input,.query button,.mgrt5 {
   margin-right: 5px;
 }
 .query button {
@@ -464,9 +455,9 @@ Date.prototype.format = function(fmt) {
   position: absolute;
   right: 100px;  
 }
-.reason-reject {
+.redfont {
   color: red;
   font-size: 1.2rem;
-} 
+}
 </style>
 

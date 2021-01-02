@@ -3,8 +3,8 @@
 	<h5>当前位置:发票业务/开票、变更申请</h5>
     <div id="mdyApldFild" class="container-fluid">
       <div id="searchConditions"  class="row form-inline">
-        <label for="queryConditions">关键词:</label>
-        <input id="queryConditions" type="text" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="用车人,单位,项目等搜索关键词">
+        <label>关键词:</label>
+        <input type="text" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="用车人,单位,项目等搜索关键词">
         <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="申请开票时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="申请开票的时间范围"></datepicker>
         <button class="btn btn-primary" @click="getRequestedInvoices">🔍获取数据</button>          
         <button class="btn btn-secondary" @click="clearData" v-if="data.length>0">清空</button>
@@ -13,7 +13,7 @@
     </div>
     <div v-if="data.length>0" class=""><!--  pre-scrollable -->
       <div id="toolbar">
-        <button id="remove" class="btn btn-danger" disabled>
+        <button class="btn btn-danger" disabled>
           <i class="glyphicon glyphicon-remove"></i> Delete
         </button>
       </div> <!-- 注意事件一定要用小写加中横线格式 -->
@@ -42,59 +42,59 @@
             <div class="container-fluid">
               <div class="row">
               	<div class="col-lg  form-inline">
-                  <label for="slctProject">项目</label>
-                  <select id="slctProject" type="text" class="form-control" v-model="infoInRequestInvoice.project" title="所属项目" placeholder="所属项目">
+                  <label>项目</label>
+                  <select type="text" class="form-control" v-model="infoInRequestInvoice.project" title="所属项目" placeholder="所属项目">
                     <option v-for="proj in listOfProject">{{proj}}</option>
                   </select>
                 </div>                
                 <div class="col-lg  form-inline">
-                  <label for="slctInvoiceType">类型</label>
-                  <select id="slctInvoiceType" type="text" class="form-control" v-model="infoInRequestInvoice.type" placeholder="需要的发票类型" title="发票类型">
+                  <label>类型</label>
+                  <select type="text" class="form-control" v-model="infoInRequestInvoice.type" placeholder="需要的发票类型" title="发票类型">
                     <option v-for="item in listOfInvoiceType">{{item.name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="slctCstmrOgnztnName">抬头</label>
-                  <select id="slctCstmrOgnztnName" type="text" class="form-control" v-model="infoInRequestInvoice.cstmrOgnztnName" placeholder="发票中的单位名称" title="单位名称抬头">
+                  <label>抬头</label>
+                  <select type="text" class="form-control" v-model="infoInRequestInvoice.cstmrOgnztnName" placeholder="发票中的单位名称" title="单位名称抬头">
                     <option v-for="item in listOfCustomerOgnztn">{{item.name}}</option>
                   </select>
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="inputInvoicePrjct">商品</label>
-                  <input id="inputInvoicePrjct" type="text" class="form-control" v-model="infoInRequestInvoice.nameOfGoods" title="商品或服务名称,不超过16个字" placeholder="发票中的商品或服务名称,不超过16个字">
+                  <label>商品</label>
+                  <input type="text" class="form-control" v-model="infoInRequestInvoice.nameOfGoods" title="商品或服务名称,不超过16个字" placeholder="发票中的商品或服务名称,不超过16个字">
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="inputInvoiceAmount">金额</label>
-                  <input id="inputInvoiceAmount" type="number" class="form-control" v-model="infoInRequestInvoice.amount" title="开票金额" placeholder="开票金额">
+                  <label>金额</label>
+                  <input type="number" class="form-control" v-model="infoInRequestInvoice.amount" title="开票金额" placeholder="开票金额">
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="slctOurCmpnyName">出票</label>
-                  <select id="slctOurCmpnyName" type="text" class="form-control" placeholder="出票公司名称" v-model="infoInRequestInvoice.nameOfOurCmpny" title="出具发票的公司名称">
+                  <label>出票</label>
+                  <select type="text" class="form-control" placeholder="出票公司名称" v-model="infoInRequestInvoice.nameOfOurCmpny" title="出具发票的公司名称">
                     <option v-for="item in listOfOurCompanys">{{item.name}}</option>
                   </select>
                 </div>
               </div>
               <div class="row">
               	<div class="col-lg  form-inline">
-                  <label for="inputBooker">订车</label>
-                  <input id="inputBooker" type="text" class="form-control" v-model="infoInRequestInvoice.booker" title="订车人" placeholder="订车人" readonly>
+                  <label>订车</label>
+                  <input type="text" class="form-control" v-model="infoInRequestInvoice.booker" title="订车人" placeholder="订车人" readonly>
                 </div>                
               	<div class="col-lg  form-inline">
-                  <label for="inputApplyer">申请</label>
-                  <input id="inputApplyer" type="text" class="form-control" v-model="infoInRequestInvoice.applyer" title="申请人" placeholder="请选择申请人" readonly>
+                  <label>申请</label>
+                  <input type="text" class="form-control" v-model="infoInRequestInvoice.applyer" title="申请人" placeholder="请选择申请人" readonly>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="inputMem">备注</label>
-                  <input id="inputMem" type="text" class="form-control" v-model="infoInRequestInvoice.memInRqst" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
+                  <label>备注</label>
+                  <input type="text" class="form-control" v-model="infoInRequestInvoice.memInRqst" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
                 </div>
               </div>
             </div>
             </div>  
             <div class="modal-footer">  
               <button class="btn btn-secondary" data-dismiss="modal">取消</button>  
-              <button id="btnSaveFilledData" @click="saveModifyedInfo" class="btn btn-primary">保存数据</button>
+              <button @click="saveModifyedInfo" class="btn btn-primary">保存数据</button>
             </div>  
         </div>  
       </div>  
@@ -110,7 +110,7 @@
           </div>
           <div class="modal-footer">
             <button class="btn btn-secondary" data-dismiss="modal">取消</button>  
-            <button id="btnDeleteARowInSubTable" @click="deleteARowInSubTable" class="btn btn-primary">确定</button>            
+            <button @click="deleteARowInSubTable" class="btn btn-primary">确定</button>            
           </div>
         </div>
       </div>
@@ -126,7 +126,7 @@
           </div>
           <div class="modal-footer">
             <button class="btn btn-secondary" data-dismiss="modal">取消</button>  
-            <button id="btnDeleteARowInMainTable" @click="deleteARowInMainTable" class="btn btn-primary">确定</button>            
+            <button @click="deleteARowInMainTable" class="btn btn-primary">确定</button>            
           </div>
         </div>
       </div>
@@ -154,55 +154,55 @@
               </table>
             </div>
             <hr> -->
-            <div id="detailsForFilling" class="container-fluid">
+            <div class="container-fluid">
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="inputOurCmpnyName">出票</label>
-                  <input id="inputOurCmpnyName" type="text" class="form-control" placeholder="出票公司名称" v-model="detailsOfFilling.nameOfOurCmpny" title="出具发票的公司名称" readonly>
+                  <label>出票</label>
+                  <input type="text" class="form-control" placeholder="出票公司名称" v-model="detailsOfFilling.nameOfOurCmpny" title="出具发票的公司名称" readonly>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="inputInvoiceType">类型</label>
-                  <input id="inputInvoiceType" type="text" class="form-control" v-model="detailsOfFilling.type" placeholder="需要的发票类型" title="发票类型" readonly>
+                  <label>类型</label>
+                  <input type="text" class="form-control" v-model="detailsOfFilling.type" placeholder="需要的发票类型" title="发票类型" readonly>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="inputCstmrOgnztnName">抬头</label>
-                  <input id="inputCstmrOgnztnName" type="text" class="form-control" v-model="detailsOfFilling.cstmrOgnztnName" placeholder="发票中的单位名称" title="单位名称抬头" readonly>
+                  <label>抬头</label>
+                  <input type="text" class="form-control" v-model="detailsOfFilling.cstmrOgnztnName" placeholder="发票中的单位名称" title="单位名称抬头" readonly>
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="inputInvoicePrjct">商品</label>
-                  <input id="inputInvoicePrjct" type="text" class="form-control" v-model="detailsOfFilling.nameOfGoods" title="商品或服务名称,不超过16个字" placeholder="发票中的商品或服务名称,不超过16个字" readonly>
+                  <label>商品</label>
+                  <input type="text" class="form-control" v-model="detailsOfFilling.nameOfGoods" title="商品或服务名称,不超过16个字" placeholder="发票中的商品或服务名称,不超过16个字" readonly>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="inputInvoiceAmount">金额</label>
-                  <input id="inputInvoiceAmount" type="number" class="form-control" v-model="detailsOfFilling.amount" title="开票金额" placeholder="开票金额" readonly>
+                  <label>金额</label>
+                  <input type="number" class="form-control" v-model="detailsOfFilling.amount" title="开票金额" placeholder="开票金额" readonly>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="inputMem">备注</label>
-                  <input id="inputMem" type="text" class="form-control" v-model="detailsOfFilling.memInRqst" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字" readonly>
+                  <label>备注</label>
+                  <input type="text" class="form-control" v-model="detailsOfFilling.memInRqst" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字" readonly>
                 </div>
               </div>
               <hr class="hr">
               <div class="row">
               	<div class="col-lg  form-inline">
-                  <label for="inputNumberOfInvoice">号码</label>
-                  <input id="inputNumberOfInvoice" type="text" class="form-control" v-model="detailsOfFilling.numberOfInvoice" title="发票号码,不少于8且不超过128个字" placeholder="发票号码,不少于8且不超过128个字">
+                  <label>号码</label>
+                  <input type="text" class="form-control" v-model="detailsOfFilling.numberOfInvoice" title="发票号码,不少于8且不超过128个字" placeholder="发票号码,不少于8且不超过128个字">
                 </div>
               	<div class="col-lg  form-inline">
-                  <label for="inputImageOfInvoice">凭证</label>
-                  <input id="inputImageOfInvoice" type="text" class="form-control" v-model="detailsOfFilling.imageOfInvoice" title="凭证图片,2M" placeholder="凭证图片,2M">
+                  <label>凭证</label>
+                  <input type="text" class="form-control" v-model="detailsOfFilling.imageOfInvoice" title="凭证图片,2M" placeholder="凭证图片,2M">
                 </div>                
               	<div class="col-lg  form-inline">
-                  <label for="inputMemForFilling">备注</label>
-                  <input id="inputMemForFilling" type="text" class="form-control" v-model="detailsOfFilling.memForFilling" title="开票备注,不超过64个字" placeholder="开票备注,不超过64个字">
+                  <label>备注</label>
+                  <input type="text" class="form-control" v-model="detailsOfFilling.memForFilling" title="开票备注,不超过64个字" placeholder="开票备注,不超过64个字">
                 </div>                
               </div>
             </div>
             </div>  
             <div class="modal-footer">  
               <button class="btn btn-secondary" data-dismiss="modal">取消</button>  
-              <button id="btnSaveFilledData" @click="saveFilledInvoiceData" class="btn btn-primary">保存数据</button>
+              <button @click="saveFilledInvoiceData" class="btn btn-primary">保存数据</button>
             </div>  
         </div>  
       </div>  

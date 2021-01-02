@@ -60,7 +60,8 @@ import qs from 'qs';
           purchasing:'采购业务',
           rqstfunds:'请款报销',
           reports:'业务报表',
-          cnfrc:'展会项目',
+          cnfrc:'国际项目',
+          dmstc:'国内会议',
         }
       }
     },

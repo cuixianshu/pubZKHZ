@@ -107,6 +107,9 @@
         </div>
       </div>
     </div>    
+    <div id="loading" class="loadingbox" v-show="showLoading">
+      <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+    </div>
   </div>
 </template>
 
@@ -136,6 +139,8 @@ Date.prototype.format = function(fmt) {
   export default {
     data() {
       return {
+        imgUrl:require('@/assets/images/loading.gif'),
+        showLoading:false,
         shortcuts:false,
         queryContent:{
           keyWord:'',
@@ -178,6 +183,8 @@ Date.prototype.format = function(fmt) {
     },    
     methods: {
       getListOfTurnedInFunds() {
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         if(this.queryContent.dateRange.length<2 || !this.queryContent.dateRange[0] || !this.queryContent.dateRange[1]){//如果日期填写不全,默认是过去1周
           var day1=new Date();
           day1.setDate(day1.getDate() - 7);
@@ -197,6 +204,8 @@ Date.prototype.format = function(fmt) {
           url: 'getTurnInFunds.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
+            _this.showLoading=false;
+            $("body").css("overflow","");
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到符合条件的记录!',
@@ -207,6 +216,8 @@ Date.prototype.format = function(fmt) {
               _this.listOfTurnInFunds=response.data;
             }
           }).catch(function (error) {
+            _this.showLoading=false;
+            $("body").css("overflow","");
             console.log(error);
             _this.$toast({
                text: '异步通信错误!'+error,
@@ -229,20 +240,20 @@ Date.prototype.format = function(fmt) {
         }
         if(this.cashier.id_detailed_accounting) {
           var o=this.detailedAccountings.find((ele) => ele['id'] == this.cashier.id_detailed_accounting);
-          this.cashier.id_accounting_sub=typeof(o)=='undefined'?0:o['id_patent'];
-          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.cashier.id_accounting_sub);
+          this.cashier.id_accounting_sub=typeof(o)=='undefined'?0:o['id_parent'];
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_parent==this.cashier.id_accounting_sub);
         } else {
           this.cashier.id_accounting_sub=0;
           this.cashier.id_detailed_accounting=0;
           this.DAsAtTheAccSub=[];
         }
-console.log(this.cashier);
+// console.log(this.cashier);
 // return;
         $('#mdlCashier').modal('toggle');
       },
       acc_subChanged() {
         if(this.cashier.id_accounting_sub) {
-          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.cashier.id_accounting_sub);
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_parent==this.cashier.id_accounting_sub);
         } else {
           this.DAsAtTheAccSub=[];
         }
@@ -290,6 +301,8 @@ console.log(this.cashier);
           return false;
         }
         // queryContent.conditions='ByTurnInFunds';
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         this.cashier.conditions='ByTurnInFunds';
         // var arr = Object.keys(this.cashier.signature_code);
         if(!this.cashier.signature_code) {
@@ -308,6 +321,8 @@ console.log(this.cashier);
           url: 'updateCashier.php',
           data: qs.stringify(_this.cashier)
           }).then(function (response) {
+            _this.showLoading=false;
+            $("body").css("overflow","");
             if(response.data===true) {
               $('#mdlCashier').modal('toggle'); 
               _this.$toast({
@@ -332,6 +347,8 @@ console.log(this.cashier);
               $('#mdlCashier').modal('toggle');             
             }
           }).catch(function (error) {
+            _this.showLoading=false;
+            $("body").css("overflow","");
             console.log(error);
             _this.$toast({
               text: '异步通信错误!'+error,

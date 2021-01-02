@@ -36,7 +36,7 @@
         <div class="modal-content">  
           <div class="modal-header">
             <span>
-              <h5>收款复核--收款ID:{{approvedResult.id}}</h5>
+              <h5>收款复核--收款ID:{{ckdCashier.id}}</h5>
             </span>
               <button class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>  
@@ -46,8 +46,8 @@
             <div id="detailsForCheckingReceipts" class="container-fluid">
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="slctBsnsType">类型</label>
-                  <select id="slctBsnsType" type="text" class="form-control" v-model="approvedResult.business_type" title="关联业务类型" disabled>
+                  <label>类型</label>
+                  <select type="text" class="form-control" v-model="ckdCashier.business_type" title="关联业务类型" disabled>
                     <option value=1>销售回款(非机票)</option>
                     <option value=2>上缴款项(非还款)</option>
                     <option value=3>机票款(含退票费)</option>
@@ -55,21 +55,21 @@
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="iptAbstract">摘要</label>
-                  <input id="iptAbstract" type="text" class="form-control" :value="approvedResult.abstract" title="approvedResult.abstract" readonly>
+                  <label>摘要</label>
+                  <input type="text" class="form-control" :value="ckdCashier.abstract" title="ckdCashier.abstract" readonly>
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="slctAS">一级</label>
-                  <select id="slctAS" type="text" class="form-control" v-model="approvedResult.id_accounting_sub" title="一级会计科目" @change="accSubChanged()">
+                  <label>一级</label>
+                  <select type="text" class="form-control" v-model="ckdCashier.id_accounting_sub" title="一级会计科目" @change="accSubChanged()">
                     <option  value=0>一级科目</option>
                     <option v-for="item in accountingSubjects" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="slctNature">二级</label>
-                  <select id="slctNature" type="text" class="form-control" v-model="approvedResult.id_detailed_accounting" title="二级会计科目">
+                  <label>二级</label>
+                  <select type="text" class="form-control" v-model="ckdCashier.id_detailed_accounting" title="二级会计科目">
                     <option  value=0>二级科目</option>
                     <option v-for="item in DAsAtTheAccSub" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
@@ -77,33 +77,42 @@
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="slctCA">账号</label>
-                  <select id="slctCA" type="text" class="form-control" placeholder="收款账号" v-model="approvedResult.id_account" title="收款账号">
+                  <label>账号</label>
+                  <select type="text" class="form-control" placeholder="收款账号" v-model="ckdCashier.id_account" title="收款账号">
                     <option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" v-model="approvedResult.id_way_pay" placeholder="收款方式" title="收款方式">
+                  <label>方式</label>
+                  <select type="text" class="form-control" v-model="ckdCashier.id_way_pay" placeholder="收款方式" title="收款方式">
                     <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>
                   </select>
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="inputCashiedAmount">金额</label>
-                  <input id="inputCashiedAmount" type="number" class="form-control" name="cashiedAmount" v-model="approvedResult.amount" placeholder="实际收款金额" title="实际收款金额">
+                  <label>金额</label>
+                  <input type="number" class="form-control" name="cashiedAmount" v-model="ckdCashier.amount" placeholder="实际收款金额" title="实际收款金额">
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="inputOther">备注</label>
-                  <input id="inputOther" type="text" class="form-control" name="otherInCashier" v-model="approvedResult.other" title="收款时的备注信息" placeholder="备注信息,不超过64个字">
+                  <label>流水</label>
+                  <input type="text" class="form-control" name="otherInCashier" v-model="ckdCashier.num_serial" title="金融机构流水号" placeholder="金融机构流水号">
                 </div>
               </div>
+              <div class="row">
+                <div class="col-lg  form-inline">
+                  <label>备注</label>
+                  <input type="text" class="form-control" name="otherInCashier" v-model="ckdCashier.other" title="收款时的备注信息" placeholder="备注信息,不超过64个字">
+                </div>
+                <div class="col-lg  form-inline">
+                </div>
+              </div>
+
               <hr style="margin:10px 0px;height:2px;border:2px;background-color:#007bff;"/>
               <div class="row" >
                 <div class="col-lg  form-inline">
-                  <label for="inputOther">复核说明:</label>
-                  <input id="inputOther" type="text" class="form-control" name="otherInCashier" v-model="approvedResult.describe_confirm" title="复核说明" placeholder="复核说明,不超过64字">
+                  <label>复核说明:</label>
+                  <input type="text" class="form-control" name="otherInCashier" v-model="ckdCashier.describe_confirm" title="复核说明" placeholder="复核说明,不超过64字">
                 </div>
               </div>              
             </div>
@@ -115,6 +124,9 @@
         </div>
       </div>
     </div>    
+    <div id="loading" class="loadingbox" v-show="showLoading">
+      <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+    </div>
   </div>
 </template>
 
@@ -144,6 +156,8 @@ Date.prototype.format = function(fmt) {
   export default {
     data() {
       return {
+        imgUrl:require('@/assets/images/loading.gif'),
+        showLoading:false,
         shortcuts:false,
         queryContent:{
           keyWord:'',
@@ -154,7 +168,7 @@ Date.prototype.format = function(fmt) {
         widthOfTH:['8%','16%','10%','15%','15%','14%','14%','8%'],
         listOfCashies:[],
         currentUserId:this.$store.state.user.id_user,
-        approvedResult:{
+        ckdCashier:{
         },
         ourAccounts:this.$store.state.ourAccounts,
         wayOfPayment:this.$store.state.waysOfPayment,
@@ -170,6 +184,8 @@ Date.prototype.format = function(fmt) {
     },    
     methods: {
       getListOfCashier() {
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         if(this.queryContent.dateRange.length<2 || !this.queryContent.dateRange[0] || !this.queryContent.dateRange[1]){//如果日期填写不全,默认是过去1周
           var day1=new Date();
           day1.setDate(day1.getDate() - 7);
@@ -186,6 +202,8 @@ Date.prototype.format = function(fmt) {
           url: 'getCashiers.php',
           data: qs.stringify(_this.queryContent)
         }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(response.data);
           if(response.data.length<1) {
             _this.$toast({
@@ -197,6 +215,8 @@ Date.prototype.format = function(fmt) {
             _this.listOfCashies=response.data;
           }
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(error);
           _this.$toast({
             text: '异步通信错误!'+error,
@@ -206,40 +226,54 @@ Date.prototype.format = function(fmt) {
         });
       },
       clickedARowInShower(dataRow) {
-        this.approvedResult=dataRow;
-        this.approvedResult.id_confirmer=this.currentUserId;
-        // this.approvedResult.id_accounting_sub=0;
-        if(this.approvedResult.id_detailed_accounting) {
-          var o=this.detailedAccountings.find((ele) => ele['id'] == this.approvedResult.id_detailed_accounting);
-          this.approvedResult.id_accounting_sub=typeof(o)=='undefined'?0:o['id_patent'];
-          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.approvedResult.id_accounting_sub);
+        this.ckdCashier=dataRow;
+        this.ckdCashier.id_confirmer=this.currentUserId;
+        // this.ckdCashier.id_accounting_sub=0;
+        if(this.ckdCashier.id_detailed_accounting) {
+          var o=this.detailedAccountings.find((ele) => ele['id'] == this.ckdCashier.id_detailed_accounting);
+          this.ckdCashier.id_accounting_sub=typeof(o)=='undefined'?0:o['id_parent'];
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_parent==this.ckdCashier.id_accounting_sub);
         } else {
-          this.approvedResult.id_accounting_sub=0;
-          this.approvedResult.id_detailed_accounting=0;
+          this.ckdCashier.id_accounting_sub=0;
+          this.ckdCashier.id_detailed_accounting=0;
           this.DAsAtTheAccSub=[];
         }
         // console.log(this.detailedAccountings);
         $('#checkReceipts').modal('toggle');
       },
       saveTheApprovedData() {
-        if(this.approvedResult.result==0) {
-          if(this.approvedResult.describe_confirm.length<4) {
-            this.$toast({
-              text: '改正错误后请填写过程,不少于4个字!',
-              type: 'info',
-              duration: 2000
-            });
-            return false;
-          }
+        if(this.ckdCashier.id_detailed_accounting==0) {
+          this.$toast({
+            text:'请选择二级科目!',type:'info',duration:2000});
+          return false;
         }
+        if(this.ckdCashier.id_account==0) {
+          this.$toast({
+            text:'请选择收款账号!',type:'info',duration:2000});
+          return false;
+        }
+        if(this.ckdCashier.id_way_pay==0) {
+          this.$toast({
+            text:'请选择收款方式!',type:'info',duration:2000});
+          return false;
+        }
+        if(this.ckdCashier.amount<=0) {
+          this.$toast({
+            text:'请正确填写金额!',type:'info',duration:2000});
+          return false;
+        }
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         var _this = this;
-        var queryContent=this.approvedResult;
+        var queryContent=this.ckdCashier;
         queryContent.conditions='WithCheckedData';
         this.$axios({
           method: 'post',
           url: 'updateCashier.php',
           data: qs.stringify(queryContent)
         }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(response.data);
           if(response.data===true) {
             $('#checkReceipts').modal('toggle'); 
@@ -249,7 +283,7 @@ Date.prototype.format = function(fmt) {
               duration: 1000
             });
           //更新数据
-            var ci=_this.listOfCashies.findIndex((ele) => ele['id'] == _this.approvedResult.id);
+            var ci=_this.listOfCashies.findIndex((ele) => ele['id'] == _this.ckdCashier.id);
             _this.listOfCashies.splice(ci,1);
           } else {
             console.log(response.data);
@@ -261,6 +295,8 @@ Date.prototype.format = function(fmt) {
             $('#checkReceipts').modal('toggle');             
           }
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(error);
           _this.$toast({
             text: '异步通信错误!'+error,
@@ -274,12 +310,12 @@ Date.prototype.format = function(fmt) {
         this.listOfCashies=[];
       },
       accSubChanged() {
-        if(this.approvedResult.id_accounting_sub) {
-          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.approvedResult.id_accounting_sub);
+        if(this.ckdCashier.id_accounting_sub) {
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_parent==this.ckdCashier.id_accounting_sub);
         } else {
           this.DAsAtTheAccSub=[];
         }
-        this.approvedResult.id_detailed_accounting=0;
+        this.ckdCashier.id_detailed_accounting=0;
         // console.log(this.DAsAtTheAccSub);
       },
 

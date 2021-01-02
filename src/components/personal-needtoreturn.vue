@@ -78,6 +78,9 @@
       </div>
     </div>
   </div>    
+  <div id="loading" class="loadingbox" v-show="showLoading">
+    <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+  </div>
 </div>
 </template>
 
@@ -107,6 +110,8 @@ Date.prototype.format = function(fmt) {
 export default {
   data() {
     return {
+      imgUrl:require('@/assets/images/loading.gif'),
+      showLoading:false,
       shortcuts:false,
       employees:this.$store.state.employees,
       payments:this.$store.state.waysOfPayment,
@@ -132,6 +137,8 @@ export default {
   },
   methods: {
     getmNTR () {
+      this.showLoading=true;
+      $("body").css("overflow","hidden");
       this.mNTRList=[];
       if(this.mNTRQC.dateRange.length<2 || this.mNTRQC.dateRange[0].length<10 || this.mNTRQC.dateRange[1].length<10) {
         var lastMonth=this.getPreMonth();
@@ -148,6 +155,8 @@ export default {
             url: 'getUnreturndMaterials.php',
             data: qs.stringify(_this.mNTRQC)
         }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
 console.log(response.data);
           if(response.data.length<1) {
             _this.$toast({
@@ -159,6 +168,8 @@ console.log(response.data);
           }
           _this.mNTRList=response.data;
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           _this.$toast({
              text: '异步通信错误!'+error,
              type: 'danger',
@@ -167,6 +178,8 @@ console.log(response.data);
         }); 
     },
     getFundsNTR () {
+      this.showLoading=true;
+      $("body").css("overflow","hidden");
       this.fListNTR=[];
       this.fListTotalAmount=0;
       if(this.fNTRQC.dateRange.length<2 || this.fNTRQC.dateRange[0].length<10 || this.fNTRQC.dateRange[1].length<10) {
@@ -185,6 +198,8 @@ console.log(response.data);
             url: 'getRequestFunds.php',
             data: qs.stringify(_this.fNTRQC)
         }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
 console.log(response.data);
           if(response.data.length<1) {
             _this.$toast({
@@ -199,6 +214,8 @@ console.log(response.data);
             _this.fListTotalAmount+=(Number(item['p_amount'])- Number(item['amount_returned']));
           });
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           _this.$toast({
              text: '异步通信错误!'+error,
              type: 'danger',

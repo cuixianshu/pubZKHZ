@@ -95,6 +95,9 @@
       </div>
     </div>
   </div>   
+  <div id="loading" class="loadingbox" v-show="showLoading">
+    <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+  </div>
 </div>
 </template>
 
@@ -104,6 +107,8 @@ import qs from 'qs';
   export default {
     data () {
       return {
+        imgUrl:require('@/assets/images/loading.gif'),
+        showLoading:false,
         currentUserId:this.$store.state.user.id_user,
         queryContent:{
           keyWord:'',
@@ -154,6 +159,8 @@ import qs from 'qs';
           });
           return;
         }
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         this.queryContent=this.distributer;
         this.queryContent.conditions='WithDistributedData';
         //需要更新tbl_materials_in_outbound,tbl_apply_materials,tbl_materials三个表
@@ -166,7 +173,8 @@ import qs from 'qs';
           url: url,
           data: qs.stringify(_this.queryContent)
         }).then(function (response) {
-// console.log(response.data);
+          _this.showLoading=false;
+          $("body").css("overflow","");
            if(response.data===true) {
               _this.$toast({
                 text: '成功保存数据!',
@@ -200,6 +208,8 @@ import qs from 'qs';
             $('#editerOfMaterial').modal('toggle');
           } 
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           _this.$toast({
             text: '异步通信错误!'+error,
             type: 'danger',
@@ -209,6 +219,8 @@ import qs from 'qs';
         });
       },
       getListOfAppliedMaterials() {
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         this.listOfAppliedMts=[];
         this.queryContent={
           keyWord:'',
@@ -221,7 +233,8 @@ import qs from 'qs';
           url: 'getAppliedMaterials.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
-// console.log(response.data);
+          _this.showLoading=false;
+          $("body").css("overflow","");
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到符合条件的记录!',
@@ -232,6 +245,8 @@ import qs from 'qs';
               _this.listOfAppliedMts=response.data;
             }
           }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
             console.log(error);
             _this.$toast({
                text: '异步通信错误!'+error,

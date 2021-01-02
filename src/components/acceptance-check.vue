@@ -26,7 +26,7 @@
             <th v-for="title,index in titleOfList" :width="width">{{title}}</th>
           </thead>
           <tbody>
-            <tr v-for="row in materials" @click="clickedARecorderToModify(row)">
+            <tr v-for="row in materials" @click="clkAMtrlToCheck(row)">
               <td :title="row.name">{{row.name}}</td>
               <td :title="row.brand">{{row.brand}}</td>
               <td :title="row.model">{{row.model}}</td>
@@ -123,43 +123,51 @@
           <div class="container-fluid">
             <div class="row">
               <div class="col-lg form-inline">
-                <label for="inputNameOfMAT">名称:</label>
-                <input id="inputNameOfMAT" type="text" class="form-control" v-model="material.name" placeholder="物料名称" title="物料名称" readonly>
+                <label>名称:</label>
+                <input type="text" class="form-control" v-model="material.name" placeholder="物料名称" title="物料名称" readonly>
               </div>
               <div class="col-lg form-inline">
-                <label for="inputUnit">单位:</label>
-                <input id="inputUnit" type="text" class="form-control" v-model="material.unit" placeholder="物料计量单位" title="物料计量单位" readonly>
+                <label>单位:</label>
+                <input type="text" class="form-control" v-model="material.unit" placeholder="物料计量单位" title="物料计量单位" readonly>
               </div> 
             </div>
             <div class="row"> 
               <div class="col-lg form-inline">
-                <label for="inputBrand">品牌:</label>
-                <input id="inputBrand" type="text" class="form-control" v-model="material.brand" placeholder="厂家品牌" title="厂家品牌" readonly>
+                <label>品牌:</label>
+                <input type="text" class="form-control" v-model="material.brand" placeholder="厂家品牌" title="厂家品牌" readonly>
               </div>
               <div class="col-lg form-inline">
-                <label for="inputModel">型号:</label>
-                <input id="inputModel" type="text" class="form-control" v-model="material.model" placeholder="规格型号" title="规格型号" readonly>
+                <label>型号:</label>
+                <input type="text" class="form-control" v-model="material.model" placeholder="规格型号" title="规格型号" readonly>
               </div>
             </div>
             <div class="row">
               <div class="col-lg form-inline">
-                <label for="inputMin_unit_packing">包装:</label>
-                <input id="inputMin_unit_packing" type="text" class="form-control" v-model="material.min_unit_packing" placeholder="如:300ml/瓶,12瓶/箱等" title="包装单位" readonly>
+                <label>包装:</label>
+                <input type="text" class="form-control" v-model="material.min_unit_packing" placeholder="如:300ml/瓶,12瓶/箱等" title="包装单位" readonly>
               </div> 
               <div class="col-lg form-inline">
-                <label for="inputStorePlace">库位:</label>
-                <input id="inputStorePlace" type="text" class="form-control" v-model="material.store_place" placeholder="如:A库/B区/C架/6层/1位" title="库名区位架号层号位号" readonly>
+                <label>库位:</label>
+                <input type="text" class="form-control" v-model="material.store_place" placeholder="如:A库/B区/C架/6层/1位" title="库名区位架号层号位号" readonly>
               </div>                                        
             </div>
             <div class="row">
               <div class="col-lg form-inline">
-                <label for="inputQty">数量:</label>
-                <input id="inputQty" type="number" class="form-control" v-model="qty" placeholder="收货数量" title="收货数量">
+                <label>数量:</label>
+                <input type="number" class="form-control" v-model="qty" placeholder="0.00" title="收货数量">
               </div>
               <div class="col-lg form-inline">
-                <label for="inputRemark">备注:</label>
-                <input id="inputRemark" type="text" class="form-control" v-model="material.remark" placeholder="备注信息" title="备注信息">
+                <label>进价:</label>
+                <input type="text" class="form-control" v-model="material.price" placeholder="0.00" title="本次进价">
               </div>              
+            </div>
+            <div class="row">
+              <div class="col-lg form-inline">
+                <label>备注:</label>
+                <input type="text" class="form-control" v-model="material.remark" placeholder="备注信息">
+              </div>              
+              <div class="col-lg form-inline">
+              </div>
             </div>
           </div>
         </div>
@@ -180,54 +188,54 @@
           <div class="container-fluid">
             <div class="row">
               <div class="col-lg form-inline">
-                <label for="aplr">原领用人:</label>
-                <select id="aplr" type="text" class="form-control" v-model="rtMtrl.id_applyer" title="原领用人" disabled>
+                <label>原领用人:</label>
+                <select type="text" class="form-control" v-model="rtMtrl.id_applyer" title="原领用人" disabled>
                   <option v-for="item in employees" :value="item.id">{{item.name}}</option>
                 </select>
               </div>
               <div class="col-lg form-inline">
-                <label for="mioTime">需归还数:</label>
-                <input id="mioTime" type="text" class="form-control" v-model="rtMtrl.mio_qty" title="还需归还的数量" readonly>
+                <label>需归还数:</label>
+                <input type="text" class="form-control" v-model="rtMtrl.mio_qty" title="还需归还的数量" readonly>
               </div> 
             </div>
             <div class="row">
               <div class="col-lg form-inline">
-                <label for="NmOfMAT">物料名称:</label>
-                <input id="NmOfMAT" type="text" class="form-control" v-model="rtMtrl.m_name" title="物料名称" readonly>
+                <label>物料名称:</label>
+                <input type="text" class="form-control" v-model="rtMtrl.m_name" title="物料名称" readonly>
               </div>
               <div class="col-lg form-inline">
-                <label for="Unit">计量单位:</label>
-                <input id="Unit" type="text" class="form-control" v-model="rtMtrl.m_unit" title="物料计量单位" readonly>
+                <label>计量单位:</label>
+                <input type="text" class="form-control" v-model="rtMtrl.m_unit" title="物料计量单位" readonly>
               </div> 
             </div>
             <div class="row"> 
               <div class="col-lg form-inline">
-                <label for="Brd">物料品牌:</label>
-                <input id="Brd" type="text" class="form-control" v-model="rtMtrl.m_brand" title="厂家品牌" readonly>
+                <label>物料品牌:</label>
+                <input type="text" class="form-control" v-model="rtMtrl.m_brand" title="厂家品牌" readonly>
               </div>
               <div class="col-lg form-inline">
-                <label for="Mdl">规格型号:</label>
-                <input id="Mdl" type="text" class="form-control" v-model="rtMtrl.m_model" title="规格型号" readonly>
+                <label>规格型号:</label>
+                <input type="text" class="form-control" v-model="rtMtrl.m_model" title="规格型号" readonly>
               </div>
             </div>
             <div class="row">
               <div class="col-lg form-inline">
-                <label for="MUP">包装单位:</label>
-                <input id="MUP" type="text" class="form-control" v-model="rtMtrl.m_min_unit_packing" title="包装单位" readonly>
+                <label>包装单位:</label>
+                <input type="text" class="form-control" v-model="rtMtrl.m_min_unit_packing" title="包装单位" readonly>
               </div> 
               <div class="col-lg form-inline">
-                <label for="StorePlc">存放库位:</label>
-                <input id="StorePlc" type="text" class="form-control" v-model="rtMtrl.m_store_place" title="库名区位架号层号位号" readonly>
+                <label>存放库位:</label>
+                <input type="text" class="form-control" v-model="rtMtrl.m_store_place" title="库名区位架号层号位号" readonly>
               </div>                                        
             </div>
             <div class="row">
               <div class="col-lg form-inline">
-                <label for="QTY">返还数量:</label>
-                <input id="QTY" type="number" class="form-control" v-model="rtn_qty" placeholder="返还数量" title="返还数量">
+                <label>返还数量:</label>
+                <input type="number" class="form-control" v-model="rtn_qty" placeholder="返还数量" title="返还数量">
               </div>
               <div class="col-lg form-inline">
-                <label for="RMK">库管备注:</label>
-                <input id="RMK" type="text" class="form-control" v-model="mio_remark" placeholder="库管备注" title="库管备注">
+                <label>库管备注:</label>
+                <input type="text" class="form-control" v-model="mio_remark" placeholder="库管备注" title="库管备注">
               </div>              
             </div>
           </div>
@@ -253,8 +261,8 @@
                 <input id="iptName" type="text" class="form-control" :value="thePurchasing.name" title="请购名称" readonly>
               </div>
               <div class="col-lg form-inline">
-                <label for="aplr">采购申请:</label>
-                <input id="aplr" type="text" class="form-control" :value="getApplyer(thePurchasing)" title="采购申请人" readonly>
+                <label>采购申请:</label>
+                <input type="text" class="form-control" :value="getApplyer(thePurchasing)" title="采购申请人" readonly>
 <!--                 <select id="aplr" type="text" class="form-control" v-model="thePurchasing.id_applier" title="采购申请人" disabled>
                   <option v-for="item in employees" :value="item.id">{{item.name}}</option>
                 </select> -->
@@ -262,22 +270,22 @@
             </div>
             <div class="row"> 
               <div class="col-lg form-inline">
-                <label for="Brd">采购品牌:</label>
-                <input id="Brd" type="text" class="form-control" :value="thePurchasing.brand" title="采购品牌的厂家或品牌" readonly>
+                <label>采购品牌:</label>
+                <input type="text" class="form-control" :value="thePurchasing.brand" title="采购品牌的厂家或品牌" readonly>
               </div>
               <div class="col-lg form-inline">
-                <label for="Mdl">规格型号:</label>
-                <input id="Mdl" type="text" class="form-control" :value="thePurchasing.model" title="规格型号" readonly>
+                <label>规格型号:</label>
+                <input type="text" class="form-control" :value="thePurchasing.model" title="规格型号" readonly>
               </div>
             </div>
             <div class="row">
               <div class="col-lg form-inline">
-                <label for="MUP">包装单位:</label>
-                <input id="MUP" type="text" class="form-control" v-model="thePurchasing.unit" placeholder="例:100g/袋,24袋/箱" title="包装单位,如:100g/袋,24袋/箱">
+                <label>包装单位:</label>
+                <input type="text" class="form-control" v-model="thePurchasing.unit" placeholder="例:100g/袋,24袋/箱" title="包装单位,如:100g/袋,24袋/箱">
               </div> 
               <div class="col-lg form-inline">
-                <label for="QTY">验收数量:</label>
-                <input id="QTY" type="number" class="form-control" v-model="thePurchasing.qtyAC" placeholder="验收数量" title="验收数量">
+                <label>验收数量:</label>
+                <input type="number" class="form-control" v-model="thePurchasing.qtyAC" placeholder="验收数量" title="验收数量">
               </div>
             </div>
             <div class="row">
@@ -296,6 +304,9 @@
         </div>  
       </div>
     </div>
+    <div id="loading" class="loadingbox" v-show="showLoading">
+      <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+    </div>
   </div>
 </div>
 </template>
@@ -306,6 +317,8 @@
     data () {
       return {
         currentUserId:this.$store.state.user.id_user,
+        imgUrl:require('@/assets/images/loading.gif'),
+        showLoading:false,
         employees:this.$store.state.employees,
         projects:this.$store.state.projects,
         shortcuts:false,
@@ -329,6 +342,7 @@
           store_place:'',
           remark:'',
           id_op:'',
+          price:0.00,
         },
         unreturnedMQC:{
           dateRange:[],
@@ -354,7 +368,7 @@
         id_op:'',
         rtn_qty:0,
 
-        pcsnsTitle:['项目','名称','品牌','规格型号','详情','数量','单位','供应商','购买金额','请购日期','采购员','备注信息'],
+        pcsnsTitle:['项目','名称','品牌','规格型号','详情','数量','单位','供应商','购买金额','请购日期','采购人','备注信息'],
         pcsnsWidth:['7%','7%','8%','10%','10%','6%','6%','8%','8%','12%','8%','10%'],
         purchasings:[],
         pcsQC:{
@@ -370,24 +384,44 @@
     },
     methods:{
       getListOfMaterials() {
-        this.materials=this.$store.state.materials;
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
+        let _this=this;
+        this.queryContent.conditions='byKeyWordForAcceptanceChecking';
+        // console.log(this.queryContent);
+        this.$axios({
+          method: 'post',
+          url: 'getMaterials.php',
+          data: qs.stringify(_this.queryContent)
+        }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
+          console.log(response.data);
+          _this.materials=response.data;
+        }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
+          _this.$toast({text:'异步通信错误!'+error,type:'danger',duration:4000});
+        });
       },
-      clickedARecorderToModify(dataRow) {
+      clkAMtrlToCheck(dataRow) {
         this.material=dataRow;
         $('#editerForNewArrived').modal('toggle');
       },
       saveNewArrivedData() {
         if(this.qty<=0) {
-          this.$toast({
-            text: '数量必须大于0!',
-            type: 'info',
-            duration: 1500
-          });
+          this.$toast({text:'数量必须大于0!',type:'info',duration:1500});
           return;
         }
+        if(this.material.price<=0) {
+          this.$toast({text:'单价必须大于0!',type:'info',duration:1500});
+          return;
+        }
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         this.queryContent=this.material;
         this.queryContent.qty_inbound=this.qty;
-        this.queryContent.conditions='updateQTYWithInboundData';
+        this.queryContent.conditions='newArrived';
         this.queryContent.id_op=this.currentUserId;
         var _this=this;
         var url='insertMaterialsInOutbound.php';
@@ -396,44 +430,37 @@
           url: url,
           data: qs.stringify(_this.queryContent)
         }).then(function (response) {
-            _this.materials=[];
-            _this.material.id='';
-            _this.material.name='';
-            _this.material.unit='';
-            _this.material.brand='';
-            _this.material.model='';
-            _this.material.min_unit_packing='';
-            _this.material.store_place='';
-            _this.material.remark='';
-            _this.qty=0;
-            _this.queryContent={
+          _this.showLoading=false;
+          $("body").css("overflow","");
+            if(response.data===true) {
+              _this.$toast({text:'成功保存数据!',type:'success',duration:800});
+              _this.materials=[];
+              _this.material.id='';
+              _this.material.name='';
+              _this.material.unit='';
+              _this.material.brand='';
+              _this.material.model='';
+              _this.material.min_unit_packing='';
+              _this.material.store_place='';
+              _this.material.remark='';
+              _this.material.price=0.00;
+              _this.qty=0;
+              _this.queryContent={
               keyWord:'',
               conditions:''
             };
-            if(response.data===true) {
-              _this.$toast({
-                text: '成功保存数据!',
-                type: 'success',
-                duration: 800
-              });
             $('#editerForNewArrived').modal('toggle');
           } else {
             console.log(response.data);
-            _this.$toast({
-               text: '通信错误!'+response.data,
-               type: 'danger',
-               duration: 2000
-            });
-            $('#editerForNewArrived').modal('toggle');
+            _this.$toast({text:'操作失败!',type:'danger',duration:2000});
+            // $('#editerForNewArrived').modal('toggle');
           } 
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(error);
-          _this.$toast({
-            text: '异步通信错误!'+error,
-            type: 'danger',
-            duration: 2000
-          });
-          $('#editerForNewArrived').modal('toggle');
+          _this.$toast({text:'通信错误!',type:'danger',duration:2000});
+          // $('#editerForNewArrived').modal('toggle');
         });
       },
       getPreMonth() {
@@ -454,6 +481,8 @@
         return {'firstDay':firstDay,'endDay':endDay};
       },
       getUnreturnedMData () {
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         var _this = this;
         this.unreturnedMs=[];
         this.unreturnedMQC.conditions="UNRETURNEDMMS";
@@ -470,6 +499,8 @@
           data: qs.stringify(_this.unreturnedMQC)
         }).then(function (response) {
           console.log(response.data);
+          _this.showLoading=false;
+          $("body").css("overflow","");
           if(response.data.length<1) {
             _this.$toast({
               text: '找不到符合条件的记录!',
@@ -480,6 +511,8 @@
             _this.unreturnedMs=response.data;
           }
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(error);
           _this.$toast({
             text: '异步通信错误!'+error,
@@ -498,13 +531,11 @@
         this.rtMtrl.mio_remark=this.mio_remark;
         this.rtMtrl.rtn_qty=this.rtn_qty;
         if(this.rtMtrl.rtn_qty=='' || this.rtMtrl.rtn_qty==0) {
-          this.$toast({
-            text: '数量不符合要求!',
-            type: 'info',
-            duration: 1500
-          });
+          this.$toast({text:'数量不符合要求!',type:'info',duration:1500});
           return;
         }
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         this.rtMtrl.conditions='updateAMIOWithReturnData';
         var _this=this;
         var url='insertMaterialsInOutbound.php';
@@ -513,13 +544,11 @@
           url: url,
           data: qs.stringify(_this.rtMtrl)
         }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(response.data);
           if(response.data===true) {
-            _this.$toast({
-              text: '成功保存数据!',
-              type: 'success',
-              duration: 800
-            });
+            _this.$toast({text:'成功保存数据!',type:'success',duration:800});
             var i=_this.unreturnedMs.findIndex(function(item){return item.id==_this.rtMtrl.id});
             _this.unreturnedMs.splice(i,1);
             _this.mio_remark='';
@@ -529,23 +558,19 @@
           } else {
             $('#editerForReturning').modal('toggle');
             console.log(response.data);
-            _this.$toast({
-              text: '通信错误!'+response.data,
-              type: 'danger',
-              duration: 2000
-            });
+            _this.$toast({text:'操作失败!',type:'danger',duration:2000});
           } 
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           $('#editerForReturning').modal('toggle');
           console.log(error);
-          _this.$toast({
-            text: '异步通信错误!'+error,
-            type: 'danger',
-            duration: 2000
-          });
+          _this.$toast({text:'通信错误!',type:'danger',duration:2000});
         });
       },
       getListOfPcsings() {
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         var _this = this;
         this.purchasings=[];
         this.pcsQC.conditions="UnAcceptanceChecked";
@@ -561,6 +586,8 @@
           url: 'getAppliedPurchasings.php',
           data: qs.stringify(_this.pcsQC)
         }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(response.data);
           if(response.data.length<1) {
             _this.$toast({
@@ -572,6 +599,8 @@
             _this.purchasings=response.data;
           }
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(error);
           _this.$toast({
             text: '异步通信错误!'+error,
@@ -605,6 +634,8 @@
           });
           return;
         }
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         this.queryContent=this.thePurchasing;
         this.queryContent.conditions='UpdateWithAcceptanceCheckedData';
         this.queryContent.id_op=this.currentUserId;
@@ -617,6 +648,8 @@
           url: url,
           data: qs.stringify(_this.queryContent)
         }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(response.data);
           if(response.data===true) {
             $('#purchasing').modal('toggle');
@@ -643,6 +676,8 @@
             });
           } 
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           $('#purchasing').modal('toggle');
           console.log(error);
           _this.$toast({
@@ -656,7 +691,7 @@
     computed:{
       getApplyer() {
         return function (row) {
-          var empl=this.employees.find((ele) => ele['id'] == row.id_applier);
+          var empl=this.employees.find((ele) => ele['id'] == row.id_applyer);
           return typeof(empl)=='undefined'?'':empl['name'];
         }
       },

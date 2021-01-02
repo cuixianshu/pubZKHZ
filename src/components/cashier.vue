@@ -67,39 +67,39 @@
             <div class="container-fluid">
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="iptType">类型</label>
-                  <input id="iptType" type="text" class="form-control" value="销售回款" title="销售回款" readonly>
+                  <label>类型</label>
+                  <input type="text" class="form-control" value="销售回款" title="销售回款" readonly>
                 </div>
                 <div class="col-lg  form-inline">
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="slctAS">一级</label>
-                  <select id="slctAS" type="text" class="form-control" v-model="cashier.id_accounting_sub" title="一级会计科目" @change="acc_subChanged()">
+                  <label>一级</label>
+                  <select type="text" class="form-control" v-model="cashier.id_accounting_sub" title="一级会计科目" @change="acc_subChanged()">
                     <option  value=0>一级科目</option>
                     <option v-for="item in accountingSubjects" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="slctNature">二级</label>
-                  <select id="slctNature" type="text" class="form-control" v-model="cashier.id_detailed_accounting" title="二级会计科目">
+                  <label>二级</label>
+                  <select type="text" class="form-control" v-model="cashier.id_detailed_accounting" title="二级会计科目">
                     <option  value=0>二级科目</option>
-                    <option v-for="item in DAsAtTheAccSub" :value="item.id">{{item.code_num+item.name}}</option>
+                    <option v-for="item in DAsInTheAccSub" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="slctCashierAccount">账号</label>
-                  <select id="slctCashierAccount" type="text" class="form-control" placeholder="收款账号" v-model="cashier.id_account" title="收款账号">
+                  <label>账号</label>
+                  <select type="text" class="form-control" placeholder="收款账号" v-model="cashier.id_account" title="收款账号">
                     <option  value=0>收款账号</option>
                   	<option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" v-model="cashier.id_way_pay" placeholder="收款方式" title="收款方式">
+                  <label>方式</label>
+                  <select type="text" class="form-control" v-model="cashier.id_way_pay" placeholder="收款方式" title="收款方式">
                     <option  value=0>收款方式</option>
                     <option v-for="item in waysOfPayments" :value="item.id">{{item.name}}</option>
                   </select>
@@ -107,12 +107,20 @@
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="inputCashiedAmount">金额</label>
-                  <input id="inputCashiedAmount" type="number" class="form-control" v-model="cashier.amount" placeholder="实际收款金额" title="实际收款金额">
+                  <label>金额</label>
+                  <input type="number" class="form-control" v-model="cashier.amount" placeholder="实际收款金额" title="实际收款金额">
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="inputOther">备注</label>
-                  <input id="inputOther" type="text" class="form-control" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
+                  <label>备注</label>
+                  <input type="text" class="form-control" v-model="cashier.other" title="不超过256个字" placeholder="备注信息">
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg form-inline">
+                  <label for="inputOther">流水</label>
+                  <input id="inputOther" type="text" class="form-control" title="金融机构流水号" placeholder="金融机构流水号,不超过12个字" v-model="cashier.num_serial">
+                </div>
+                <div class="col-lg form-inline">
                 </div>
               </div>
             </div>
@@ -142,6 +150,9 @@
         </div>
       </div>
     </div> 
+    <div id="loading" class="loadingbox" v-show="showLoading">
+      <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+    </div>
   </div>
 </template>
 
@@ -171,6 +182,8 @@ Date.prototype.format = function(fmt) {
   export default {
     data() {
       return {
+        imgUrl:require('@/assets/images/loading.gif'),
+        showLoading:false,
         shortcuts:false,
         queryContent:{
           keyWord:'',
@@ -195,6 +208,7 @@ Date.prototype.format = function(fmt) {
           other:'',
           id_accounting_sub:0,
           id_detailed_accounting:0,
+          num_serial:','
         },
         ourAccounts:this.$store.state.ourAccounts,
         waysOfPayments:this.$store.state.waysOfPayment,
@@ -202,7 +216,7 @@ Date.prototype.format = function(fmt) {
         employees:this.$store.state.myEmplys,
         accountingSubjects:this.$store.state.accountingSubjects,
         detailedAccountings:this.$store.state.detailedAccountings,
-        DAsAtTheAccSub:[],
+        DAsInTheAccSub:[],
 
       }
     },
@@ -211,6 +225,8 @@ Date.prototype.format = function(fmt) {
     },    
     methods: {
       getUncollectedOrders() {
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         this.allChecked=false;
         this.uncollectedOrders=[];
         this.selectedOrders=[];
@@ -229,6 +245,8 @@ Date.prototype.format = function(fmt) {
           url: 'getOrders.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
             console.log(response.data);
             if(response.data.length<1) {
               _this.$toast({
@@ -240,6 +258,8 @@ Date.prototype.format = function(fmt) {
               _this.uncollectedOrders=response.data;
             }
           }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
             console.log(error);
             _this.$toast({
                text: '异步通信错误!'+error,
@@ -304,6 +324,7 @@ Date.prototype.format = function(fmt) {
         }
       },
       openMdlCashier () {
+        console.log(this.detailedAccountings);
         if(this.selectedOrders.length<1) {
           this.$toast({
             text: '请至少勾选一条记录!',
@@ -314,16 +335,18 @@ Date.prototype.format = function(fmt) {
         }
         if(this.cashier.id_detailed_accounting) {
           var o=this.detailedAccountings.find((ele) => ele['id'] == this.cashier.id_detailed_accounting);
-          this.cashier.id_accounting_sub=typeof(o)=='undefined'?0:o['id_patent'];
-          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.cashier.id_accounting_sub);
+          this.cashier.id_accounting_sub=typeof(o)=='undefined'?0:o['id_parent'];
+          this.DAsInTheAccSub=this.detailedAccountings.filter(item=>item.id_parent==this.cashier.id_accounting_sub);
         } else {
           this.cashier.id_accounting_sub=0;
           this.cashier.id_detailed_accounting=0;
-          this.DAsAtTheAccSub=[];
+          this.DAsInTheAccSub=[];
         }
         this.cashier.amount=0;
         this.cashier.id_account=0;
-        this.cashier.id_way_pay=0
+        this.cashier.id_way_pay=0;
+        this.cashier.num_serial='';
+        this.cashier.other='';
         $('#mdlCashier').modal('toggle');
       },
       confirmCollection() {
@@ -332,12 +355,12 @@ Date.prototype.format = function(fmt) {
       },
       acc_subChanged() {
         if(this.cashier.id_accounting_sub) {
-          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.cashier.id_accounting_sub);
+          this.DAsInTheAccSub=this.detailedAccountings.filter(item=>item.id_parent==this.cashier.id_accounting_sub);
         } else {
-          this.DAsAtTheAccSub=[];
+          this.DAsInTheAccSub=[];
         }
         this.cashier.id_detailed_accounting=0;
-        // console.log(this.DAsAtTheAccSub);
+        // console.log(this.DAsInTheAccSub);
       },
       saveCollectionData() {
         var queryContent={
@@ -346,18 +369,23 @@ Date.prototype.format = function(fmt) {
           id_detailed_accounting:this.cashier.id_detailed_accounting,
           other:this.cashier.other,
           amount:this.cashier.amount,
+          num_serial:this.cashier.num_serial,
           id_cashier:this.currentUserId,
           conditions:'withCollectionData',
           orders:this.selectedOrders,
           business_type:1,
           abstract:'销售"'+this.selectedOrders[0]['p_name']+'"等'+this.selectedOrders.length+'笔业务回款',
         };
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         var _this=this;
         this.$axios({
           method: 'post',
           url: 'updateCashier.php',
           data: qs.stringify(queryContent)
           }).then(function (response) {
+            _this.showLoading=false;
+            $("body").css("overflow","");
             console.log(response.data);
             if(response.data===true) {
               $('#mdlCashier').modal('toggle');//关闭
@@ -385,6 +413,8 @@ Date.prototype.format = function(fmt) {
               });
             }
           }).catch(function (error) {
+            _this.showLoading=false;
+            $("body").css("overflow","");
             console.log(error);
             _this.$toast({
               text: '异步通信错误!'+error,

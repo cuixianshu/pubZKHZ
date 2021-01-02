@@ -10,18 +10,22 @@
         padding:0;
       }
       .father {
+        height: 100vh;
         width: 100%;
-        background-color:#F2F2F2;
+        /*background-color:#F2F2F2;*/
       }      
       html{
         height: 100%;
+        background-color:#FFF;
       }
     	body {
-    		padding-right: 0!important;
-        height: 100%;
+    		padding: 0!important;
+        margin:0!important;
+        min-height: 100%;
+        background-color:#F2F2F2;
     	}
       .tab-pane {
-        min-height: 720px;
+        min-height: 100vh;
       }
       .divfortable {
         width: 100%;
@@ -40,11 +44,30 @@
       h5 {
         color: #007bff;
       }
+      #main-window {
+        min-height: 100%;
+      }
+      .loadingpic {
+        position: absolute;
+        left: 50%;
+        top: 30%;
+        transform: translate(-50%,-110%);
+      }
+      .loadingbox {
+        position:absolute;
+        top:0px;
+        left:0px;
+        right: 0px;
+        bottom:0px;
+/*        width: 100%;
+        min-height: 100%;*/
+        background:#000;
+        opacity:0.5;
+      }
     </style>
   </head>
   <body>
-	  <header id="main-menu">
-    </header>
-
+	  <div id="main-window">
+    </div>
   </body>
 </html>

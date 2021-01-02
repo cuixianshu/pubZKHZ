@@ -18,8 +18,7 @@
           <th v-for="(title,index) in titleOfList" :width="width[index]">{{title}}</th>
         </thead>
         <tbody>
-          <tr v-for="row in listOfNBNAs" @click="clickedARecorderToModify(row)">
-            <!-- <td v-for="vlu in row" :title='vlu'>{{vlu}}</td> -->
+          <tr v-for="row in listOfNBNAs" @click="clkARqstToAprv(row)">
             <td title="所属项目">{{getProjectName(row)}}</td>
             <td :title="row.mtname">{{row.mtname}}</td>
             <td :title="row.brand">{{row.brand}}</td>
@@ -42,48 +41,44 @@
         </div>
         <div class="modal-body">
           <div class="container-fluid">
-            <div class="row">
-              <div class="col-lg form-inline">
-                <label for="inputNameOfMAT">名称:</label>
-                <input id="inputNameOfMAT" type="text" class="form-control" v-model="notAprvdAplyMtrl.mtname" placeholder="物料名称" title="物料名称" readonly>
-              </div>
-              <div class="col-lg form-inline">
-                <label for="inputUnit">单位:</label>
-                <input id="inputUnit" type="text" class="form-control" v-model="notAprvdAplyMtrl.unit" placeholder="物料计量单位" title="物料计量单位" readonly>
-              </div> 
+            <div class="form-inline">
+              <label>项目:</label>
+              <select type="text" class="form-control" v-model="notAprvdAplyMtrl.id_project" placeholder="所属项目" title="所属项目" disabled>
+                <option v-for="item in projects" :value="item.id">{{item.name}}</option>
+              </select>
             </div>
-            <div class="row"> 
-              <div class="col-lg form-inline">
-                <label for="inputBrand">品牌:</label>
-                <input id="inputBrand" type="text" class="form-control" v-model="notAprvdAplyMtrl.brand" placeholder="厂家品牌" title="厂家品牌" readonly>
-              </div>
-              <div class="col-lg form-inline">
-                <label for="inputModel">型号:</label>
-                <input id="inputModel" type="text" class="form-control" v-model="notAprvdAplyMtrl.model" placeholder="规格型号" title="规格型号" readonly>
-              </div>
+            <div class="form-inline">
+              <label>名称:</label>
+              <input type="text" class="form-control" v-model="notAprvdAplyMtrl.mtname" placeholder="物料名称" title="物料名称" readonly>
             </div>
-            <div class="row">
-              <div class="col-lg form-inline">
-                <label for="inputMin_unit_packing">包装:</label>
-                <input id="inputMin_unit_packing" type="text" class="form-control" v-model="notAprvdAplyMtrl.min_unit_packing" placeholder="如:300ml/瓶,12瓶/箱等" title="包装单位" readonly>
-              </div> 
-              <div class="col-lg form-inline">
-                <label for="inputQty">数量:</label>
-                <input id="inputQty" type="number" class="form-control" v-model="notAprvdAplyMtrl.qty" placeholder="申请领用数量" title="申请领用数量" readonly>
-              </div>
+            <div class="form-inline">
+              <label>品牌:</label>
+              <input type="text" class="form-control" v-model="notAprvdAplyMtrl.brand" placeholder="厂家品牌" title="厂家品牌" readonly>
             </div>
-            <div class="row">
-              <div class="col-lg form-inline">
-                <label for="inputProject">项目:</label>
-                <select id="inputProject" type="text" class="form-control" v-model="notAprvdAplyMtrl.id_project" placeholder="所属项目" title="所属项目" disabled>
-                  <option v-for="item in projects" :value="item.id">{{item.name}}</option>
-                </select>
-              </div>              
-              <div class="col-lg form-inline">
-                <label for="inputRemark">备注:</label>
-                <input id="inputRemark" type="text" class="form-control" v-model="notAprvdAplyMtrl.remark" placeholder="备注信息" title="备注信息" readonly>
-              </div>              
+            <div class="form-inline">
+              <label>型号:</label>
+              <input type="text" class="form-control" v-model="notAprvdAplyMtrl.model" placeholder="规格型号" title="规格型号" readonly>
             </div>
+            <div class="form-inline">
+              <label>备注:</label>
+              <input type="text" class="form-control" v-model="notAprvdAplyMtrl.remark" placeholder="备注信息" title="备注信息" readonly>
+            </div> 
+            <div class="form-inline">
+              <label>数量:</label>
+              <input type="number" class="form-control" v-model="notAprvdAplyMtrl.qty" placeholder="申请领用数量" title="申请领用数量" readonly>
+            </div>
+            <div class="form-inline">
+              <label>单位:</label>
+              <input type="text" class="form-control" v-model="notAprvdAplyMtrl.unit" placeholder="物料计量单位" title="物料计量单位" readonly>
+            </div>              
+            <div class="form-inline">
+              <label>进价:</label>
+              <input type="text" class="form-control" v-model="notAprvdAplyMtrl.last_price" title="上次进价" readonly>
+            </div> 
+            <div class="form-inline">
+              <label>用途:</label>
+              <input type="text" class="form-control" v-model="notAprvdAplyMtrl.use_for" title="物料用途" readonly>
+            </div> 
             <br>
             <div class="row">
               <label class="radio-inline">
@@ -109,6 +104,9 @@
       </div>
     </div>
   </div>   
+  <div id="loading" class="loadingbox" v-show="showLoading">
+    <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+  </div>
 </div>
 </template>
 
@@ -118,6 +116,8 @@ import qs from 'qs';
   export default {
     data () {
       return {
+        imgUrl:require('@/assets/images/loading.gif'),
+        showLoading:false,
         currentUserId:this.$store.state.user.id_user,
         queryContent:{
           keyWord:'',
@@ -152,6 +152,8 @@ import qs from 'qs';
     },
     methods:{
       getListOfABNA() {
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         var _this = this;
         this.listOfNBNAs=[];
         this.queryContent.conditions='NotApproved';
@@ -160,7 +162,8 @@ import qs from 'qs';
           url: 'getAppliedMaterials.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
-// console.log(response.data);
+          _this.showLoading=false;
+          $("body").css("overflow","");
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到符合条件的记录!',
@@ -171,6 +174,8 @@ import qs from 'qs';
               _this.listOfNBNAs=response.data;
             }
           }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
             console.log(error);
             _this.$toast({
                text: '异步通信错误!'+error,
@@ -179,16 +184,14 @@ import qs from 'qs';
             });
           });
       },
-      clickedARecorderToModify(dataRow) {
+      clkARqstToAprv(dataRow) {
         this.notAprvdAplyMtrl=dataRow;
         this.approvedResult.id_applyMaterials=dataRow.id;
+        this.approvedResult.result=0;
+        this.approvedResult.whyDisagree='';
         $('#editerOfMaterial').modal('toggle');
       },
       saveApproving() {
-        // this.queryContent=this.notAprvdAplyMtrl;
-        // this.queryContent.qty_apply=this.qty;
-        // this.queryContent.conditions='insertMaterialApplying';
-        // this.queryContent.id_op=this.currentUserId;
         if(this.approvedResult.result!=1) {
           if(this.approvedResult.whyDisagree.length<4) {
             this.$toast({
@@ -199,8 +202,8 @@ import qs from 'qs';
             return;
           }
         }
-// console.log(this.approvedResult);
-// return;
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         var _this=this;
         var url='updateMaterialsApplying.php';
         this.$axios({
@@ -208,7 +211,8 @@ import qs from 'qs';
           url: url,
           data: qs.stringify(_this.approvedResult)
         }).then(function (response) {
-// console.log(response.data);
+          _this.showLoading=false;
+          $("body").css("overflow","");
             // _this.listOfNBNAs=[];
             _this.notAprvdAplyMtrl={
               id:'',
@@ -240,6 +244,8 @@ import qs from 'qs';
               }
             });             
           } else {
+          _this.showLoading=false;
+          $("body").css("overflow","");
             console.log(response.data);
             _this.$toast({
                text: '通信错误!'+response.data,
@@ -302,10 +308,10 @@ import qs from 'qs';
 </script>
 
 <style scoped>
-#editerOfMaterial input,#editerOfMaterial select {
+/*#editerOfMaterial input,#editerOfMaterial select {
   width: 70%;
-}
-.row {
+}*/
+.form-inline {
   margin-top: 10px;
 }
 .searchbox button {
@@ -327,5 +333,8 @@ import qs from 'qs';
 }
 input[type=radio] {
   width: 1.2em!important;
+}
+.form-inline input,.form-inline select {
+  width: 75%;
 }
 </style>

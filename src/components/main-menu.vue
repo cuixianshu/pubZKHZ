@@ -1,6 +1,9 @@
 <template>
-  <div class="container-fluid mainmenu">
-    <div class="row menu-row" v-if="isLogined"><!--  -->
+  <div class="container-fluid mainwindow">
+<!--     <div class="fxrt" v-if="isLogined && !showMainMenu">
+      <button class="bgcorg" @click="showMainMenu=true;">显示主菜单</button>
+    </div> -->
+    <div class="row menu-row" v-if="isLogined && showMainMenu">
       <ul class="nav nav-tabs menu-tabs" v-if="user.orders">
         <li class="dropdown">
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">订单管理</span>
@@ -20,7 +23,7 @@
                 核单
               </span>
             </li>
-            <li v-if="user.orders_tkt_inbound">
+<!--             <li v-if="user.orders_tkt_inbound">
               <span class="dropdown-item menu-item" @click="loadPage('/ticket-inbound')">
                 机票入库
               </span>
@@ -34,7 +37,7 @@
               <span class="dropdown-item menu-item" @click="loadPage('/ticketChangeRefound')">
                 机票退改
               </span>
-            </li>
+            </li> -->
           </div>
         </li>        
       </ul>
@@ -64,7 +67,6 @@
                 作废重开
               </span>
             </li>
-            <!-- <li v-if="user.orders"><span class="dropdown-item menu-item" @click="loadPage('/fillInvoice')">填开发票a</span></li> -->
           </div>
         </li>        
       </ul> 
@@ -73,11 +75,11 @@
           <span data-toggle="dropdown" class="dropdown-toggle menu-title">收款付款</span>
           <div class="dropdown-menu">
             <li v-if="user.finance_cashier"><span class="dropdown-item menu-item" @click="loadPage('/cashier')">销售回款</span></li>
-            <li v-if="user.finance_tkt_cashier"><span class="dropdown-item menu-item" @click="loadPage('/ticket-cashier')">机票收款</span></li>            
             <li v-if="user.finance_accept_other_funds"><span class="dropdown-item menu-item" @click="loadPage('/accept-other-funds')">其它收款</span></li>
             <li v-if="user.finance_check_receipts"><span class="dropdown-item menu-item" @click="loadPage('/check-receipts')">收款复核</span></li>
             <li v-if="user.finance_pay"><span class="dropdown-item menu-item" @click="loadPage('/pay')">支付款项</span></li>
             <li v-if="user.finance_review_payment"><span class="dropdown-item menu-item" @click="loadPage('/review-payment')">付款复核</span></li>
+            <li v-if="user.finance_append_invoice"><span class="dropdown-item menu-item" @click="loadPage('/append-invoice')">增补发票</span></li>          
           </div>
         </li>        
       </ul> 
@@ -87,7 +89,7 @@
           <div class="dropdown-menu">
             <li v-if="user.rqstfunds_borrow_reimburse"><span class="dropdown-item menu-item" @click="loadPage('/request-funds')">请款借款</span></li>
             <li v-if="user.rqstfunds_purchasing_funds"><span class="dropdown-item menu-item" @click="loadPage('/rqst-pcsg-funds')">采购请款</span></li>
-            <li v-if="user.rqstfunds_rfdtkt_paying"><span class="dropdown-item menu-item" @click="loadPage('/rqst-rfdtkt-paying')">机票退款</span></li>            
+<!--             <li v-if="user.rqstfunds_rfdtkt_paying"><span class="dropdown-item menu-item" @click="loadPage('/rqst-rfdtkt-paying')">机票退款</span></li>             -->
             <li v-if="user.rqstfunds_primary_audits"><span class="dropdown-item menu-item" @click="loadPage('/prmry-audits-rqst-funds')">请款初审</span></li>
             <li v-if="user.rqstfunds_final_audits"><span class="dropdown-item menu-item" @click="loadPage('/final-audits-rqst-funds')">请款复审</span></li>
           </div>
@@ -122,11 +124,6 @@
                 产品管理
               </span>
             </li>
-<!--             <li v-if="user.bscinfo_project">
-              <span class="dropdown-item menu-item" @click="loadPage('/project')">
-                项目管理
-              </span>
-            </li> -->
             <li v-if="user.bscinfo_contract">
               <span class="dropdown-item menu-item" @click="loadPage('/contract')">
                 合同管理
@@ -185,9 +182,36 @@
           </div>
         </li>        
       </ul> 
+      <ul class="nav nav-tabs menu-tabs" v-if="user.dmstc">
+        <li class="dropdown">
+          <span data-toggle="dropdown" class="dropdown-toggle menu-title">国内会议</span>
+          <div class="dropdown-menu">
+            <li v-if="user.dmstc_vips">
+              <span class="dropdown-item menu-item" @click="loadPage('/vips')">
+                VIP基本信息
+              </span>
+            </li>
+            <li v-if="user.dmstc_vip_in_project">
+              <span class="dropdown-item menu-item" @click="loadPage('/vip-in-project')">
+                VIP参会管理
+              </span>
+            </li>
+            <li v-if="user.dmstc_vip_trips">
+              <span class="dropdown-item menu-item" @click="loadPage('/vip-trips')">
+                VIP行程管理
+              </span>
+            </li>
+            <li v-if="user.dmstc_browse_vip_trips">
+              <span class="dropdown-item menu-item" @click="loadPage('/browse-trips')">
+                查看VIP行程
+              </span>
+            </li>
+          </div>
+        </li>        
+      </ul> 
       <ul class="nav nav-tabs menu-tabs" v-if="user.cnfrc">
         <li class="dropdown">
-          <span data-toggle="dropdown" class="dropdown-toggle menu-title">展会项目</span>
+          <span data-toggle="dropdown" class="dropdown-toggle menu-title">国际项目</span>
           <div class="dropdown-menu">
             <li v-if="user.cnfrc_project">
               <span class="dropdown-item menu-item" @click="loadPage('/project')">
@@ -212,16 +236,6 @@
             <li v-if="user.bscinfo_product">
               <span class="dropdown-item menu-item" @click="loadPage('/product')">
                 供应商
-              </span>
-            </li>
-            <li v-if="user.bscinfo_contract">
-              <span class="dropdown-item menu-item" @click="loadPage('/contract')">
-                合同管理
-              </span>
-            </li>
-            <li v-if="user.bscinfo_equipment">
-              <span class="dropdown-item menu-item" @click="loadPage('/equipment')">
-                设备管理
               </span>
             </li>
           </div>
@@ -252,7 +266,12 @@
             <li v-if="user.personal_logout"><span class="dropdown-item menu-item" @click="beingQuit">退出登录</span></li>
           </div>
         </li>        
-      </ul> 
+      </ul>
+<!--       <ul class="nav nav-tabs menu-tabs">
+        <li class="dropdown"> 
+          <span class="menu-title" @click="showMainMenu=false;">隐藏</span>
+        </li>
+      </ul> -->
     </div>
 
     <div class="content-row">
@@ -284,10 +303,10 @@
 <script>
 
 export default {
-  name: 'main-menu',
+  name: 'main-window',
   data() {
     return {
-      
+      showMainMenu:true,
     }
   },
   methods: {
@@ -302,7 +321,10 @@ export default {
       $('#quitSys').modal('toggle');
       this.$store.commit('userLoginOut');
       this.$router.push('/');      
-    }
+    },
+    hideMenu() {
+      this.showMainMenu=false;
+    },
   },
   computed:{
     isLogined() {
@@ -319,12 +341,10 @@ export default {
 </script>
 
 <style scoped>
-.mainmenu {
-  height: 100%;
+.mainwindow {
+  min-height: 100vh;
   background-color:#F2F2F2;
-/*  position: fixed;
-  top:0px;
-  left:0px;*/
+  padding:0;
   /*z-index: 9999;*/
 /*
 //#F2F2F2
@@ -357,8 +377,12 @@ ul {
   /*padding:5px;*/
 }
 .menu-row {
-margin-top:0px;
-background-color: #FF8C00;  
+/*  position: fixed;
+  top:0px;
+  left:0px;*/
+  margin:0;
+  width: 100%;
+  background-color: #FF8C00;  
 }
 .dropdown-menu {
    background-color: #FF8C00;;
@@ -372,7 +396,7 @@ background-color: #FF8C00;
   text-align: center;
   width: 100%;
   /*border: 1px solid #000;*/
-  padding:10px;
+  padding:0px;
   /*background-color: #007bff;*/
 }
 .title {
@@ -388,7 +412,19 @@ li span {
 .modal-body {
   margin:0 auto;
 }
-
+.fxrt {
+  position:fixed;
+  top:0;
+  right:0;
+}
+.bgcorg{
+  background-color: #FF8C00;
+  color: #FFF;
+  border: none;
+  border-radius: 3px;
+  width: 100px;
+  height: 35px;
+}
 </style>
 
 

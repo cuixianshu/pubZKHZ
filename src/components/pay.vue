@@ -12,7 +12,7 @@
       <div id="pay-pane" class="container-fluid tab-pane">
         <div class="row">
           <div class="col-lg form-inline searchcontent">
-            <input id="queryConditions" type="text" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位,请款人 收款账号 用途等关键词">
+            <input type="text" class="form-control" v-model="queryContent.keyWord" placeholder="请输入搜索关键词" title="发票号、用车人、客户部门、客户单位,请款人 收款账号 用途等关键词">
             <datepicker class="datepicker"id="dateRange" v-model="queryContent.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请款的时间范围,默认最近7天" :shortcuts="shortcuts" placeholder="请款的时间范围"></datepicker> 
             <button class="btn btn-primary" @click="getListOfRqstedFunds">🔍获取请款数据</button>
             <button class="btn btn-secondary" @click="clearList" v-if="listOfRqstedFunds.length>0">清除</button>            
@@ -46,8 +46,8 @@
         <div class="row">
           <div class="col-lg form-inline searchcontent">
             <datepicker class="datepicker"id="dateRange" v-model="debtQC.dateRange" value-type="format" format="YYYY-MM-DD" :minute-step="10" range append-to-body width="220"  title="请款的时间范围,默认上个月" :shortcuts="shortcuts" placeholder="请款的时间范围"></datepicker> 
-            <label for="slctEmp">员工:</label> 
-            <select id="slctEmp" class="form-control" v-model="debtQC.id_debter" title="请选择员工进行查询">
+            <label>员工:</label> 
+            <select class="form-control" v-model="debtQC.id_debter" title="请选择员工进行查询">
               <option value="0">所有员工</option> 
               <option v-for="item in employees" :value="item.id">{{item.name}}</option>
             </select>
@@ -90,38 +90,17 @@
           </div>
           <div class="modal-body">
             <div class="container-fluid">
-              <div class="row request-funds">
-                <div class="col-lg  form-inline">
-                  <label>性质</label>
-                  <input type="text" class="form-control" :value="getNature(requestFunds)" :title="getNature(requestFunds)" readonly>
-                </div>
-                <div class="col-lg  form-inline">
-                  <label>用途</label>
-                  <input type="text" class="form-control" :value="requestFunds.use_for" :title="requestFunds.use_for" readonly>
-                </div>
-              </div>
-              <div class="row request-funds">
-                <div class="col-lg  form-inline">
-                  <label>账号</label>
-                  <input type="text" class="form-control" :value="requestFunds.account" :title="requestFunds.account" readonly>
-                </div>
-                <div class="col-lg  form-inline">
-                  <label>备注</label>
-                  <input type="text" class="form-control" :value="requestFunds.remark" :title="requestFunds.remark" readonly>
-                </div>
-              </div>
-              <hr class="split-line">              
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="slctAS">一级</label>
-                  <select id="slctAS" type="text" class="form-control" v-model="payment.id_accounting_sub" title="一级科目" @change="acc_subChanged()">
+                  <label>一级</label>
+                  <select type="text" class="form-control" v-model="payment.id_accounting_sub" title="一级科目" @change="acc_subChanged()">
                     <option  value=0>一级科目</option>
                     <option v-for="item in accountingSubjects" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="slctNature">二级</label>
-                  <select id="slctNature" type="text" class="form-control" v-model="payment.id_detailed_acc" title="二级科目">
+                  <label>二级</label>
+                  <select type="text" class="form-control" v-model="payment.id_detailed_acc" title="二级科目">
                     <option  value=0>二级科目</option>
                     <option v-for="item in DAsAtTheAccSub" :value="item.id">{{item.code_num+item.name}}</option>
                   </select>
@@ -129,15 +108,15 @@
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="slctpaymentAccount">账户</label>
-                  <select id="slctpaymentAccount" type="text" class="form-control" placeholder="付款账户" v-model="payment.id_account" title="付款账户">
+                  <label>账户</label>
+                  <select type="text" class="form-control" placeholder="付款账户" v-model="payment.id_account" title="付款账户">
                     <option value=0>付款账户</option>
                     <option v-for="item in ourAccounts" :value="item.id">{{item.short_name}}</option>
                   </select>
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="slctWayOfpayment">方式</label>
-                  <select id="slctWayOfpayment" type="text" class="form-control" v-model="payment.id_way_pay" placeholder="付款方式" title="付款方式">
+                  <label>方式</label>
+                  <select type="text" class="form-control" v-model="payment.id_way_pay" placeholder="付款方式" title="付款方式">
                     <option value=0>付款方式</option>
                     <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>
                   </select>
@@ -145,23 +124,54 @@
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="inputCashiedAmount">金额</label>
-                  <input id="inputCashiedAmount" type="number" class="form-control" v-model="payment.amount" placeholder="实付金额" title="实付金额">
+                  <label>金额</label>
+                  <input type="number" class="form-control" v-model="payment.amount" placeholder="实付金额" title="实付金额">
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="inputSerial">流水</label>
-                  <input id="inputSerial" type="text" class="form-control" v-model="payment.serial_paid" placeholder="银行流水号" title="银行流水号">
+                  <label>流水</label>
+                  <input type="text" class="form-control" v-model="payment.serial_paid" placeholder="银行流水号" title="银行流水号">
                 </div>
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="inputSerialOfBills">票据</label>
-                  <input id="inputSerialOfBills" type="text" class="form-control" v-model="payment.numbers_bills" title="发票号码,多个号码用 * 分隔,不超过256个字" placeholder="发票号码,多个号码用 * 分隔">
+                  <label>备注</label>
+                  <input type="text" class="form-control" v-model="payment.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
                 </div>
                 <div class="col-lg  form-inline">
-                  <label for="inputRemark">备注</label>
-                  <input id="inputRemark" type="text" class="form-control" v-model="payment.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字">
                 </div>
+              </div>
+              <div class="row" style="padding-left: 15px;">
+                  <label>票据</label>
+                  <input type="text" class="form-control" v-model="payment.numbers_bills" title="发票号码,多个号码用 , 分隔,不超过256个字" placeholder="发票号码,多个号码用 , 分隔">
+              </div>
+              <hr class="split-line">              
+              <div class="form-inline redtxt">
+                <label>请款</label>
+                <input type="text" class="form-control" :value="requestFunds.name_applyer"readonly>
+              </div>
+              <div class="form-inline redtxt">
+                <label>时间</label>
+                <input type="text" class="form-control" :value="requestFunds.time_applied"readonly>
+              </div>
+              <div class="form-inline redtxt">
+                <label>性质</label>
+                <input type="text" class="form-control" :value="getNature(requestFunds)" :title="getNature(requestFunds)" readonly>
+              </div>
+              <div class="form-inline redtxt">
+                <label>用途</label>
+                <input type="text" class="form-control" :value="requestFunds.use_for" :title="requestFunds.use_for" readonly>
+              </div>
+              <div class="form-inline redtxt">
+                <label>账号</label>
+                <input type="text" class="form-control" :value="requestFunds.account" :title="requestFunds.account" readonly>
+              </div>
+              <div class="form-inline redtxt">
+                <label>备注</label>
+                <input type="text" class="form-control" :value="requestFunds.remark" :title="requestFunds.remark" readonly>
+              </div>
+              <div class="form-inline redtxt">
+                <label>票据</label>
+                <input type="text" class="form-control" :value="requestFunds.nums_of_invoices" readonly>
               </div>
             </div>
           </div>
@@ -172,6 +182,9 @@
         </div>
       </div>
     </div>    
+    <div id="loading" class="loadingbox" v-show="showLoading">
+      <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+    </div>
   </div>
 </template>
 
@@ -201,6 +214,8 @@ Date.prototype.format = function(fmt) {
   export default {
     data() {
       return {
+        imgUrl:require('@/assets/images/loading.gif'),
+        showLoading:false,
         shortcuts:false,
         employees:this.$store.state.employees,
         queryContent:{
@@ -283,6 +298,8 @@ Date.prototype.format = function(fmt) {
     },    
     methods: {
       getListOfRqstedFunds() {
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         if(this.queryContent.dateRange.length<2 || !this.queryContent.dateRange[0] || !this.queryContent.dateRange[1]){//如果日期填写不全,默认是过去1周
           var day1=new Date();
           day1.setDate(day1.getDate() - 7);
@@ -299,8 +316,8 @@ Date.prototype.format = function(fmt) {
           url: 'getRequestFunds.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
-// console.log(response.data);
-// return;
+            _this.showLoading=false;
+            $("body").css("overflow","");
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到符合条件的记录!',
@@ -312,6 +329,8 @@ Date.prototype.format = function(fmt) {
             }
 
           }).catch(function (error) {
+            _this.showLoading=false;
+            $("body").css("overflow","");
             console.log(error);
             _this.$toast({
                text: '异步通信错误!'+error,
@@ -325,8 +344,8 @@ Date.prototype.format = function(fmt) {
         // this.DAsAtTheAccSub=this.detailedAccountings;
         this.requestFunds=dataRow;
         this.payment.account=dataRow.account;
-        // this.payment.way_pay=dataRow.way_pay;
-        this.payment.id_way_pay=dataRow.id_way_pay;
+        this.payment.numbers_bills=dataRow.nums_of_invoices;
+        this.payment.id_way_pay=dataRow.way_pay;
         this.payment.id_account=0;
         this.payment.amount=dataRow.amount;
         this.payment.id_accounting_sub=0;
@@ -336,52 +355,36 @@ Date.prototype.format = function(fmt) {
       savePayment() {
         if(!this.payment.id_detailed_acc) {
           this.$toast({
-            text: '请选择科目明细!',
-            type: 'info',
-            duration: 2000
-          });
+            text: '请选择科目明细!',type:'info',duration:2000});
           return false;          
         }
         if(!this.payment.id_account) {
           this.$toast({
-            text: '请选择支付账户!',
-            type: 'info',
-            duration: 2000
-          });
+            text:'请选择支付账户!',type:'info',duration:2000});
           return false;          
         }
         if(!this.payment.id_way_pay) {
           this.$toast({
-            text: '请选择支付方式!',
-            type: 'info',
-            duration: 2000
-          });
+            text: '请选择支付方式!',type:'info',duration:2000});
           return false;          
         }
         if(this.payment.amount<=0 || parseFloat(this.payment.amount)>parseFloat(this.requestFunds.amount)) {
           this.$toast({
-            text: '请检查金额!',
-            type: 'info',
-            duration: 2000
-          });
+            text: '请检查金额!',type:'info',duration:2000});
           return false;          
         }
         if(this.payment.serial_paid.length<4) {
           this.$toast({
-            text: '银行流水号不能少于4个字!',
-            type: 'info',
-            duration: 2000
-          });
+            text:'银行流水号不能少于4个字!',type:'info',duration:2000});
           return false;          
         }
         if(this.payment.numbers_bills.length<4) {
           this.$toast({
-            text: '票据号码不能少于4个字!',
-            type: 'info',
-            duration: 2000
-          });
+            text:'票据号码不能少于4个字!',type:'info',duration:2000});
           return false;          
         }                
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         var queryContent={
           id_rqstFunds:this.requestFunds.id,
           id_account:this.payment.id_account,
@@ -404,7 +407,8 @@ Date.prototype.format = function(fmt) {
           data: qs.stringify(queryContent)
           }).then(function (response) {
             console.log(response.data);
-// return;
+            _this.showLoading=false;
+            $("body").css("overflow","");
             if(response.data===true) {
               $('#mdlPay').modal('toggle'); 
               _this.$toast({
@@ -428,6 +432,8 @@ Date.prototype.format = function(fmt) {
               $('#mdlPay').modal('toggle');             
             }
           }).catch(function (error) {
+            _this.showLoading=false;
+            $("body").css("overflow","");
             console.log(error);
             _this.$toast({
               text: '异步通信错误!'+error,
@@ -441,6 +447,8 @@ Date.prototype.format = function(fmt) {
         this.listOfRqstedFunds=[];
       },
       getEMPDebts () {
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
 
         this.empDebters=[];
         if(this.debtQC.dateRange.length<2 || this.debtQC.dateRange[0].length<10 || this.debtQC.dateRange[1].length<10) {
@@ -459,7 +467,8 @@ Date.prototype.format = function(fmt) {
             data: qs.stringify(_this.debtQC)
           }).then(function (response) {
 console.log(response.data);
-// return;
+          _this.showLoading=false;
+          $("body").css("overflow","");
           if(response.data.length<1) {
             _this.$toast({
               text: '没有符合条件的记录',
@@ -470,6 +479,8 @@ console.log(response.data);
           }
           _this.empDebters=response.data;
           }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           _this.$toast({
              text: '异步通信错误!'+error,
              type: 'danger',
@@ -495,7 +506,7 @@ console.log(response.data);
         return {'firstDay':firstDay,'endDay':endDay};
       },
       acc_subChanged() {
-        this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.payment.id_accounting_sub)
+        this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_parent==this.payment.id_accounting_sub)
         this.payment.id_detailed_acc=0;
         console.log(this.DAsAtTheAccSub);
 
@@ -565,8 +576,13 @@ datepicker {
   /*bottom: 0;*/
   right: 0;
 }
-.request-funds {
+.redtxt {
   color:red;
+}
+.redtxt .form-control {
+  margin-top: 10px;
+  margin-right: 10px;
+  width: 85%;
 }
 .split-line {
   background-color: red;

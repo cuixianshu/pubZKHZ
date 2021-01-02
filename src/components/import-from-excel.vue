@@ -2,7 +2,7 @@
 <div class="father">
   <h5>当前位置:订单管理/Excel导入</h5>
   <div id="fromExcel" class="container-fluid">
-    <div class="get-xlsx">
+    <div class="get-xlsx" v-if="showFilePicker">
       <div class="row">
         <div>
           <input id="openFileSelector" type="file" @change="excelFileChanged"  
@@ -10,9 +10,10 @@
         </div>
       </div>
     </div>
-    <div class="divfortable" v-if="xlsTitle.length">
+    <div v-if="xlsTitle.length">
+      <h5>已从文件中获取{{xlsTitle.length}}条数据</h5>
       <table class="table table-hover pre-scrollable">
-        <thead>
+        <thead> class="divfortable"
           <th v-for="title in xlsTitle">{{title}}</th>
         </thead>
           <tbody>
@@ -52,17 +53,24 @@
 	    </div>  
 	  </div>  
 	</div>      
+  <div id="loading" class="loadingbox" v-show="showLoading">
+    <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
   </div>
+</div>
 </template>
 
 <script>
 import qs from 'qs';
 import XLSX from 'xlsx';
 import ClipboardJS from 'clipboard';
+// import rmvLoadingBox from '@/cuiLibs/rmvLoadingBox';
   export default {
   	data () {
   	  return{
         currentUserId:this.$store.state.user.id_user,
+        showLoading:false,
+        imgUrl:require('@/assets/images/loading.gif'),
+        showFilePicker:true,
         xlsTitle:[],
         xlsData:[],
         tip_for_duplicate:'',
@@ -79,6 +87,7 @@ import ClipboardJS from 'clipboard';
         if(!event.currentTarget.files.length) {//没有文件被选中 
           return;
         }
+        this.showFilePicker=false;
         if(this.xlsTitle.length>0){//如果已有数据,需清空
           this.xlsTitle=[];
           this.xlsData=[];
@@ -165,7 +174,8 @@ import ClipboardJS from 'clipboard';
                   type: 'danger',
                   duration: 3000
                 });
-                $('#openFileSelector').val('');                
+                $('#openFileSelector').val('');  
+                _this.showFilePicker=true;              
                 return;
               }
               for(var i=0;i<_this.indispensableCellValue.length;i++) {
@@ -177,6 +187,7 @@ import ClipboardJS from 'clipboard';
                     duration: 4000
                   }); 
                   $('#openFileSelector').val('');
+                  _this.showFilePicker=true
                   return ;
                 }                
               }
@@ -187,13 +198,55 @@ import ClipboardJS from 'clipboard';
           reader.readAsArrayBuffer(f);
         }
         reader.readAsBinaryString(f);
-
-
       },
       clearXlsx :function() {
         this.xlsData=[];
         this.xlsTitle=[];
         $('#openFileSelector').val('');
+        this.showFilePicker=true;
+      },
+      saveXlsxDataToDBS:function () {
+// console.log(this.xlsData);
+// return;
+        var rspnData=this.axiosAsync();
+      },
+      async axiosAsync() {
+// console.log(this.currentUserId);
+// return;     
+        var _this=this;
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
+        var rspnData = await this.promiseMethod();
+        this.showLoading=false;
+        $("body").css("overflow","");
+        if(rspnData.error === '' && rspnData.countOfInserted>0){
+          if(rspnData.duplicate_recorders.length>1){//有重复数据
+            this.tip_for_duplicate="成功保存:"+rspnData.countOfInserted+"条。丢弃重复数据:"+rspnData.duplicate_recorders.length+"条，以下为重复数据：";
+            this.duplicateRecorders=rspnData.duplicate_recorders;
+            $("#duplicate_recorders_shower").modal('show');            
+          } else {
+            this.$toast({
+              text: rspnData.countOfInserted+"条记录成功保存!",
+              type: 'success',
+              duration: 1500
+            });
+          }
+        } else if(rspnData.error !== ''){
+          this.$toast({
+            text: "操作失败:"+rspnData.error,
+            type: 'danger',
+            duration: 5000
+          });
+          console.log(rspnData);
+        } else {//全部重复
+          this.tip_for_duplicate="数据重复("+rspnData.duplicate_recorders.length+"条),全部丢弃!";
+          this.duplicateRecorders=rspnData.duplicate_recorders;
+          $("#duplicate_recorders_shower").modal('show');
+        }
+        $('#openFileSelector').val('');
+        this.showFilePicker=true;
+        this.xlsData=[];
+        this.xlsTitle=[];
       },
       promiseMethod :function (){
 
@@ -212,59 +265,6 @@ import ClipboardJS from 'clipboard';
           })
         });
         return prmsData;
-      },
-      async axiosAsync() {
-// console.log(this.currentUserId);
-// return;     
-        var _this=this;
-        var modalModel="<div id='loadingModal' class='modal fade'></div>";//height:80px;
-        var msg="<div id='msg' style='width:50%;text-align:center;padding:10px;background:#17a2b8;color:#FFF;position: absolute;top:20%;left:50%;transform:translate(-50%,-50%);'><h4>正在处理,请稍等...</h4></div>" ; 
-
-        if($("#loadingModal").length<1) {
-          $("#fromExcel").after(modalModel);
-        }
-        if($("#msg").length<1) {
-          $("#loadingModal").append(msg);
-        }
-        $("#loadingModal").modal('show');
-        var rspnData = await this.promiseMethod();
-
-        $('#openFileSelector').val(''); 
-        $('#loadingModal').remove();
-        $('.modal-backdrop').remove();
-        $("body").attr("class","");
-        if(rspnData.error === '' && rspnData.countOfInserted>0){
-          if(rspnData.duplicate_recorders.length>1){//有重复数据
-            this.tip_for_duplicate="成功保存:"+rspnData.countOfInserted+"条。丢弃重复数据:"+rspnData.duplicate_recorders.length+"条，以下为重复数据：";
-            this.duplicateRecorders=rspnData.duplicate_recorders;
-            $("#duplicate_recorders_shower").modal('show');            
-          } else {
-            this.$toast({
-              text: rspnData.countOfInserted+"条记录成功保存!",
-              type: 'success',
-              duration: 1500
-            });
-          }
-        } else if(rspnData.error !== ''){
-            this.$toast({
-              text: "操作失败:"+rspnData.error,
-              type: 'danger',
-              duration: 5000
-            });
-            console.log(rspnData);
-        } else {//全部重复
-          this.tip_for_duplicate="数据重复("+rspnData.duplicate_recorders.length+"条),全部丢弃!";
-          this.duplicateRecorders=rspnData.duplicate_recorders;
-          $("#duplicate_recorders_shower").modal('show');
-          // console.log(rspnData);
-        }
-        this.xlsData=[];
-        this.xlsTitle=[];
-      },
-      saveXlsxDataToDBS:function () {
-// console.log(this.xlsData);
-// return;
-        var rspnData=this.axiosAsync();
       },
       clearTitle(val) {
         this.xlsTitle=val;
@@ -317,12 +317,15 @@ import ClipboardJS from 'clipboard';
 </script>
 
 <style scoped>
-.father {
-  width: 100%;
-}
 #fromExcel, .tab-pane {
   overflow: auto;
 }
+/*#fromExcel {
+  position: absolute;
+    left: 50%;
+  top: 30%;
+transform: translate(-50%,-110%);
+}*/
 .clearBtn {
 	margin-right: 20px;
 }
@@ -336,29 +339,11 @@ table {
 .mx-input-wrapper {
   width: 100%;
 }
-/*.table table-hover {
-  font-size: 14px;
-}*/
-#openFileSelector {
-  /*display: none;*/
-}
-/*#modal-overlay {
-    visibility: hidden;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width:100%;
-    height:100%;
-    text-align:center;
-    z-index: 1000;
-    background-color: #333;
-    opacity: 0.5; 
-}*/
 td {
-    overflow:hidden; 
-    white-space:nowrap; 
-    text-overflow:ellipsis;
-    max-width: 50px;
+  overflow:hidden; 
+  white-space:nowrap; 
+  text-overflow:ellipsis;
+  max-width: 50px;
 }
 #board {
   text-align: left;
@@ -366,5 +351,4 @@ td {
 h5 {
   color: #007bff;
 }
-
 </style>

@@ -185,6 +185,9 @@
                     <div class="col-lg form-inline">
                       沟通类型:<span class="ticl">{{getCmntdType(item.nature)}}</span>
                     </div>
+                    <div class="col-lg form-inline">
+                      下次日期:<span class="ticl">{{item.date_next=="0001-01-01"?"":item.date_next}}</span>
+                    </div>
                   </div>
                   <div class="row">
                     <div class="col-lg form-inline">
@@ -240,16 +243,16 @@
                       沟通备注:<span class="ticl">{{item.remark}}</span>
                     </div>
                   </div> -->
-                  <div class="row">
+<!--                   <div class="row">
                     <div class="col-lg form-inline">
                       下次日期:<span class="ticl">{{item.date_next=="0001-01-01"?"":item.date_next}}</span>
                     </div>
-                  </div>
-                  <div class="row">
+                  </div> -->
+<!--                   <div class="row">
                     <div class="col-lg form-inline">
                       下次计划:<span class="ticl">{{item.plan_next}}</span>
                     </div>
-                  </div>
+                  </div> -->
                 </div> 
                 <br>
               </li>
@@ -278,7 +281,7 @@
                 <input class="form-control" type="text" placeholder="嘉宾所在国家" v-model="curCommunication.a_country">
               </div>
               <div class="col-lg-2 form-inline">
-                <label>饮食</label>
+                <label>餐食</label>
                 <select class="form-control" v-model="curCommunication.a_dietary">
                   <option value="0">任意</option>
                   <option value="1">清真</option>
@@ -287,12 +290,22 @@
                 </select>
               </div>
             </div>
-              <div class="row">
-                <div class="col-lg form-inline">
-                  <label>机构</label>
-                  <input class="form-control" type="text" placeholder="嘉宾单位" v-model="curCommunication.a_workplace" style="width:95%;">
-                </div>
-              </div>
+            <div class="form-inline mgtp10mgbt10">
+              <label for="keynote">主题演讲</label>
+              <input id="keynote" type="checkbox" class="form-control mgrt20" v-model="curCommunication.level" value="keynote">
+              <label for="SAB">SAB</label>
+              <input id="SAB" type="checkbox" class="form-control mgrt20" v-model="curCommunication.level" value="SAB">
+              <label for="chair">主席</label>
+              <input id="chair" type="checkbox" class="form-control mgrt20" v-model="curCommunication.level" value="chair">
+              <label for="speaker">演讲人</label>
+              <input id="speaker" type="checkbox" class="form-control mgrt20" v-model="curCommunication.level" value="speaker">
+              <label for="media">媒体</label>
+              <input id="media" type="checkbox" class="form-control mgrt20" v-model="curCommunication.level" value="media">
+              <label for="partner">合作方</label>
+              <input id="partner" type="checkbox" class="form-control mgrt20" v-model="curCommunication.level" value="partner">
+              <label for="audience">观众</label>
+              <input id="audience" type="checkbox" class="form-control mgrt20" v-model="curCommunication.level" value="audience">
+            </div>
             <div class="row">
                 <div class="col-lg-4 form-inline">
                   <label>头衔</label>
@@ -313,9 +326,13 @@
                 <button class="btn btn-link" v-if="showAtdDetails" @click="tglAtdDetailsInFC">收起详情</button>
                 <button class="btn btn-link" v-if="!showAtdDetails" @click="tglAtdDetailsInFC">查看详情</button>
                 </div>
-              
             </div>
-
+            <div class="row">
+              <div class="col-lg form-inline">
+                <label>机构</label>
+                <input class="form-control" type="text" placeholder="嘉宾单位" v-model="curCommunication.a_workplace" style="width:95%;">
+              </div>
+            </div>
             <div id="attAwa" v-if="showAtdDetails"><!--  :class="clsShowDetails" -->
               <div class="row">
                 <div class="col-lg">
@@ -476,17 +493,21 @@
                           <div class="col-lg form-inline">
                             积极程度:<label>{{getInitiativeName(hstry.initiative)}}</label>
                           </div>
-                          <div class="col-lg form-inline">
+<!--                           <div class="col-lg form-inline">
                             沟通编号:<label>{{hstry.id}}</label>
-                          </div>
-                        </div>
-                      <!-- </div> -->
+                          </div> -->
+                          <div class="col-lg form-inline">
+                            下次日期:<span>{{hstry.date_next=="0001-01-01"?"未设置":hstry.date_next}}</span>
+                          </div>                        </div>
+<!--                           <div class="col-lg form-inline">
+                            下次计划:<span>{{hstry.plan_next}}</span>
+                          </div> -->
                         <div class="row">
                           <div class="col-lg form-inline">
                             沟通摘要:<pre><p class="wttxt-alnlft">{{hstry.abstract}}</p></pre>
                           </div>
                         </div>
-                        <div class="row">
+<!--                         <div class="row">
                           <div class="col-lg form-inline">
                             下次日期:<span>{{hstry.date_next=="0001-01-01"?"未设置":hstry.date_next}}</span>
                           </div>
@@ -495,7 +516,7 @@
                           <div class="col-lg form-inline">
                             下次计划:<span>{{hstry.plan_next}}</span>
                           </div>
-                        </div>
+                        </div> -->
                       </div> 
                     </div>
                     <br>
@@ -520,6 +541,10 @@
                   <option value="2">积极的</option>
                   <option value="3">热切的</option>
                 </select>
+                <label>下次日期</label>
+                <input type="date" class="form-control" v-model="curCommunication.date_next">
+                <label>下次计划</label>
+                <input type="text" class="form-control" v-model="curCommunication.plan_next" placeholder="计划沟通事项" style="min-width: 500px;">
               <div class="form-inline mgtp5 mgrt5">
                 <button class="btn btn-link" @click="hideCmtdHistory" v-if="showAtdCmtdHstys">
                   隐藏历史记录</button>
@@ -535,12 +560,10 @@
                 </div>
               </div>
 
-              <div class="form-inline mgtp5 mgrt5">
-                <label>下次日期</label>
-                <input type="date" class="form-control" v-model="curCommunication.date_next">
+<!--               <div class="form-inline mgtp5 mgrt5">
                 <label>下次计划</label>
                 <input type="text" class="form-control" v-model="curCommunication.plan_next" placeholder="计划沟通事项" style="min-width: 500px;">
-              </div>
+              </div> -->
             </div>
           </div>
           <div class="modal fade" id="spkrDtlShower" role="dialog" aria-labelledby="spkrDtlShower" data-backdrop="static" data-keyboard: false>
@@ -593,15 +616,15 @@
         </div>
       </div>
     </div>
-    <div v-if="showLoading" class="mask">
-      <img class="loading" :src="imgUrl" alt="正在载入数据"/>
-    </div>    
+    <div id="loading" class="loadingbox" v-show="showLoading">
+      <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+    </div>
   </div>
 </template>
 <script>
 import qs from 'qs';
 import csvExportor from 'csv-exportor';
-import loading from '@/assets/loading.gif';
+// import loading from '@/assets/loading.gif';
 Date.prototype.format = function(fmt) { 
   var o = { 
     "M+" : this.getMonth()+1,                 //月份 
@@ -626,7 +649,8 @@ Date.prototype.format = function(fmt) {
     data() {
       return {
         showLoading:false,
-        imgUrl:loading,
+        // imgUrl:loading,
+        imgUrl:require('@/assets/images/loading.gif'),
         currentUserId:this.$store.state.user.id_user,
         // allATDs:[],
         queryContent:{
@@ -915,7 +939,7 @@ Date.prototype.format = function(fmt) {
         }
         if(!this.QcInFC.sDate || !this.QcInFC.eDate) {//有空项,设为默认,过去7天
           let td = new Date();
-          td.setDate(td.getDate() - 7);
+          td.setDate(td.getDate() - 21);
           this.QcInFC.sDate=td.format("yyyy-MM-dd");
           td = new Date();
           td.setDate(td.getDate());
@@ -928,6 +952,7 @@ Date.prototype.format = function(fmt) {
           }
         }
         this.showLoading=true;
+        $("body").css("overflow","hidden");
         //先获取cmtdRcdsOfAllATDsInFC,
         this.QcInFC.conditions="byDateRangeTrackId......ForCommunicating";
         console.log(this.QcInFC);
@@ -945,8 +970,10 @@ Date.prototype.format = function(fmt) {
           _this.showCmtnRcdsViewer=true;
           _this.showFcSchBox=!_this.showCmtnRcdsViewer;
           _this.showLoading=false;
+          $("body").css("overflow","");
         }).catch(function (error) {
           _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(error);
           _this.$toast({text:'通信错误!',type:'danger',duration:4000});
         });
@@ -972,15 +999,26 @@ Date.prototype.format = function(fmt) {
         this.curCommunication.orgCoOrC=r.ar_id_role.substr(0,2);//保存原主席副主席状态
         this.curCommunication.orgAbs=r.abstract;
         this.curCommunication.orgNature=r.nature;
+        this.curCommunication.orgDateNext=r.date_next;
         r.ar_id_role=r.ar_id_role.charAt(r.ar_id_role.length-1);
         let td = new Date();
-        if(this.curCommunication.date_next==="0001-01-01" || this.curCommunication.date_next==="") {
-          td.setDate(td.getDate() + 7);
+        // if(this.curCommunication.date_next==="0001-01-01" || this.curCommunication.date_next==="") {
+          td.setDate(td.getDate() + 3);
           this.curCommunication.date_next=td.format("yyyy-MM-dd");
-        }
+        // }
         this.curCommunication.abstract="";
         this.curCommunication.remark="";
         this.curCommunication.nature="0";
+        this.curCommunication.level=[];
+        let numArrLvl=this.curCommunication.a_level.split('');
+        let nameOfLvl=['keynote','SAB','chair','speaker','media','partner','audience'];
+        let strNameLvl=[];
+        for(let i=0;i<numArrLvl.length;i++) {
+          if(numArrLvl[i]==1) {
+            strNameLvl.push(nameOfLvl[i]);
+          }
+        }
+        this.curCommunication.level=strNameLvl;        
         console.log(this.curCommunication);
         //获取当前communication的原始attendedRecord
         let orgnlAr={};
@@ -1016,6 +1054,7 @@ Date.prototype.format = function(fmt) {
         this.curCommunication.ar_id_role=this.curCommunication.orgCoOrC+this.curCommunication.ar_id_role;
         this.curCommunication.abstract=this.curCommunication.orgAbs;
         this.curCommunication.nature=this.curCommunication.orgNature;
+        this.curCommunication.date_next=this.curCommunication.orgDateNext;
         this.showCmntnEditer=false;
         this.showCmtnRcdsViewer=true;
         this.showAtdCmtdHstys=false;
@@ -1077,12 +1116,21 @@ Date.prototype.format = function(fmt) {
         atd.a_title1=this.curCommunication.a_title1;
         atd.a_workplace=this.curCommunication.a_workplace;
         atd.atcl_md5=this.curCommunication.atcl_md5;
+        atd.level=this.curCommunication.level;
         // atd.atcl_abstract=this.curCommunication.atcl_abstract;
         atd.atcl_title=this.curCommunication.atcl_title;
         atd.id=this.curCommunication.id_attendee;
         for(let prop in atd) {
           atd[prop]=atd[prop]=="undefined"?"":atd[prop];//是undefined 中 null吗
         }
+        let nameOfLvl=['keynote','SAB','chair','speaker','media','partner','audience'];
+        let numArrLvl= new Array(nameOfLvl.length).fill(0)
+        for(let i=0;i<nameOfLvl.length;i++) {
+          if(atd.level.indexOf(nameOfLvl[i])>-1) {
+            numArrLvl[i]=1;
+          }
+        }
+        atd.a_level=numArrLvl.join('');        
         //update tbl_cnfrc_attendees
         let _this=this;
         let queryContent={};
@@ -1322,6 +1370,18 @@ console.log(curCmnctn);
         console.log(error);
         _this.$toast({text: '通信错误!',type: 'danger',duration: 4000});
       });
+      this.queryContent.conditions="is_international";
+      this.$axios({
+        method: 'post',
+        url: 'getProjects.php',
+        data: qs.stringify(_this.queryContent)
+      }).then(function (response) {
+        console.log(response.data);
+        _this.projectsInIIR=response.data;
+      }).catch(function (error) {
+        console.log(error);
+        _this.$toast({text: '通信错误!',type: 'danger',duration: 4000});
+      });
     },
     watch:{
       'curCommunication.ar_id_track': {
@@ -1401,7 +1461,8 @@ console.log(curCmnctn);
           this.filteredAtdsInQcAtdSlcter=[];
           var _this=this;
           if(this.QcInFC.id_track!=0) {
-            this.showLoading=true;
+          this.showLoading=true;
+          $("body").css("overflow","hidden");
             // this.atdsInCurTrk=this.atdsInCurPrjct.filter((item)=>item.id_last_track==this.QcInFC.id_track);
             this.queryContent.conditions="ALLATDsInCurTrackInFCForProvidingOptions";
             this.queryContent.idOfTrack=this.QcInFC.id_track;
@@ -1416,8 +1477,10 @@ console.log(curCmnctn);
                 _this.filteredAtdsInQcAtdSlcter=JSON.parse(JSON.stringify(_this.atdsInCurTrk));
               }
               _this.showLoading=false;
+              $("body").css("overflow","");
             }).catch(function (error) {
               _this.showLoading=false;
+              $("body").css("overflow","");
               console.log(error);
               _this.$toast({text:'通信错误!',type:'danger',duration:4000});
             });
@@ -1740,5 +1803,13 @@ li {
   left: 50%;
   top: 30%;
   transform: translate(-50%,-110%);
+}
+input[type=checkbox] {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+.mgtp10mgbt10 {
+  margin-top:10px;
+  margin-bottom: 10px;
 }
 </style>

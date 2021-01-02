@@ -10,7 +10,44 @@
       </div>
     </div>
     <div class="" v-if="listOfRequestFunds.length>0">
-      <table class="table table-hover">
+      <ul>
+        <li v-for="row,index in listOfRequestFunds" @click="clickedARowInShower(row)" class="mycd mgtp10">
+          <div class="form-inline">
+            <label>编号</label><span>{{row.id}}</span>
+          </div>
+          <div class="form-inline mgtp10">
+            <label>日期</label><input class="form-control" type="text" readonly v-model="row.time_applied">
+          </div>
+          <div class="form-inline mgtp10">
+            <label>项目</label><input class="form-control" type="text" readonly v-model="row.project">
+          </div>
+          <div class="form-inline mgtp10">
+            <label>请款</label><input class="form-control" type="text" readonly v-model="row.name_applyer">
+          </div>
+          <div class="form-inline mgtp10">
+            <label>用途</label><input class="form-control" type="text" readonly v-model="row.use_for">
+          </div>
+          <div class="form-inline mgtp10">
+            <label>关联</label><input class="form-control" type="text" readonly v-model="row.id_relative">
+          </div>
+          <div class="form-inline mgtp10">
+            <label>票据</label><input class="form-control" type="text" readonly v-model="row.nums_of_invoices">
+          </div>
+          <div class="form-inline mgtp10">
+            <label>账号</label><input class="form-control" type="text" readonly v-model="row.account">
+          </div>
+          <div class="form-inline mgtp10">
+            <label>方式</label><input class="form-control" type="text" readonly v-model="row.way_pay">
+          </div>
+          <div class="form-inline mgtp10">
+            <label>金额</label><input class="form-control" type="text" readonly v-model="row.amount">
+          </div>
+          <div class="form-inline mgtp10">
+            <label>初审</label><input class="form-control" type="text" readonly v-model="row.name_approver">
+          </div>
+        </li>
+      </ul>
+<!--       <table class="table table-hover">
         <thead>
           <th v-for="(title,index) in titlesOfList" :width="widthOfTH[index]">{{title}}</th>
         </thead>
@@ -30,7 +67,7 @@
             <td title="初审日期">{{(new Date(row.time_approved)).format('yyyy-MM-dd')}}</td>
           </tr>
         </tbody>
-      </table>
+      </table> -->
     </div>
     <div class="modal fade" id="mdlFinalAuditRqstingFunds" role="dialog" aria-labelledby="mdlFinalAuditRqstingFunds" data-backdrop="static" data-keyboard: false>
       <div class="modal-dialog modal-lg">
@@ -46,40 +83,34 @@
           </div>
           <div class="modal-body">
             <div class="container-fluid">
-              <div class="row">
-                <div class="col-lg  form-inline">
-                  <label for="slctProject">项目</label>
-                  <select id="slctProject" type="text" class="form-control" placeholder="所属项目" v-model="requestFunds.id_project" title="所属项目" disabled>
+                <div class="form-inline mgtp10">
+                  <label>项目</label>
+                  <select type="text" class="form-control" placeholder="所属项目" v-model="requestFunds.id_project" title="所属项目" disabled>
                     <option v-for="item in projects" :value="item.id">{{item.name}}</option>}
                   </select>
                 </div>
-                <div class="col-lg  form-inline">
-                  <label for="inputUsage">用途</label>
-                  <input id="inputUsage" type="text" class="form-control" v-model="requestFunds.use_for" title="款项用途,不超过64个字" placeholder="款项用途,不超过64个字" disabled>
+                <div class="form-inline mgtp10">
+                  <label>用途</label>
+                  <input type="text" class="form-control" v-model="requestFunds.use_for" title="款项用途,不超过64个字" placeholder="款项用途,不超过64个字" disabled>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-lg  form-inline">
-                  <label for="inputCashiedAmount">金额</label>
-                  <input id="inputCashiedAmount" type="number" class="form-control" v-model="requestFunds.amount" placeholder="请款金额" title="请款金额" disabled>
+                <div class="form-inline mgtp10">
+                  <label>金额</label>
+                  <input type="number" class="form-control" v-model="requestFunds.amount" placeholder="请款金额" title="请款金额" disabled>
                 </div>
-                <div class="col-lg  form-inline">
-                  <label for="slctWayOfCashier">方式</label>
-                  <select id="slctWayOfCashier" type="text" class="form-control" v-model="requestFunds.id_way_pay" placeholder="收款方式" title="收款方式" disabled>
+                <div class="form-inline mgtp10">
+                  <label>方式</label>
+                  <select type="text" class="form-control" v-model="requestFunds.id_way_pay" placeholder="收款方式" title="收款方式" disabled>
                     <option v-for="item in wayOfPayment" :value="item.id">{{item.name}}</option>}
                   </select>
                 </div>
-              </div>
-              <div class="row">
-                <div class="col-lg  form-inline">
-                  <label for="inputAccount">账号</label>
-                  <input id="slctCashierAccount" type="text" class="form-control" placeholder="接收款项的账号" v-model="requestFunds.account" title="账号名和账号" disabled>
+                <div class="form-inline mgtp10">
+                  <label>账号</label>
+                  <input type="text" class="form-control" placeholder="接收款项的账号" v-model="requestFunds.account" title="账号名和账号" disabled>
                 </div>
-                <div class="col-lg  form-inline">
-                  <label for="inputRemark">备注</label>
-                  <input id="inputRemark" type="text" class="form-control" v-model="requestFunds.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字" disabled>
+                <div class="form-inline mgtp10">
+                  <label>备注</label>
+                  <input type="text" class="form-control" v-model="requestFunds.remark" title="备注信息,不超过64个字" placeholder="备注信息,不超过64个字" disabled>
                 </div>
-              </div>
               <br>
               <div class="row">
                 <label class="radio-inline">
@@ -101,6 +132,9 @@
         </div>
       </div>
     </div>    
+    <div id="loading" class="loadingbox" v-show="showLoading">
+      <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+    </div>
   </div>
 </template>
 
@@ -130,6 +164,8 @@ Date.prototype.format = function(fmt) {
   export default {
     data() {
       return {
+        imgUrl:require('@/assets/images/loading.gif'),
+        showLoading:false,
         shortcuts:false,
         queryContent:{
           keyWord:'',
@@ -180,6 +216,8 @@ Date.prototype.format = function(fmt) {
     },    
     methods: {
       getListOfRequestFunds() {
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         if(this.queryContent.dateRange.length<2 || !this.queryContent.dateRange[0] || !this.queryContent.dateRange[1]){//如果日期填写不全,默认是过去1周
           var day1=new Date();
           day1.setDate(day1.getDate() - 7);
@@ -196,7 +234,8 @@ Date.prototype.format = function(fmt) {
           url: 'getRequestFunds.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
-// console.log(response.data);
+          _this.showLoading=false;
+          $("body").css("overflow","");
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到符合条件的记录!',
@@ -208,6 +247,8 @@ Date.prototype.format = function(fmt) {
             }
 
           }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
             console.log(error);
             _this.$toast({
                text: '异步通信错误!'+error,
@@ -218,28 +259,7 @@ Date.prototype.format = function(fmt) {
       },
       clickedARowInShower(dataRow) {
         this.requestFunds=dataRow;
-        // this.requestFunds.account=dataRow.account;
-        // this.requestFunds.amount=dataRow.amount;
-        // this.requestFunds.id=dataRow.id;
-        // this.requestFunds.id_applyer=dataRow.id_applyer;
-        // this.requestFunds.id_approver=dataRow.id_approver;
-        // this.requestFunds.id_approver2=dataRow.id_approver2;
-        // this.requestFunds.id_project=dataRow.id_project;
-        // this.requestFunds.id_relative=dataRow.id_relative;
-        // this.requestFunds.id_way_pay=dataRow.id_way_pay;
-        // this.requestFunds.is_paid=dataRow.is_paid;
-        // this.requestFunds.name_applyer=dataRow.name_applyer;
-        // this.requestFunds.project=dataRow.project;
-        // this.requestFunds.reason_reject=dataRow.reason_reject;
-        // this.requestFunds.reason_reject2=dataRow.reason_reject2;
-        // this.requestFunds.remark=dataRow.remark;
-        // this.requestFunds.result_approved=dataRow.result_approved;
-        // this.requestFunds.result_approved2=dataRow.result_approved2;
-        // this.requestFunds.time_applied=dataRow.time_applied;
-        // this.requestFunds.time_approved=dataRow.time_approved;
-        // this.requestFunds.time_approved2=dataRow.time_approved2;
-        // this.requestFunds.use_for=dataRow.use_for;
-        // this.requestFunds.way_pay=dataRow.way_pay;
+        this.auditResult.resultValue=0;
         $('#mdlFinalAuditRqstingFunds').modal('toggle');
       },
       clearList () {
@@ -255,6 +275,8 @@ Date.prototype.format = function(fmt) {
           });
           return;          
         }
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         var queryContent=this.auditResult;
         queryContent.id_auditer=this.currentUserId;
         queryContent.conditions='WithFinalAuditedData';
@@ -265,7 +287,8 @@ Date.prototype.format = function(fmt) {
           url: 'updateRequestFunds.php',
           data: qs.stringify(queryContent)
           }).then(function (response) {
-// console.log(response.data);
+          _this.showLoading=false;
+          $("body").css("overflow","");
             if(response.data===true) {
               $('#mdlFinalAuditRqstingFunds').modal('toggle'); 
               _this.$toast({
@@ -289,6 +312,8 @@ Date.prototype.format = function(fmt) {
               $('#mdlFinalAuditRqstingFunds').modal('toggle');             
             }
           }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
             console.log(error);
             _this.$toast({
               text: '异步通信错误!'+error,
@@ -384,6 +409,22 @@ input[type=radio] {
   width: 90%;
   margin:0 auto;
 }
-
+.mycd {
+  padding: 10px;
+  list-style:none;
+  border: 3px solid #007bff;
+  background-color: #4F4F4F;
+  color:#FFF;
+  border-radius:5px; 
+}
+.mycd input {
+  width: 85%;
+}
+.mgtp10 {
+  margin-top: 10px;
+}
+ul {
+  padding: 10px;  
+}
 </style>
 

@@ -101,12 +101,16 @@
               </div>
               <div class="row">
                 <div class="col-lg  form-inline">
-                  <label for="inputSerialOfBills">票据</label>
-                  <input id="inputSerialOfBills" type="text" class="form-control" v-model="payment.numbers_bills" title="相关票据号码,不超过256个字" placeholder="相关票据号码">
-                </div>
-                <div class="col-lg  form-inline">
                   <label for="inputRemark">备注</label>
                   <input id="inputRemark" type="text" class="form-control" v-model="payment.remark" title="付款时的备注内容" placeholder="备注信息,不超过64个字">
+                </div>
+                <div class="col-lg  form-inline">
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-inline" style="padding-left:15px;width:100%;">
+                  <label for="inputSerialOfBills">票据</label>
+                  <input id="inputSerialOfBills" type="text" class="form-control" v-model="payment.numbers_bills" title="相关票据号码,不超过256个字" placeholder="相关票据号码">
                 </div>
               </div>
               <hr class="split-line">              
@@ -130,6 +134,9 @@
         </div>
       </div>
     </div>    
+    <div id="loading" class="loadingbox" v-show="showLoading">
+      <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+    </div>
   </div>
 </template>
 
@@ -159,6 +166,8 @@ Date.prototype.format = function(fmt) {
   export default {
     data() {
       return {
+        imgUrl:require('@/assets/images/loading.gif'),
+        showLoading:false,
         shortcuts:false,
         queryContent:{
           keyWord:'',
@@ -188,6 +197,8 @@ Date.prototype.format = function(fmt) {
     },    
     methods: {
       getListOfPaidRqstedFunds() {
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         if(this.queryContent.dateRange.length<2 || !this.queryContent.dateRange[0] || !this.queryContent.dateRange[1]){//如果日期填写不全,默认是过去1周
           var day1=new Date();
           day1.setDate(day1.getDate() - 7);
@@ -204,6 +215,8 @@ Date.prototype.format = function(fmt) {
           url: 'getPaymentData.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
             console.log(response.data);
             if(response.data.length<1) {
               _this.$toast({
@@ -215,6 +228,8 @@ Date.prototype.format = function(fmt) {
               _this.listOfPaidRqstedFunds=response.data;
             }
           }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
             console.log(error);
             _this.$toast({
                text: '异步通信错误!'+error,
@@ -227,8 +242,8 @@ Date.prototype.format = function(fmt) {
         this.payment=dataRow;
         if(this.payment.id_detailed_accounting) {
           var o=this.detailedAccountings.find((ele) => ele['id'] == this.payment.id_detailed_accounting);
-          this.payment.id_accounting_sub=typeof(o)=='undefined'?0:o['id_patent'];
-          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.payment.id_accounting_sub);
+          this.payment.id_accounting_sub=typeof(o)=='undefined'?0:o['id_parent'];
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_parent==this.payment.id_accounting_sub);
         } else {
           this.payment.id_accounting_sub=0;
           this.payment.id_detailed_accounting=0;
@@ -310,6 +325,8 @@ Date.prototype.format = function(fmt) {
           });
           return false;
         }
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         var queryContent={
           id_payment:this.payment.id,
           id_account:this.payment.id_account,
@@ -330,6 +347,8 @@ Date.prototype.format = function(fmt) {
           url: 'updatePayment.php',
           data: qs.stringify(queryContent)
           }).then(function (response) {
+            _this.showLoading=false;
+            $("body").css("overflow","");
             console.log(response.data);
             if(response.data===true) {
               $('#mdlReviewPaying').modal('toggle'); 
@@ -354,6 +373,8 @@ Date.prototype.format = function(fmt) {
               $('#mdlReviewPaying').modal('toggle');             
             }
           }).catch(function (error) {
+            _this.showLoading=false;
+            $("body").css("overflow","");
             console.log(error);
             _this.$toast({
               text: '异步通信错误!'+error,
@@ -368,7 +389,7 @@ Date.prototype.format = function(fmt) {
       },
       acc_subChanged() {
         if(this.payment.id_accounting_sub) {
-          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_patent==this.payment.id_accounting_sub);
+          this.DAsAtTheAccSub=this.detailedAccountings.filter(item=>item.id_parent==this.payment.id_accounting_sub);
         } else {
           this.DAsAtTheAccSub=[];
         }

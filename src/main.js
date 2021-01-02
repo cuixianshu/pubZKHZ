@@ -12,7 +12,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js';
 // import cmpntHeader from './components/cmpnt-header';../node_modules/
 import mainMenu from '@/components/main-menu.vue';
-import globalVariable from '@/components/global_variable.js';
+// import globalVariable from '@/components/global_variable.js';
 
 // 
 import axios from 'axios';
@@ -33,7 +33,7 @@ import toastRegistry from './toast/index';
 // Vue.component('font-awesome-layers-text', FontAwesomeLayersText);
 
 
-Vue.prototype.GLOBAL=globalVariable;
+// Vue.prototype.GLOBAL=globalVariable;
 axios.defaults.baseURL = process.env.API_ROOT;
 Vue.prototype.$axios = axios;
 
@@ -50,7 +50,7 @@ Vue.config.productionTip = false;
 // })
 
 var mainApp = new Vue({
-  el: '#main-menu',
+  el: '#main-window',
   router,
   store,
   components: { mainMenu },

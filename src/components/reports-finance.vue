@@ -192,6 +192,9 @@
       </div>
     </div>
   </div>    
+  <div id="loading" class="loadingbox" v-show="showLoading">
+    <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+  </div>
 </div>
 </template>
 
@@ -222,6 +225,8 @@ Date.prototype.format = function(fmt) {
 export default {
   data() {
     return {
+      imgUrl:require('@/assets/images/loading.gif'),
+      showLoading:false,
       shortcuts:false,
       projects:this.$store.state.projects,
       employees:this.$store.state.employees,
@@ -352,6 +357,8 @@ export default {
   },
   methods: {
     getRcptCashData () {
+      this.showLoading=true;
+      $("body").css("overflow","hidden");
       this.rcptnData=[];
       this.rcptnTotalAmount=0;
       if(this.rcptQC.dateRange.length<2 || this.rcptQC.dateRange[0].length<10 || this.rcptQC.dateRange[1].length<10) {
@@ -368,6 +375,8 @@ export default {
             url: 'getCashiers.php',
             data: qs.stringify(_this.rcptQC)
         }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(response.data);
           if(response.data.length<1) {
             _this.$toast({
@@ -403,6 +412,8 @@ export default {
           }
           _this.rcpt_filename+=((new Date()).format("yyyyMMddhhmmss")).toString();
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           _this.$toast({
              text: '异步通信错误!'+error,
              type: 'danger',
@@ -411,6 +422,8 @@ export default {
         }); 
     },
     getPayData () {
+      this.showLoading=true;
+      $("body").css("overflow","hidden");
       this.payData=[];
       this.payTotalAmount=0;
       if(this.payQC.dateRange.length<2 || this.payQC.dateRange[0].length<10 || this.payQC.dateRange[1].length<10) {
@@ -427,6 +440,8 @@ export default {
             url: 'getPaymentData.php',
             data: qs.stringify(_this.payQC)
         }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(response.data);
           if(response.data.length<1) {
             _this.$toast({
@@ -464,6 +479,8 @@ export default {
           }
           _this.pay_filename+=((new Date()).format("yyyyMMddhhmmss")).toString();
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           _this.$toast({
              text: '异步通信错误!'+error,
              type: 'danger',
@@ -472,6 +489,8 @@ export default {
         });
     },
     getInvoiceData () {
+      this.showLoading=true;
+      $("body").css("overflow","hidden");
       this.invoiceData=[];
       this.invoiceTotalAmount=0;
       if(this.invoiceQC.dateRange.length<2 || this.invoiceQC.dateRange[0].length<10 || this.invoiceQC.dateRange[1].length<10) {
@@ -488,6 +507,8 @@ export default {
             url: 'getInvoices.php',
             data: qs.stringify(_this.invoiceQC)
         }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(response.data);
           if(response.data.length<1) {
             _this.$toast({
@@ -560,6 +581,8 @@ export default {
           }
           _this.invoice_filename+=((new Date()).format("yyyyMMddhhmmss")).toString();
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           _this.$toast({
              text: '异步通信错误!'+error,
              type: 'danger',

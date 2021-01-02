@@ -90,6 +90,9 @@
       </div>
     </div>
   </div>   
+  <div id="loading" class="loadingbox" v-show="showLoading">
+    <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+  </div>
 </div>
 </template>
 
@@ -99,6 +102,8 @@ import qs from 'qs';
   export default {
     data () {
       return {
+        imgUrl:require('@/assets/images/loading.gif'),
+        showLoading:false,
         currentUserId:this.$store.state.user.id_user,
         queryContent:{
           keyWord:'',
@@ -125,6 +130,8 @@ import qs from 'qs';
     },
     methods:{
       getListOfMaterials() {
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         var _this = this;
         this.materials=[];
         this.queryContent.conditions='lastInventoryBefore3DaysAgo';
@@ -133,6 +140,8 @@ import qs from 'qs';
           url: 'getMaterials.php',
           data: qs.stringify(_this.queryContent)
           }).then(function (response) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
             if(response.data.length<1) {
               _this.$toast({
                 text: '找不到符合条件的记录!',
@@ -143,6 +152,8 @@ import qs from 'qs';
               _this.materials=response.data;
             }
           }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
             console.log(error);
             _this.$toast({
                text: '异步通信错误!'+error,
@@ -169,6 +180,8 @@ import qs from 'qs';
           });
           return;          
         }
+        this.showLoading=true;
+        $("body").css("overflow","hidden");
         this.queryContent=this.material;
         this.queryContent.conditions='updateQTYWithInventoryData';
         this.queryContent.id_op=this.currentUserId;
@@ -180,8 +193,8 @@ import qs from 'qs';
           url: url,
           data: qs.stringify(_this.queryContent)
         }).then(function (response) {
-// console.log(response.data);
-// return;
+          _this.showLoading=false;
+          $("body").css("overflow","");
             if(response.data===true) {
             $('#editerOfMaterial').modal('toggle');
               _this.$toast({
@@ -209,6 +222,8 @@ import qs from 'qs';
             $('#editerOfMaterial').modal('toggle');
           } 
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           _this.$toast({
             text: '异步通信错误!'+error,
             type: 'danger',

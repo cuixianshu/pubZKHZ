@@ -61,6 +61,9 @@
         </table>
     </div>
   </div>
+  <div id="loading" class="loadingbox" v-show="showLoading">
+    <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
+  </div>
 </div>
 </template>
 
@@ -91,6 +94,8 @@ Date.prototype.format = function(fmt) {
 export default {
   data() {
     return {
+      imgUrl:require('@/assets/images/loading.gif'),
+      showLoading:false,
       shortcuts:false,
       projects:this.$store.state.projects,
       employees:this.$store.state.employees,
@@ -161,6 +166,8 @@ why_disagree: (...)
   },
   methods: {
     getPurchaseData () {
+      this.showLoading=true;
+      $("body").css("overflow","hidden");
       this.purchasingData=[];
       this.pcsTotalAmount=0;
       if(this.pcsQC.dateRange.length<2 || this.pcsQC.dateRange[0].length<10 || this.pcsQC.dateRange[1].length<10) {
@@ -177,6 +184,8 @@ why_disagree: (...)
         url: 'getPurchasings.php',
         data: qs.stringify(_this.pcsQC)
       }).then(function (response) {
+        _this.showLoading=false;
+        $("body").css("overflow","");
         console.log(response.data);
         if(response.data.length<1) {
           _this.$toast({
@@ -209,6 +218,8 @@ why_disagree: (...)
         }
         _this.pcs_filename+=((new Date()).format("yyyyMMddhhmmss")).toString();
       }).catch(function (error) {
+        _this.showLoading=false;
+        $("body").css("overflow","");
         _this.$toast({
            text: '异步通信错误!'+error,
            type: 'danger',

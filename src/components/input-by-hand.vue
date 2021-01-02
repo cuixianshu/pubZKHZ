@@ -4,49 +4,49 @@
 	<div id="manualInputPane" class="container-fluid">
 	  <div class="row">
 	    <div class="col-md-3 form-inline">
-	      <label for="slctBooker" class="require">*客户</label>
-	      <select id="slctBooker" type="text" class="form-control" placeholder="请选择客户" v-model="newOrder.id_booker" title="选择姓名单位电话" required>
+	      <label class="require">*客户</label>
+	      <select type="text" class="form-control" placeholder="请选择客户" v-model="newOrder.id_booker" title="选择姓名单位电话" required>
 	        <option v-for="booker in customers" :value="booker.id">{{booker.mix_name}}</option>
 	      </select>
 	    </div>
 	    <div class="col-md-3 form-inline">
-	      <label for="slctProject" class="require">*项目</label>
-	      <select id="slctProject" type="text" class="form-control" placeholder="所属项目" v-model="newOrder.id_project" title="选择此单所属项目" required>
+	      <label class="require">*项目</label>
+	      <select type="text" class="form-control" placeholder="所属项目" v-model="newOrder.id_project" title="选择此单所属项目" required>
 	        <option v-for="item in projects" :value="item.id">{{item.name}}</option>
 	      </select>
 	    </div>
 	    <div class="col-md-3 form-inline">
-	      <label for="slctNameOfPrdct" class="require">*产品</label>
-	      <select id="slctNameOfPrdct" type="text" class="form-control" placeholder="产品名称" v-model="newOrder.id_product" title="销售的产品名称" required>
+	      <label class="require">*产品</label>
+	      <select type="text" class="form-control" placeholder="产品名称" v-model="newOrder.id_product" title="销售的产品名称" required>
 	        <option v-for="item in products" :value="item.id">{{item.name}}</option>
 	      </select>
 	    </div>
 	    <div class="col-md-3 form-inline">
-	      <label for="inputNumOfContract">合同</label>
-	      <input id="inputNumOfContract" type="text" class="form-control" placeholder="合同编号" v-model="newOrder.numOfContract" title="合同编号" required>
+	      <label>合同</label>
+	      <input type="text" class="form-control" placeholder="合同编号" v-model="newOrder.numOfContract" title="合同编号" required>
 	    </div>          
 	  </div>
 	  <div class="row">
 		<div id="divCount" class="col-md-3 form-inline">
-		  <label for="inputCount" class="require">*数量</label>
-		  <input id="inputCount" type="number" class="form-control" placeholder="销售数量" v-model="newOrder.quantity" title="销售数量,必须大于 0" required>
+		  <label class="require">*数量</label>
+		  <input type="number" class="form-control" placeholder="销售数量" v-model="newOrder.quantity" title="销售数量,必须大于 0" required>
 		</div>
 	    <div class="col-md-3 form-inline">
-	      <label for="inputsalePrice" class="require">*售价</label>
-	      <input id="inputsalePrice" type="number" class="form-control" placeholder="销售价格" v-model="newOrder.salePrice" title="销售价格,必须大于 0" required>
+	      <label class="require">*售价</label>
+	      <input type="number" class="form-control" placeholder="销售价格" v-model="newOrder.salePrice" title="销售价格,必须大于 0" required>
 	    </div>
 	    <div class="col-md-3 form-inline">
-	      <label for="inptStartPoint" class="require">*起点</label>
-	      <input id="inptStartPoint" type="text" class="form-control" placeholder="举办或出发地点" v-model="newOrder.startPoint" title="举办或出发地点" required>
+	      <label class="require">*起点</label>
+	      <input type="text" class="form-control" placeholder="举办或出发地点" v-model="newOrder.startPoint" title="举办或出发地点" required>
 	    </div>
 	    <div class="col-md-3 form-inline">
-	      <label for="inputAdtnlFee">附费</label>
-	      <input id="inputAdtnlFee" type="number" class="form-control" placeholder="附加费用金额" v-model="newOrder.adtnlFee" title="代垫代付或附加费用">
+	      <label>附费</label>
+	      <input type="number" class="form-control" placeholder="附加费用金额" v-model="newOrder.adtnlFee" title="代垫代付或附加费用">
 	    </div>                    
                     
 	  </div>
 	  <div class="row">
-        <div id="startDate" class="col-md-3 form-inline">
+        <div class="col-md-3 form-inline">
           <label class="require">*开始</label>
 	      <datepicker class="datepicker-in-neworder" v-model="newOrder.startDate" type="datetime"  format="YYYY-MM-DD HH:mm" title="举办或开始的时间" :minute-step="5" placeholder="举办或开始的时间" append-to-body width="160">
 	      </datepicker>
@@ -56,36 +56,36 @@
 	      <datepicker class="datepicker-in-neworder" v-model="newOrder.endDate" type="datetime"  format="YYYY-MM-DD HH:mm" title="结束时间" :minute-step="5" append-to-body width="160"></datepicker>
 	    </div>
 	    <div class="col-md-3 form-inline">
-	      <label for="inptEndPoint" class="require">*终点</label>
-	      <input id="inptEndPoint" type="text" class="form-control" placeholder="终到或结束地点" v-model="newOrder.endPoint" title="结束地点">
+	      <label class="require">*终点</label>
+	      <input type="text" class="form-control" placeholder="终到或结束地点" v-model="newOrder.endPoint" title="结束地点">
 	    </div>
 	    <div class="col-md-3 form-inline">
-	      <label for="inputUseOfAdtnl">用途</label>
-	      <input id="inputUseOfAdtnl" type="text" class="form-control" placeholder="附加费的用途" v-model="newOrder.useOfAdtnl" title="代垫代付或附加费用的用途">         
+	      <label>用途</label>
+	      <input type="text" class="form-control" placeholder="附加费的用途" v-model="newOrder.useOfAdtnl" title="代垫代付或附加费用的用途">         
 	    </div>
 	  </div>
 	  <div class="row">
 		<div id="op" class="col-md-3 form-inline">
-		  <label for="slctOp" class="require">*执行</label>
-	      <select id="slctOp" type="text" class="form-control" placeholder="执行人" v-model="newOrder.id_operator" title="请选择执行人">
+		  <label class="require">*执行</label>
+	      <select type="text" class="form-control" placeholder="执行人" v-model="newOrder.id_operator" title="请选择执行人">
 	        <option v-for="op in operators" :value="op.id">{{op.nmMbl}}</option>
 	      </select>
 		</div>    		  	
 		<div class="col-md-3 form-inline">
-		  <label for="slctEquipment" class="require">*设备</label>
-		  <select id="slctEquipment" type="text" class="form-control" placeholder="所用设备" v-model="newOrder.id_equipment" title="执行时所用设备器具或装备">
+		  <label class="require">*设备</label>
+		  <select type="text" class="form-control" placeholder="所用设备" v-model="newOrder.id_equipment" title="执行时所用设备器具或装备">
 	        <option v-for="equipment in equipments" :value="equipment.id">{{equipment.nmNmbr}}</option>
 	      </select>
 		</div>    		  	
 	    <div class="col-md-3 form-inline">
-	      <label for="slctPayer" class="require">*结算</label>
-	      <select id="slctPayer" type="text" class="form-control" placeholder="请选择结算人信息" v-model="newOrder.id_payer" title="请选择结算人" required>
+	      <label class="require">*结算</label>
+	      <select type="text" class="form-control" placeholder="请选择结算人信息" v-model="newOrder.id_payer" title="请选择结算人" required>
 	        <option v-for="payer in customers" :value="payer.id">{{payer.mix_name}}</option>
 	      </select>
 	    </div>
 		<div class="col-md-3 form-inline">
-		  <label for="inputMem">备注</label>
-		  <input id="inputMem" type="text" class="form-control" placeholder="备注说明" v-model="newOrder.mem" title="其它需要说明的事项">
+		  <label>备注</label>
+		  <input type="text" class="form-control" placeholder="备注说明" v-model="newOrder.mem" title="其它需要说明的事项">
 		</div>    		  	
 	  </div>
 	  <div class="row">

@@ -345,7 +345,7 @@ const store = new Vuex.Store({
     },
     getMaterials(store,vue) {
       var that=vue;
-      var queryContent={keyWord:'',conditions:''};
+      var queryContent={keyWord:'',conditions:'ForVuex'};
       that.$axios({
         method: 'post',
         url: 'getMaterials.php',

@@ -56,9 +56,9 @@ const router =  new Router({
       //component: acceptanceCheck
     },
     {
-      path: '/ticket-cashier',
-      name: 'finance_tkt_cashier',
-      component:resolve => require(['@/components/ticket-cashier.vue'], resolve)
+      path: '/append-invoice',
+      name: 'finance_append_invoice',
+      component:resolve => require(['@/components/append-invoice.vue'], resolve)
       //component: ticketCahier
     },
     {
@@ -301,37 +301,51 @@ const router =  new Router({
       path:'/rqst-rfdtkt-paying',
       name:'rqstfunds_rfdtkt_paying',
       component:resolve => require(['@/components/rqst-rfdtkt-paying.vue'], resolve)
-      // component:rqstRfdFee 
     },
     {
       path:'/authorizations',
       name:'bscinfo_authorization',
       component:resolve => require(['@/components/authorizations.vue'], resolve)
-      // component:authorizations
     },
     {
       path:'/materialsApply',
       name:'materials_apply',
       component:resolve => require(['@/components/materials-apply.vue'], resolve)
-      // component:materialsApply
     },    
     {
       path:'/change-pswd',
       name:'personal_modify_info',
       component:resolve => require(['@/components/change-pswd.vue'], resolve)
-      // component:changePswd
     },
     {
       path:'/cnfrc-attendees',
       name:'cnfrc_attendees',
       component:resolve => require(['@/components/attendees.vue'], resolve)
-      // component:changePswd
     },
     {
       path:'/cnfrc-communicate',
       name:'cnfrc_communicate',
       component:resolve => require(['@/components/communicate.vue'], resolve)
-      // component:changePswd
+    },
+    {
+      path:'/vips',
+      name:'dmstc_vips',
+      component:resolve => require(['@/components/vips.vue'], resolve)
+    },
+    {
+      path:'/vip-trips',
+      name:'dmstc_vip_trips',
+      component:resolve => require(['@/components/vip-trips.vue'], resolve)
+    },
+    {
+      path:'/vip-in-project',
+      name:'dmstc_vip_in_project',
+      component:resolve => require(['@/components/vip-in-project.vue'], resolve)
+    },
+    {
+      path:'/browse-trips',
+      name:'dmstc_browse_vip_trips',
+      component:resolve => require(['@/components/vip-browse-trips.vue'], resolve)
     },
     {
       path:'*',

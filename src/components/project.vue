@@ -736,8 +736,8 @@
       </div>
     </div>
   </div>
-  <div v-if="showLoading" class="mask">
-    <img class="loading" src="@/assets/loading.gif" alt="正在载入数据"/>
+  <div id="loading" class="loadingbox" v-show="showLoading">
+    <img class="loadingpic" :src="imgUrl" alt="正在载入数据"/>
   </div>
 </div>
 </template>
@@ -749,13 +749,14 @@ import qs from 'qs';
   export default {
     data () {
       return {
+        showLoading:false,
+        imgUrl:require('@/assets/images/loading.gif'),
         //common
         queryContent:{
           id_project:0,
           id_track:0,
           keyWord:''
         },
-        showLoading:false,
         allProjects:JSON.parse(JSON.stringify(this.$store.state.projects)),
         projectTitle:['项目名称','甲方','联系人及电话','主要内容','开始日期','结束日期','项目举办地点','项目规模','完成状态','负责人','合同号','自有','备注'],
         prjctTitleWidth:['7%','8%','9%','9%','9%','9%','9%','7%','7%','7%','7%','6%','6%'],
@@ -1143,6 +1144,8 @@ import qs from 'qs';
 
       getTracksToViewOrEdit() {
         this.showLoading=true;
+        $("body").css("overflow","hidden");
+        
         this.showTracksTableInTrkViewer=true;
         this.showTrackEditerInTrackViewer=false;
         this.tracksInViewer=[];
@@ -1156,13 +1159,17 @@ import qs from 'qs';
           console.log(response.data);
           _this.tracksInViewer=response.data;
           _this.showLoading=false;
+          $("body").css("overflow","");
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(error);
           _this.$toast({text: '通信错误!',type: 'danger',duration: 4000});
         });
       },
       clkATrackInTrkViewerToModify(r) {
         this.showLoading=true;
+        $("body").css("overflow","hidden");
         this.origin_chair=r['id_chair']?r['id_chair']:0;
         this.origin_co_chair=r['id_co_chair']?r['id_co_chair']:0;
         var queryContent={};
@@ -1186,7 +1193,10 @@ import qs from 'qs';
           _this.originTrackInViewer=JSON.parse(JSON.stringify(r));
           _this.track=JSON.parse(JSON.stringify(r));
           _this.showLoading=false;
+          $("body").css("overflow","");
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(error);
           _this.$toast({
             text: '通信错误!'+response.data,
@@ -1444,6 +1454,7 @@ import qs from 'qs';
       },
       clkAScheduleToModify(r) {
         this.showLoading=true;
+        $("body").css("overflow","hidden");
         this.id_org_spkr=r.speaker_id;
         var queryContent={};
         var _this=this;
@@ -1470,7 +1481,10 @@ import qs from 'qs';
           }
           _this.isNewCreateSchedule=false;
           _this.showLoading=false;
+          $("body").css("overflow","");
         }).catch(function (error) {
+          _this.showLoading=false;
+          $("body").css("overflow","");
           console.log(error);
           _this.$toast({
             text: '通信错误!'+error,
@@ -2023,12 +2037,6 @@ input {
   right   : 0;
   background:#000;  /*一般遮罩随便设置一个颜色*/
   opacity:70%;
-}
-.loading {
-  position: absolute;
-  left: 50%;
-  top: 30%;
-  transform: translate(-50%,-110%);
 }
 .mgtp10 {
   margin-top: 10px;
